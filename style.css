@@ -1,0 +1,215 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --color-primary: #F97316;
+    --color-secondary: #FF9A44;
+    --color-accent: #FC6076;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Scrollbar for Light Theme */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f9fafb; 
+}
+::-webkit-scrollbar-thumb {
+    background: #d1d5db; 
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary); 
+}
+
+.font-syncopate { font-family: 'Syncopate', sans-serif; }
+
+/* Active Nav Link */
+.nav-link.active {
+    color: var(--color-primary);
+}
+
+/* Light grid pattern */
+.bg-grid-pattern {
+    background-image: 
+        linear-gradient(to right, #00000005 1px, transparent 1px),
+        linear-gradient(to bottom, #00000005 1px, transparent 1px);
+    background-size: 40px 40px;
+}
+
+/* Flowing Yellow Background */
+.bg-yellow-flow {
+    background-color: #ffffff;
+    background-image: 
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.95) 40%, rgba(255, 255, 255, 1) 100%),
+        url('assets/geometric-pattern.svg');
+    background-size: 100% 100%, 150px 130px;
+    background-repeat: no-repeat, repeat;
+    background-attachment: fixed;
+}
+
+@keyframes flowBg {
+    0% { background-position: 0% 0%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 100%; }
+}
+/* Custom CSS Runner Animation */
+.runner-running .leg-l { animation: run-leg 0.6s infinite alternate ease-in-out; }
+.runner-running .leg-r { animation: run-leg 0.6s infinite alternate-reverse ease-in-out; }
+.runner-running .arm-l { animation: run-arm 0.6s infinite alternate-reverse ease-in-out; }
+.runner-running .arm-r { animation: run-arm 0.6s infinite alternate ease-in-out; }
+.runner-running { animation: run-bounce 0.3s infinite alternate ease-in-out; }
+
+/* Idle State (No animation) */
+.runner-idle .leg-l, .runner-idle .leg-r, .runner-idle .arm-l, .runner-idle .arm-r, .runner-idle {
+    animation: none;
+    transform: translateX(-50%) rotate(0deg);
+}
+.runner-idle { transform: translateY(0); }
+
+@keyframes run-leg {
+    0% { transform: translateX(-50%) rotate(-45deg); }
+    100% { transform: translateX(-50%) rotate(45deg); }
+}
+
+@keyframes run-arm {
+    0% { transform: translateX(-50%) rotate(-50deg); }
+    100% { transform: translateX(-50%) rotate(50deg); }
+}
+
+@keyframes run-bounce {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-4px); }
+}
+/* Skeletal CSS Runner Animation */
+.runner-running .leg-l { animation: swing-leg-back 0.6s infinite linear; }
+.runner-running .leg-l .calf-l { animation: swing-calf-back 0.6s infinite linear; }
+.runner-running .leg-r { animation: swing-leg-front 0.6s infinite linear; }
+.runner-running .leg-r .calf-r { animation: swing-calf-front 0.6s infinite linear; }
+
+.runner-running .arm-l { animation: swing-arm-back 0.6s infinite linear; }
+.runner-running .arm-l .forearm-l { animation: swing-forearm 0.6s infinite linear; }
+.runner-running .arm-r { animation: swing-arm-front 0.6s infinite linear; }
+.runner-running .arm-r .forearm-r { animation: swing-forearm 0.6s infinite linear 0.3s; }
+
+.runner-running .runner-wrapper { animation: skeleton-bounce 0.3s infinite alternate ease-in-out; }
+
+/* Idle State overrides */
+.runner-idle .leg-l, .runner-idle .leg-r, .runner-idle .arm-l, .runner-idle .arm-r, .runner-idle .calf-l, .runner-idle .calf-r, .runner-idle .forearm-l, .runner-idle .forearm-r {
+    animation: none;
+    transform: translateX(-50%) rotate(0deg);
+}
+
+@keyframes skeleton-bounce {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-5px); }
+}
+
+@keyframes swing-leg-back {
+    0% { transform: translateX(-50%) rotate(-30deg); }
+    25% { transform: translateX(-50%) rotate(10deg); }
+    50% { transform: translateX(-50%) rotate(40deg); }
+    75% { transform: translateX(-50%) rotate(10deg); }
+    100% { transform: translateX(-50%) rotate(-30deg); }
+}
+
+@keyframes swing-calf-back {
+    0% { transform: rotate(10deg); }
+    25% { transform: rotate(70deg); }
+    50% { transform: rotate(0deg); }
+    75% { transform: rotate(0deg); }
+    100% { transform: rotate(10deg); }
+}
+
+@keyframes swing-leg-front {
+    0% { transform: translateX(-50%) rotate(40deg); }
+    25% { transform: translateX(-50%) rotate(10deg); }
+    50% { transform: translateX(-50%) rotate(-30deg); }
+    75% { transform: translateX(-50%) rotate(10deg); }
+    100% { transform: translateX(-50%) rotate(40deg); }
+}
+
+@keyframes swing-calf-front {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(0deg); }
+    50% { transform: rotate(10deg); }
+    75% { transform: rotate(70deg); }
+    100% { transform: rotate(0deg); }
+}
+
+@keyframes swing-arm-back {
+    0% { transform: translateX(-50%) rotate(40deg); }
+    50% { transform: translateX(-50%) rotate(-40deg); }
+    100% { transform: translateX(-50%) rotate(40deg); }
+}
+@keyframes swing-arm-front {
+    0% { transform: translateX(-50%) rotate(-40deg); }
+    50% { transform: translateX(-50%) rotate(40deg); }
+    100% { transform: translateX(-50%) rotate(-40deg); }
+}
+
+@keyframes swing-forearm {
+    0% { transform: rotate(-80deg); }
+    50% { transform: rotate(-30deg); }
+    100% { transform: rotate(-80deg); }
+}
+/* Sprite Sheet Runner */
+.runner-sprite {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 600%;
+    height: auto;
+    transform: translate(0, -50%);
+}
+.runner-running .runner-sprite {
+    animation: play-sprite 0.6s steps(6) infinite;
+}
+.runner-idle .runner-sprite {
+    animation: none;
+    transform: translate(0, -50%);
+}
+@keyframes play-sprite {
+    from { transform: translate(0, -50%); }
+    to { transform: translate(-100%, -50%); }
+}
+/* Sprite Sheet Runner Fix */
+.runner-sprite {
+    background-size: 600% 600%;
+    background-position: 0% 50%;
+    background-repeat: no-repeat;
+}
+.runner-running .runner-sprite {
+    animation: play-sprite 0.6s steps(6) infinite;
+}
+.runner-idle .runner-sprite {
+    animation: none;
+    background-position: 0% 50%;
+}
+@keyframes play-sprite {
+    from { background-position: 0% 50%; }
+    to { background-position: 120% 50%; }
+}
+/* Sprite Sheet Runner Math */
+.runner-running .runner-sprite {
+    animation: play-sprite 0.6s steps(6) infinite;
+}
+.runner-idle .runner-sprite {
+    animation: none;
+    transform: translateY(-50%);
+}
+@keyframes play-sprite {
+    from { transform: translate(0, -50%); }
+    to { transform: translate(-360px, -50%); }
+}
+
+

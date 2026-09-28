@@ -1,0 +1,24 @@
+<svg width="120" height="104" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="hex" x="0" y="0" width="120" height="104" patternUnits="userSpaceOnUse">
+      <!-- Background -->
+      <rect width="120" height="104" fill="#fcd34d" />
+      
+      <!-- Cube 1 -->
+      <polygon points="30,52 60,34.6 90,52 60,69.3" fill="#fde68a" />
+      <polygon points="30,52 60,69.3 60,104 30,86.6" fill="#fbbf24" />
+      <polygon points="90,52 60,69.3 60,104 90,86.6" fill="#f59e0b" />
+      
+      <!-- Cube 2 (offset) -->
+      <polygon points="-30,0 0,-17.3 30,0 0,17.3" fill="#fde68a" />
+      <polygon points="-30,0 0,17.3 0,52 -30,34.6" fill="#fbbf24" />
+      <polygon points="30,0 0,17.3 0,52 30,34.6" fill="#f59e0b" />
+      
+      <!-- Cube 3 (offset) -->
+      <polygon points="90,0 120,-17.3 150,0 120,17.3" fill="#fde68a" />
+      <polygon points="90,0 120,17.3 120,52 90,34.6" fill="#fbbf24" />
+      <polygon points="150,0 120,17.3 120,52 150,34.6" fill="#f59e0b" />
+    </pattern>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#hex)" />
+</svg>
