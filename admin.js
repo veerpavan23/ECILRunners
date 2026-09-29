@@ -96,6 +96,7 @@ document.getElementById('form-event').addEventListener('submit', async (e) => {
             title: document.getElementById('ev-title').value,
             date: document.getElementById('ev-date').value,
             location: document.getElementById('ev-location').value,
+            description: document.getElementById('ev-description').value,
             image_url: imageUrl
         }]);
         if (error) throw error;
@@ -328,6 +329,7 @@ window.openEditEvent = async (id) => {
             title: document.getElementById('edit-ev-title').value,
             date: document.getElementById('edit-ev-date').value,
             location: document.getElementById('edit-ev-location').value,
+            description: document.getElementById('edit-ev-description').value,
             image_url: imageUrl
         }).eq('id', currentEditId);
         
@@ -533,6 +535,7 @@ window.openEditGallery = async (albumName) => {
         loadGallery();
     });
 };
+
 
 
 
