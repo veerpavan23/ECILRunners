@@ -127,8 +127,17 @@
     </div>
 
     <script src="admin.js"></script>
+    <!-- Generic Edit Modal -->
+    <div id="edit-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 relative">
+            <button onclick="closeEditModal()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors"><i class="fas fa-times text-2xl"></i></button>
+            <h2 id="edit-modal-title" class="text-2xl font-syncopate font-bold mb-6 border-b pb-2">Edit Item</h2>
+            <div id="edit-modal-content"></div>
+        </div>
+    </div>
 </body>
 </html>
+
 
 
 
