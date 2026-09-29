@@ -270,3 +270,51 @@ if (runnerGif) {
         runnerGif.addEventListener('load', freezeRunner);
     }
 }
+
+// --- SUPABASE INTEGRATION ---
+const SUPABASE_URL = 'https://cvehhriirejuffbrowkr.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2ZWhocmlpcmVqdWZmYnJvd2tyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjIzMDEsImV4cCI6MjEwNjIzODMwMX0.FKnvc0Xj66_VWRbeWOWChG7SSmjjPyxNyHNJmX0E8qA';
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+async function loadLiveEvents() {
+    const container = document.getElementById('events-container');
+    if (!container) return;
+
+    try {
+        const { data, error } = await supabaseClient.from('events').select('*').order('created_at', { ascending: false }).limit(3);
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+            container.innerHTML = data.map(ev => `
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:-translate-y-2 transition-all duration-300 group">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="${ev.image_url || 'assets/events_marathon.jpg'}" alt="Event" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-4 right-4 bg-[#F97316] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-md">
+                            ${ev.date.split(',')[0]}
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center gap-2 text-sm text-[#F97316] font-bold mb-3">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            <span class="uppercase tracking-wider text-xs">${ev.location}</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">${ev.title}</h3>
+                        <p class="text-gray-600 text-sm mb-6 line-clamp-2">Join us for this amazing ECIL Runners event. See you at the starting line!</p>
+                        <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                            <span class="font-bold text-gray-900">FREE</span>
+                            <button class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#F97316] group-hover:text-white transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    } catch (err) {
+        console.error("Failed to fetch live events:", err);
+    }
+}
+
+// Load events when page loads
+document.addEventListener('DOMContentLoaded', loadLiveEvents);
