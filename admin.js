@@ -119,7 +119,7 @@ async function loadEvents() {
                 <div class="font-bold">${ev.title}</div>
                 <div class="text-sm text-gray-500">${ev.date} | ${ev.location}</div>
             </div>
-            <button onclick="deleteRecord('events', '${ev.id}')" class="ml-auto text-red-500 text-sm">Delete</button>
+            <button onclick="openEditEvent('\$\{ev.id\}')" class="text-blue-500 text-sm hover:underline mr-3">Edit</button><button onclick="deleteRecord('events', '\$\{ev.id\}')" class="ml-auto text-red-500 text-sm">Delete</button>
         </div>
     `).join('') || 'No events found.';
 }
@@ -181,7 +181,7 @@ async function loadMerch() {
                 <div class="font-bold">${mc.title} <span class="text-[#F97316]">${mc.price}</span></div>
                 <div class="text-sm text-gray-500">Sizes: ${mc.sizes} | ${mc.images ? mc.images.length : 1} photos</div>
             </div>
-            <button onclick="deleteRecord('merch', '${mc.id}')" class="ml-auto text-red-500 text-sm hover:underline">Delete</button>
+            <button onclick="openEditMerch('\$\{mc.id\}')" class="text-blue-500 text-sm hover:underline mr-3">Edit</button><button onclick="deleteRecord('merch', '\$\{mc.id\}')" class="ml-auto text-red-500 text-sm hover:underline">Delete</button>
         </div>
     `).join('') || 'No merch found.';
 }
@@ -275,3 +275,153 @@ function loadDashboardData() {
 };
 
 
+
+
+// GLOBALS FOR EDIT
+let currentEditId = null;
+let currentEditImages = [];
+
+window.closeEditModal = () => {
+    document.getElementById('edit-modal').classList.add('hidden');
+    document.getElementById('edit-modal-content').innerHTML = '';
+};
+
+// EDIT EVENTS
+window.openEditEvent = async (id) => {
+    loader.classList.remove('hidden');
+    const { data, error } = await supabaseClient.from('events').select('*').eq('id', id).single();
+    loader.classList.add('hidden');
+    if (error) return alert('Error fetching event');
+    
+    currentEditId = id;
+    document.getElementById('edit-modal-title').textContent = 'Edit Event';
+    document.getElementById('edit-modal-content').innerHTML = `
+        <form id="form-edit-event" class="space-y-4">
+            <div><label class="block text-sm text-gray-600 mb-1">Event Title</label><input type="text" id="edit-ev-title" value="${data.title}" required class="w-full border rounded p-2"></div>
+            <div><label class="block text-sm text-gray-600 mb-1">Date & Time</label><input type="text" id="edit-ev-date" value="${data.date}" required class="w-full border rounded p-2"></div>
+            <div><label class="block text-sm text-gray-600 mb-1">Location</label><input type="text" id="edit-ev-location" value="${data.location}" required class="w-full border rounded p-2"></div>
+            <div>
+                <label class="block text-sm text-gray-600 mb-1">Current Image</label>
+                <img src="${data.image_url}" class="w-32 h-32 object-cover rounded mb-2 border">
+                <label class="block text-sm text-gray-600 mb-1">Upload New Image (Leave blank to keep current)</label>
+                <input type="file" id="edit-ev-image" accept="image/*" class="w-full border rounded p-1">
+            </div>
+            <button type="submit" class="bg-[#F97316] text-white px-6 py-2 rounded font-bold w-full">Save Changes</button>
+            <p id="edit-ev-status" class="text-sm text-gray-500 mt-2 text-center"></p>
+        </form>
+    `;
+    document.getElementById('edit-modal').classList.remove('hidden');
+
+    document.getElementById('form-edit-event').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const statusEl = document.getElementById('edit-ev-status');
+        statusEl.textContent = 'Saving...';
+        
+        let imageUrl = data.image_url;
+        const file = document.getElementById('edit-ev-image').files[0];
+        if (file) {
+            statusEl.textContent = 'Uploading new image...';
+            imageUrl = await uploadImage(file);
+        }
+        
+        await supabaseClient.from('events').update({
+            title: document.getElementById('edit-ev-title').value,
+            date: document.getElementById('edit-ev-date').value,
+            location: document.getElementById('edit-ev-location').value,
+            image_url: imageUrl
+        }).eq('id', currentEditId);
+        
+        closeEditModal();
+        loadEvents();
+    });
+};
+
+// EDIT MERCHANDISE
+window.renderEditMerchImages = () => {
+    return currentEditImages.map((img, idx) => `
+        <div class="flex items-center gap-4 mb-2 bg-gray-50 p-3 rounded border">
+            <img src="${img}" class="w-16 h-16 object-cover rounded shadow-sm border border-gray-200">
+            <div class="flex flex-col gap-1">
+                ${idx > 0 ? `<button type="button" onclick="window.moveMerchImage(${idx}, -1)" class="text-xs bg-white border px-2 py-1 rounded hover:bg-gray-100 shadow-sm"><i class="fas fa-arrow-up"></i> Move Up</button>` : ''}
+                ${idx < currentEditImages.length - 1 ? `<button type="button" onclick="window.moveMerchImage(${idx}, 1)" class="text-xs bg-white border px-2 py-1 rounded hover:bg-gray-100 shadow-sm"><i class="fas fa-arrow-down"></i> Move Down</button>` : ''}
+            </div>
+            <button type="button" onclick="window.deleteMerchImage(${idx})" class="ml-auto text-red-500 hover:text-red-700 bg-white border px-3 py-1 rounded shadow-sm"><i class="fas fa-trash"></i></button>
+        </div>
+    `).join('');
+};
+
+window.moveMerchImage = (idx, direction) => {
+    const temp = currentEditImages[idx];
+    currentEditImages[idx] = currentEditImages[idx + direction];
+    currentEditImages[idx + direction] = temp;
+    document.getElementById('edit-mc-images-container').innerHTML = window.renderEditMerchImages();
+};
+
+window.deleteMerchImage = (idx) => {
+    if(currentEditImages.length === 1) return alert("Must have at least one image!");
+    currentEditImages.splice(idx, 1);
+    document.getElementById('edit-mc-images-container').innerHTML = window.renderEditMerchImages();
+};
+
+window.openEditMerch = async (id) => {
+    loader.classList.remove('hidden');
+    const { data, error } = await supabaseClient.from('merch').select('*').eq('id', id).single();
+    loader.classList.add('hidden');
+    if (error) return alert('Error fetching merch');
+    
+    currentEditId = id;
+    currentEditImages = data.images || [data.image_url];
+    
+    document.getElementById('edit-modal-title').textContent = 'Edit Merchandise';
+    document.getElementById('edit-modal-content').innerHTML = `
+        <form id="form-edit-merch" class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div><label class="block text-sm text-gray-600 mb-1">Category</label><input type="text" id="edit-mc-category" value="${data.category || ''}" list="category-options" required class="w-full border rounded p-2"></div>
+                <div><label class="block text-sm text-gray-600 mb-1">Item Name</label><input type="text" id="edit-mc-title" value="${data.title}" required class="w-full border rounded p-2"></div>
+                <div><label class="block text-sm text-gray-600 mb-1">Price</label><input type="text" id="edit-mc-price" value="${data.price}" required class="w-full border rounded p-2"></div>
+                <div><label class="block text-sm text-gray-600 mb-1">Sizes Available</label><input type="text" id="edit-mc-sizes" value="${data.sizes}" required class="w-full border rounded p-2"></div>
+            </div>
+            
+            <div class="mt-4 p-4 border rounded bg-gray-50/50">
+                <label class="block text-sm font-bold text-gray-800 mb-3 uppercase tracking-wider">Manage Photos</label>
+                <div id="edit-mc-images-container" class="mb-4">
+                    ${window.renderEditMerchImages()}
+                </div>
+                <label class="block text-sm text-gray-600 mb-1 mt-4">Add More Photos</label>
+                <input type="file" id="edit-mc-new-images" accept="image/*" multiple class="w-full border rounded p-2 bg-white">
+            </div>
+            
+            <button type="submit" class="bg-[#F97316] text-white px-6 py-3 rounded-lg font-bold w-full mt-4 text-lg tracking-wide shadow-md hover:bg-orange-600 transition-colors">Save All Changes</button>
+            <p id="edit-mc-status" class="text-sm text-gray-500 mt-2 text-center"></p>
+        </form>
+    `;
+    
+    document.getElementById('edit-modal').classList.remove('hidden');
+
+    document.getElementById('form-edit-merch').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const statusEl = document.getElementById('edit-mc-status');
+        statusEl.textContent = 'Saving...';
+        
+        const files = document.getElementById('edit-mc-new-images').files;
+        if (files.length > 0) {
+            statusEl.textContent = `Uploading ${files.length} new images...`;
+            for (let i = 0; i < files.length; i++) {
+                const url = await uploadImage(files[i]);
+                currentEditImages.push(url);
+            }
+        }
+        
+        await supabaseClient.from('merch').update({
+            category: document.getElementById('edit-mc-category').value,
+            title: document.getElementById('edit-mc-title').value,
+            price: document.getElementById('edit-mc-price').value,
+            sizes: document.getElementById('edit-mc-sizes').value,
+            images: currentEditImages,
+            image_url: currentEditImages[0]
+        }).eq('id', currentEditId);
+        
+        closeEditModal();
+        loadMerch();
+    });
+};
