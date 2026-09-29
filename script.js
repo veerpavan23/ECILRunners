@@ -287,7 +287,7 @@ async function loadLiveEvents() {
         
         if (data && data.length > 0) {
             container.innerHTML = data.map(ev => `
-                <div class="bg-white rounded-full overflow-hidden shadow-lg border border-gray-100 hover:-translate-y-2 transition-all duration-300 group">
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:-translate-y-2 transition-all duration-300 group">
                     <div class="relative h-48 overflow-hidden">
                         <img src="${ev.image_url || 'assets/events_marathon.jpg'}" alt="Event" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         <div class="absolute top-4 right-4 bg-[#F97316] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-md">
@@ -338,7 +338,7 @@ async function loadLiveGallery() {
 
             container.innerHTML = Object.keys(albums).map((albumName, index) => `
                 <div class="swiper-slide w-80 sm:w-96">
-                    <div class="relative group rounded-full overflow-hidden shadow-2xl aspect-square album-card" data-album-id="${index}">
+                    <div class="relative group rounded-2xl overflow-hidden shadow-2xl aspect-[3/4] album-card" data-album-id="${index}">
                         <img src="${albums[albumName][0]}" class="album-img absolute inset-0 w-full h-full object-cover transition-opacity duration-1000">
                         <img src="" class="album-img-next absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent z-10">
@@ -351,24 +351,25 @@ async function loadLiveGallery() {
                 </div>
             `).join('');
 
-            
-            // Initialize Swiper for Seamless Circular Flow
+            // Initialize Swiper for 3D Coverflow
             new Swiper('.gallery-swiper', {
-                slidesPerView: 'auto',
-                spaceBetween: 30,
+                effect: 'coverflow',
+                grabCursor: true,
                 centeredSlides: true,
-                loop: true,
-                speed: 4000,
-                autoplay: {
-                    delay: 0,
-                    disableOnInteraction: false,
+                slidesPerView: 'auto',
+                coverflowEffect: {
+                    rotate: 0,
+                    stretch: -60,
+                    depth: 400,
+                    modifier: 1,
+                    slideShadows: true
                 },
                 navigation: {
                     nextEl: '.swiper-button-next',
                     prevEl: '.swiper-button-prev',
-                }
+                },
+                loop: true
             });
-
 
             // Handle automatic photo crossfading within each album
             const albumKeys = Object.keys(albums);
@@ -415,7 +416,7 @@ async function loadLiveMerch() {
         
         if (data && data.length > 0) {
             container.innerHTML = data.map(mc => `
-                <div class="bg-gray-50 rounded-full overflow-hidden border border-gray-100 group">
+                <div class="bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 group">
                     <div class="relative h-64 p-6 flex items-center justify-center bg-white">
                         <img src="${mc.image_url || 'assets/merch_tshirt.jpg'}" alt="Merchandise" class="max-h-full object-contain group-hover:scale-110 transition-transform duration-500">
                     </div>
@@ -436,6 +437,5 @@ async function loadLiveMerch() {
         console.error("Failed to fetch live merch:", err);
     }
 }
-
 
 
