@@ -329,23 +329,82 @@ async function loadLiveGallery() {
         if (error) throw error;
         
         if (data && data.length > 0) {
-            container.innerHTML = data.map(photo => `
-                <div class="break-inside-avoid relative group rounded-2xl overflow-hidden shadow-lg mb-6">
-                    <img src="${photo.image_url}" alt="Gallery Photo" class="w-full object-cover group-hover:scale-105 transition-transform duration-700">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div class="absolute bottom-6 left-6 text-white">
-                            <p class="font-bold text-lg">${photo.album_name}</p>
-                            <p class="text-sm text-gray-300">ECIL Runners</p>
+            // Group by album name
+            const albums = {};
+            data.forEach(photo => {
+                if (!albums[photo.album_name]) albums[photo.album_name] = [];
+                albums[photo.album_name].push(photo.image_url);
+            });
+
+            container.innerHTML = Object.keys(albums).map((albumName, index) => `
+                <div class="swiper-slide w-80 sm:w-96">
+                    <div class="relative group rounded-2xl overflow-hidden shadow-2xl aspect-[3/4] album-card" data-album-id="${index}">
+                        <img src="${albums[albumName][0]}" class="album-img absolute inset-0 w-full h-full object-cover transition-opacity duration-1000">
+                        <img src="" class="album-img-next absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent z-10">
+                            <div class="absolute bottom-8 left-6 right-6 text-white text-center">
+                                <p class="font-bold text-2xl tracking-wide mb-2">${albumName}</p>
+                                <p class="text-xs text-gray-300 uppercase tracking-widest">${albums[albumName].length} Photos</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             `).join('');
+
+            // Initialize Swiper for 3D Coverflow
+            new Swiper('.gallery-swiper', {
+                effect: 'coverflow',
+                grabCursor: true,
+                centeredSlides: true,
+                slidesPerView: 'auto',
+                coverflowEffect: {
+                    rotate: 30,
+                    stretch: 0,
+                    depth: 100,
+                    modifier: 1,
+                    slideShadows: true,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                loop: true
+            });
+
+            // Handle automatic photo crossfading within each album
+            const albumKeys = Object.keys(albums);
+            document.querySelectorAll('.album-card').forEach(card => {
+                const albumId = parseInt(card.getAttribute('data-album-id'));
+                const photos = albums[albumKeys[albumId]];
+                
+                if (photos.length > 1) {
+                    let currentIndex = 0;
+                    const img1 = card.querySelector('.album-img');
+                    const img2 = card.querySelector('.album-img-next');
+                    let showingImg1 = true;
+
+                    setInterval(() => {
+                        currentIndex = (currentIndex + 1) % photos.length;
+                        const nextPhoto = photos[currentIndex];
+
+                        if (showingImg1) {
+                            img2.src = nextPhoto;
+                            img2.classList.remove('opacity-0');
+                            img1.classList.add('opacity-0');
+                        } else {
+                            img1.src = nextPhoto;
+                            img1.classList.remove('opacity-0');
+                            img2.classList.add('opacity-0');
+                        }
+                        showingImg1 = !showingImg1;
+                    }, 3000 + (Math.random() * 2000)); // Randomize slightly so they don't all flip at the exact same millisecond
+                }
+            });
         }
     } catch (err) {
         console.error("Failed to fetch live gallery:", err);
     }
 }
-
 
 async function loadLiveMerch() {
     const container = document.getElementById('merch-container');
@@ -378,3 +437,4 @@ async function loadLiveMerch() {
         console.error("Failed to fetch live merch:", err);
     }
 }
+

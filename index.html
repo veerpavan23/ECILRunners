@@ -10,6 +10,8 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 </head>
 <body class="bg-white text-gray-800 font-sans antialiased selection:bg-[#F97316] selection:text-white relative">
     
@@ -340,41 +342,15 @@
                     <h3 class="text-4xl md:text-5xl font-syncopate font-bold text-gray-900">Community in Motion</h3>
                 </div>
 
-                <div id="gallery-container" class="grid grid-cols-2 md:grid-cols-4 gap-4 auto-rows-[250px]" data-aos="fade-up" data-aos-delay="100">
-                    <div class="col-span-2 row-span-2 relative group rounded-xl overflow-hidden cursor-pointer shadow-sm">
-                        <div class="absolute inset-0 bg-[#F97316]/10 opacity-0 group-hover:opacity-100 transition-opacity z-10 mix-blend-overlay"></div>
-                        <img src="assets/gallery_dawn.jpg" alt="Runners at dawn" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                        <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black/80 to-transparent z-20 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
-                            <p class="text-[#FF9A44] text-xs font-bold uppercase tracking-widest mb-1">Monsoon Run</p>
-                            <h4 class="text-white font-bold text-xl">The Starting Line</h4>
-                        </div>
-                    </div>
-                    
-                    <div class="relative group rounded-xl overflow-hidden cursor-pointer shadow-sm">
-                        <img src="assets/gallery_stretch.jpg" alt="Stretching" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <i class="fas fa-expand text-white text-2xl"></i>
-                        </div>
-                    </div>
-
-                    <div class="relative group rounded-xl overflow-hidden cursor-pointer shadow-sm">
-                        <img src="assets/gallery_selfie.jpg" alt="Group selfie" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
-                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <i class="fas fa-expand text-white text-2xl"></i>
-                        </div>
-                    </div>
-
-                    <div class="col-span-2 relative group rounded-xl overflow-hidden cursor-pointer shadow-sm">
-                        <div class="absolute inset-0 bg-[#F97316]/10 opacity-0 group-hover:opacity-100 transition-opacity z-10 mix-blend-overlay"></div>
-                        <img src="assets/gallery_finish.jpg" alt="Marathon Finish" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700">
-                        <div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black/80 to-transparent z-20 translate-y-full group-hover:translate-y-0 transition-transform duration-500">
-                            <p class="text-[#FF9A44] text-xs font-bold uppercase tracking-widest mb-1">Hyderabad Marathon</p>
-                            <h4 class="text-white font-bold text-xl">Finish Line Triumphs</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+                <div class="swiper gallery-swiper w-full pt-12 pb-16">
+                      <div class="swiper-wrapper" id="gallery-container">
+                          <!-- Slides injected here -->
+                      </div>
+                      <div class="swiper-button-next text-[#F97316]"></div>
+                      <div class="swiper-button-prev text-[#F97316]"></div>
+                  </div>
+              </div>
+          </section>
 
         <!-- Merch Section -->
         <section id="merch" class="py-24 relative z-10 bg-white/40 backdrop-blur-sm border-t border-gray-100">
@@ -529,6 +505,7 @@
     <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
