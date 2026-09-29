@@ -48,14 +48,59 @@
                 <button class="w-full text-left px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="merch">Merchandise</button>
                 <button class="w-full text-left px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="gallery">Gallery</button>
                 <button class="w-full text-left px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="orders">Orders (Razorpay)</button>
+                <button class="w-full text-left px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="users">Manage Users</button>
             </aside>
             
             <!-- Content Area -->
-            <main class="flex-1 p-8 overflow-y-auto bg-gray-50">
-                <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                    <h2 class="text-2xl font-bold mb-6" id="current-tab-title">Manage Events</h2>
-                    <p class="text-gray-500">Database connection pending...</p>
+                        <main class="flex-1 p-8 overflow-y-auto bg-gray-50 relative">
+                
+                <!-- Events Tab -->
+                <div id="tab-events" class="tab-content max-w-4xl mx-auto space-y-6">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h2 class="text-xl font-bold mb-4">Add New Event</h2>
+                        <form id="form-event" class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label class="block text-sm text-gray-600 mb-1">Title</label><input type="text" id="ev-title" required class="w-full border rounded p-2"></div>
+                                <div><label class="block text-sm text-gray-600 mb-1">Date</label><input type="text" id="ev-date" placeholder="e.g. October 15, 2024" required class="w-full border rounded p-2"></div>
+                                <div><label class="block text-sm text-gray-600 mb-1">Location</label><input type="text" id="ev-location" required class="w-full border rounded p-2"></div>
+                                <div><label class="block text-sm text-gray-600 mb-1">Image Upload</label><input type="file" id="ev-image" accept="image/*" class="w-full border rounded p-1"></div>
+                            </div>
+                            <button type="submit" class="bg-[#F97316] text-white px-6 py-2 rounded font-bold">Save Event</button>
+                        </form>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h2 class="text-xl font-bold mb-4">Current Events</h2>
+                        <div id="list-events" class="space-y-3">Loading...</div>
+                    </div>
                 </div>
+
+                <!-- Merch Tab -->
+                <div id="tab-merch" class="tab-content hidden max-w-4xl mx-auto space-y-6">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h2 class="text-xl font-bold mb-4">Add Merchandise</h2>
+                        <form id="form-merch" class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label class="block text-sm text-gray-600 mb-1">Item Name</label><input type="text" id="mc-title" required class="w-full border rounded p-2"></div>
+                                <div><label class="block text-sm text-gray-600 mb-1">Price</label><input type="text" id="mc-price" placeholder="e.g. ?499" required class="w-full border rounded p-2"></div>
+                                <div><label class="block text-sm text-gray-600 mb-1">Sizes Available</label><input type="text" id="mc-sizes" placeholder="e.g. S, M, L, XL" required class="w-full border rounded p-2"></div>
+                                <div><label class="block text-sm text-gray-600 mb-1">Image Upload</label><input type="file" id="mc-image" accept="image/*" class="w-full border rounded p-1"></div>
+                            </div>
+                            <button type="submit" class="bg-[#F97316] text-white px-6 py-2 rounded font-bold">Save Merchandise</button>
+                        </form>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h2 class="text-xl font-bold mb-4">Current Merchandise</h2>
+                        <div id="list-merch" class="space-y-3">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- Placeholders for others -->
+                <div id="tab-gallery" class="tab-content hidden max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-6"><h2 class="text-xl font-bold">Gallery Management (Coming Soon)</h2></div>
+                <div id="tab-orders" class="tab-content hidden max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-6"><h2 class="text-xl font-bold">Razorpay Orders (Coming in Phase 2)</h2></div>
+                <div id="tab-users" class="tab-content hidden max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-6"><h2 class="text-xl font-bold">User Management (Coming Soon)</h2></div>
+                
+                <!-- Loading overlay -->
+                <div id="admin-loader" class="hidden absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center"><div class="text-xl font-bold text-gray-600 animate-pulse">Processing...</div></div>
             </main>
         </div>
     </div>
@@ -63,3 +108,5 @@
     <script src="admin.js"></script>
 </body>
 </html>
+
+
