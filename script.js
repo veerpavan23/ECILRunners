@@ -317,4 +317,31 @@ async function loadLiveEvents() {
 }
 
 // Load events when page loads
-document.addEventListener('DOMContentLoaded', loadLiveEvents);
+document.addEventListener('DOMContentLoaded', () => { loadLiveEvents(); loadLiveGallery(); });
+
+
+async function loadLiveGallery() {
+    const container = document.getElementById('gallery-container');
+    if (!container) return;
+
+    try {
+        const { data, error } = await supabaseClient.from('gallery').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+            container.innerHTML = data.map(photo => `
+                <div class="break-inside-avoid relative group rounded-2xl overflow-hidden shadow-lg mb-6">
+                    <img src="${photo.image_url}" alt="Gallery Photo" class="w-full object-cover group-hover:scale-105 transition-transform duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div class="absolute bottom-6 left-6 text-white">
+                            <p class="font-bold text-lg">${photo.album_name}</p>
+                            <p class="text-sm text-gray-300">ECIL Runners</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    } catch (err) {
+        console.error("Failed to fetch live gallery:", err);
+    }
+}
