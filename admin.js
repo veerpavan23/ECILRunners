@@ -53,6 +53,7 @@ checkSession();
 
 
 
+
 // Tab Switching
 const tabs = document.querySelectorAll('[data-tab]');
 const tabContents = document.querySelectorAll('.tab-content');
@@ -111,16 +112,16 @@ async function loadEvents() {
     const list = document.getElementById('list-events');
     const { data, error } = await supabaseClient.from('events').select('*').order('created_at', { ascending: false });
     if (error) { list.innerHTML = 'Error loading events.'; return; }
-    list.innerHTML = data.map(ev => 
+    list.innerHTML = data.map(ev => `
         <div class="flex items-center gap-4 p-3 border rounded">
-             + (ev.image_url ? <img src=" + ev.image_url + " class="w-12 h-12 object-cover rounded"> : <div class="w-12 h-12 bg-gray-200 rounded"></div>) + 
+            ${ev.image_url ? `<img src="${ev.image_url}" class="w-12 h-12 object-cover rounded">` : `<div class="w-12 h-12 bg-gray-200 rounded"></div>`}
             <div>
-                <div class="font-bold"> + ev.title + </div>
-                <div class="text-sm text-gray-500"> + ev.date +  |  + ev.location + </div>
+                <div class="font-bold">${ev.title}</div>
+                <div class="text-sm text-gray-500">${ev.date} | ${ev.location}</div>
             </div>
-            <button onclick="deleteRecord('events', ' + ev.id + ')" class="ml-auto text-red-500 text-sm">Delete</button>
+            <button onclick="deleteRecord('events', '${ev.id}')" class="ml-auto text-red-500 text-sm">Delete</button>
         </div>
-    ).join('') || 'No events found.';
+    `).join('') || 'No events found.';
 }
 
 // MERCH CRUD
@@ -151,16 +152,16 @@ async function loadMerch() {
     const list = document.getElementById('list-merch');
     const { data, error } = await supabaseClient.from('merch').select('*').order('created_at', { ascending: false });
     if (error) { list.innerHTML = 'Error loading merch.'; return; }
-    list.innerHTML = data.map(mc => 
+    list.innerHTML = data.map(mc => `
         <div class="flex items-center gap-4 p-3 border rounded">
-             + (mc.image_url ? <img src=" + mc.image_url + " class="w-12 h-12 object-cover rounded"> : <div class="w-12 h-12 bg-gray-200 rounded"></div>) + 
+            ${mc.image_url ? `<img src="${mc.image_url}" class="w-12 h-12 object-cover rounded">` : `<div class="w-12 h-12 bg-gray-200 rounded"></div>`}
             <div>
-                <div class="font-bold"> + mc.title +  <span class="text-[#F97316]"> + mc.price + </span></div>
-                <div class="text-sm text-gray-500">Sizes:  + mc.sizes + </div>
+                <div class="font-bold">${mc.title} <span class="text-[#F97316]">${mc.price}</span></div>
+                <div class="text-sm text-gray-500">Sizes: ${mc.sizes}</div>
             </div>
-            <button onclick="deleteRecord('merch', ' + mc.id + ')" class="ml-auto text-red-500 text-sm">Delete</button>
+            <button onclick="deleteRecord('merch', '${mc.id}')" class="ml-auto text-red-500 text-sm">Delete</button>
         </div>
-    ).join('') || 'No merch found.';
+    `).join('') || 'No merch found.';
 }
 
 // Global Delete
@@ -178,5 +179,3 @@ function loadDashboardData() {
     loadEvents();
     loadMerch();
 };
-
-
