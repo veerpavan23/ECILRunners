@@ -475,28 +475,75 @@ async function loadLiveMerch() {
         if (error) throw error;
         
         if (data && data.length > 0) {
-            container.innerHTML = data.map(mc => `
-                <div class="bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 group">
-                    <div class="relative h-64 p-6 flex items-center justify-center bg-white">
-                        <img src="${mc.image_url || 'assets/merch_tshirt.jpg'}" alt="Merchandise" class="max-h-full object-contain group-hover:scale-110 transition-transform duration-500">
-                    </div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-2">
-                            <h3 class="text-lg font-bold text-gray-900">${mc.title}</h3>
-                            <span class="text-[#F97316] font-bold">${mc.price}</span>
+            // Group merch by category
+            const categories = {};
+            data.forEach(mc => {
+                const cat = mc.category || 'General';
+                if (!categories[cat]) categories[cat] = [];
+                categories[cat].push(mc);
+            });
+
+            // We will replace the container's parent innerHTML to inject category headers
+            const parent = container.parentElement;
+            
+            let html = '';
+            for (const [catName, items] of Object.entries(categories)) {
+                html += `
+                    <div class="mb-16">
+                        <h3 class="text-3xl font-syncopate font-bold text-gray-900 mb-8 border-b-2 border-gray-100 pb-4">${catName}</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                            ${items.map(mc => {
+                                const images = mc.images && mc.images.length > 0 ? mc.images : [mc.image_url || 'assets/merch_tshirt.jpg'];
+                                return `
+                                <div class="bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-shadow duration-300">
+                                    <div class="swiper product-swiper w-full h-72 bg-white relative">
+                                        <div class="swiper-wrapper">
+                                            ${images.map(img => `
+                                                <div class="swiper-slide flex items-center justify-center p-6">
+                                                    <img src="${img}" class="max-h-full max-w-full object-contain hover:scale-105 transition-transform duration-500">
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                        ${images.length > 1 ? '<div class="swiper-pagination !bottom-2"></div>' : ''}
+                                    </div>
+                                    <div class="p-6">
+                                        <div class="flex justify-between items-start mb-2 gap-2">
+                                            <h3 class="text-lg font-bold text-gray-900 leading-tight">${mc.title}</h3>
+                                            <span class="text-[#F97316] font-bold text-lg whitespace-nowrap">${mc.price}</span>
+                                        </div>
+                                        <p class="text-sm text-gray-500 mb-6">Sizes: ${mc.sizes}</p>
+                                        <button class="w-full bg-gray-900 text-white py-3 rounded-xl font-bold tracking-wide hover:bg-[#F97316] transition-colors flex items-center justify-center gap-2">
+                                            Buy via WhatsApp
+                                        </button>
+                                    </div>
+                                </div>
+                                `
+                            }).join('')}
                         </div>
-                        <p class="text-sm text-gray-500 mb-4">Sizes: ${mc.sizes}</p>
-                        <button class="w-full bg-gray-900 text-white py-3 rounded-xl font-bold tracking-wide hover:bg-[#F97316] transition-colors flex items-center justify-center gap-2">
-                            Buy via WhatsApp
-                        </button>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }
+            
+            parent.innerHTML = html;
+
+            // Initialize the mini product swipers
+            new Swiper('.product-swiper', {
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                grabCursor: true,
+                nested: true // Important if inside another swiper, but safe to add anyway
+            });
         }
     } catch (err) {
         console.error("Failed to fetch live merch:", err);
     }
+} catch (err) {
+        console.error("Failed to fetch live merch:", err);
+    }
 }
+
 
 
 
