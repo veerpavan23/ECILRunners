@@ -336,7 +336,8 @@ async function loadLiveGallery() {
                 albums[photo.album_name].push(photo.image_url);
             });
 
-            container.innerHTML = Object.keys(albums).map((albumName, index) => `
+            
+            let slidesHtml = Object.keys(albums).map((albumName, index) => `
                 <div class="swiper-slide w-80 sm:w-96">
                     <div class="relative group rounded-2xl overflow-hidden shadow-2xl aspect-[3/4] album-card" data-album-id="${index}">
                         <img src="${albums[albumName][0]}" class="album-img absolute inset-0 w-full h-full object-cover transition-opacity duration-1000">
@@ -350,6 +351,13 @@ async function loadLiveGallery() {
                     </div>
                 </div>
             `).join('');
+            
+            // Force enough slides for an infinite loop if there are only a few albums
+            if (Object.keys(albums).length > 0 && Object.keys(albums).length < 6) {
+                slidesHtml = slidesHtml + slidesHtml + slidesHtml + slidesHtml + slidesHtml;
+            }
+            container.innerHTML = slidesHtml;
+
 
             // Initialize Swiper for 3D Coverflow
             new Swiper('.gallery-swiper', {
@@ -437,5 +445,6 @@ async function loadLiveMerch() {
         console.error("Failed to fetch live merch:", err);
     }
 }
+
 
 
