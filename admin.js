@@ -1,5 +1,5 @@
 const SUPABASE_URL = 'https://cvehhriirejuffbrowkr.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_SZccr-avgxtpReKT1oyygA_mkPxe-Tv';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2ZWhocmlpcmVqdWZmYnJvd2tyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjIzMDEsImV4cCI6MjEwNjIzODMwMX0.FKnvc0Xj66_VWRbeWOWChG7SSmjjPyxNyHNJmX0E8qA';
 
 // Elements
 const loginScreen = document.getElementById('login-screen');
@@ -178,4 +178,5 @@ function loadDashboardData() {
     loadEvents();
     loadMerch();
 };
+
 
