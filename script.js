@@ -302,7 +302,7 @@ async function loadLiveEvents() {
                         <h3 class="text-xl font-bold text-gray-900 mb-2">${ev.title}</h3>
                         <p class="text-gray-600 text-sm mb-6 line-clamp-2">${ev.description || 'Join us for this amazing ECIL Runners event. See you at the starting line!'}</p>
                         <div class="flex justify-between items-center pt-4 border-t border-gray-100">
-                            <span class="font-bold text-gray-900">`${ev.price || 'FREE'}</span>
+                            <span class="font-bold text-gray-900">${ev.price || 'FREE'}</span>
                             <button class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#F97316] group-hover:text-white transition-colors">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                             </button>
@@ -560,6 +560,7 @@ if(mobileBtn && mobileMenu) {
         });
     });
 }
+
 
 
 
