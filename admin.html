@@ -78,14 +78,23 @@
                 <div id="tab-merch" class="tab-content hidden max-w-4xl mx-auto space-y-6">
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                         <h2 class="text-xl font-bold mb-4">Add Merchandise</h2>
-                        <form id="form-merch" class="space-y-4">
+                                                <form id="form-merch" class="space-y-4">
                             <div class="grid grid-cols-2 gap-4">
+                                <div><label class="block text-sm text-gray-600 mb-1">Category</label>
+                                    <select id="mc-category" class="w-full border rounded p-2">
+                                        <option value="Mens Collection">Mens Collection</option>
+                                        <option value="Womens Collection">Womens Collection</option>
+                                        <option value="Kids Collection">Kids Collection</option>
+                                        <option value="Accessories">Accessories</option>
+                                    </select>
+                                </div>
                                 <div><label class="block text-sm text-gray-600 mb-1">Item Name</label><input type="text" id="mc-title" required class="w-full border rounded p-2"></div>
                                 <div><label class="block text-sm text-gray-600 mb-1">Price</label><input type="text" id="mc-price" placeholder="e.g. ?499" required class="w-full border rounded p-2"></div>
                                 <div><label class="block text-sm text-gray-600 mb-1">Sizes Available</label><input type="text" id="mc-sizes" placeholder="e.g. S, M, L, XL" required class="w-full border rounded p-2"></div>
-                                <div><label class="block text-sm text-gray-600 mb-1">Image Upload</label><input type="file" id="mc-image" accept="image/*" class="w-full border rounded p-1"></div>
+                                <div class="col-span-2"><label class="block text-sm text-gray-600 mb-1">Product Images (Front, Back, Size Chart)</label><input type="file" id="mc-images" accept="image/*" multiple required class="w-full border rounded p-1 bg-gray-50"></div>
                             </div>
                             <button type="submit" class="bg-[#F97316] text-white px-6 py-2 rounded font-bold">Save Merchandise</button>
+                            <p id="mc-status" class="text-sm text-gray-500 mt-2 font-medium"></p>
                         </form>
                     </div>
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -124,6 +133,7 @@
     <script src="admin.js"></script>
 </body>
 </html>
+
 
 
 

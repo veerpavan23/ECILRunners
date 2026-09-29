@@ -128,22 +128,34 @@ async function loadEvents() {
 document.getElementById('form-merch').addEventListener('submit', async (e) => {
     e.preventDefault();
     loader.classList.remove('hidden');
+    const statusEl = document.getElementById('mc-status');
     try {
-        const file = document.getElementById('mc-image').files[0];
-        const imageUrl = await uploadImage(file);
+        const files = document.getElementById('mc-images').files;
+        statusEl.textContent = `Uploading 0 of ${files.length} images...`;
+        
+        let imageUrls = [];
+        for (let i = 0; i < files.length; i++) {
+            const url = await uploadImage(files[i]);
+            imageUrls.push(url);
+            statusEl.textContent = `Uploading ${i + 1} of ${files.length} images...`;
+        }
         
         const { error } = await supabaseClient.from('merch').insert([{
+            category: document.getElementById('mc-category').value,
             title: document.getElementById('mc-title').value,
             price: document.getElementById('mc-price').value,
             sizes: document.getElementById('mc-sizes').value,
-            image_url: imageUrl
+            images: imageUrls,
+            image_url: imageUrls[0] // fallback
         }]);
         if (error) throw error;
         alert('Merch added!');
         document.getElementById('form-merch').reset();
+        statusEl.textContent = '';
         loadMerch();
     } catch (err) {
-        alert(err.message);
+        alert('Error: ' + err.message);
+        if (statusEl) statusEl.textContent = 'Upload failed.';
     }
     loader.classList.add('hidden');
 });
@@ -154,12 +166,13 @@ async function loadMerch() {
     if (error) { list.innerHTML = 'Error loading merch.'; return; }
     list.innerHTML = data.map(mc => `
         <div class="flex items-center gap-4 p-3 border rounded">
-            ${mc.image_url ? `<img src="${mc.image_url}" class="w-12 h-12 object-cover rounded">` : `<div class="w-12 h-12 bg-gray-200 rounded"></div>`}
+            ${mc.images && mc.images.length > 0 ? `<img src="${mc.images[0]}" class="w-16 h-16 object-cover rounded border">` : (mc.image_url ? `<img src="${mc.image_url}" class="w-16 h-16 object-cover rounded border">` : `<div class="w-16 h-16 bg-gray-200 rounded"></div>`)}
             <div>
+                <div class="text-xs font-bold text-gray-400 uppercase tracking-wider">${mc.category || 'Mens Collection'}</div>
                 <div class="font-bold">${mc.title} <span class="text-[#F97316]">${mc.price}</span></div>
-                <div class="text-sm text-gray-500">Sizes: ${mc.sizes}</div>
+                <div class="text-sm text-gray-500">Sizes: ${mc.sizes} | ${mc.images ? mc.images.length : 1} photos</div>
             </div>
-            <button onclick="deleteRecord('merch', '${mc.id}')" class="ml-auto text-red-500 text-sm">Delete</button>
+            <button onclick="deleteRecord('merch', '${mc.id}')" class="ml-auto text-red-500 text-sm hover:underline">Delete</button>
         </div>
     `).join('') || 'No merch found.';
 }
@@ -251,3 +264,4 @@ function loadDashboardData() {
     loadMerch();
     loadGallery();
 };
+
