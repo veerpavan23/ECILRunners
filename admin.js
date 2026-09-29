@@ -245,7 +245,7 @@ async function loadGallery() {
         <div class="border border-gray-200 rounded-lg p-4 bg-gray-50/50">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="font-bold text-lg text-gray-800">${albumName} <span class="text-sm font-normal text-gray-500">(${albums[albumName].length} photos)</span></h3>
-                <button onclick="openEditGallery('`${albumName}`')" class="text-blue-500 text-sm hover:underline font-medium mr-4">Edit Album</button><button onclick="deleteAlbum('`${albumName}`')" class="text-red-500 text-sm hover:underline font-medium">Delete Entire Album</button>
+                <button onclick="openEditGallery('${albumName}')" class="text-blue-500 text-sm hover:underline font-medium mr-4">Edit Album</button><button onclick="deleteAlbum('${albumName}')" class="text-red-500 text-sm hover:underline font-medium">Delete Entire Album</button>
             </div>
             <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
                 ${albums[albumName].map(photo => `
@@ -533,4 +533,5 @@ window.openEditGallery = async (albumName) => {
         loadGallery();
     });
 };
+
 
