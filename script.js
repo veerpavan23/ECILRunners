@@ -325,7 +325,7 @@ async function loadLiveGallery() {
     if (!container) return;
 
     try {
-        const { data, error } = await supabaseClient.from('gallery').select('*').order('created_at', { ascending: false });
+        const { data, error } = await supabaseClient.from('gallery').select('*').order('order_index', { ascending: true }).order('created_at', { ascending: false });
         if (error) throw error;
         
         if (data && data.length > 0) {
@@ -535,6 +535,7 @@ async function loadLiveMerch() {
             });
         }
 } catch (err) { console.error("Failed to fetch live merch:", err); } }
+
 
 
 

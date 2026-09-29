@@ -231,7 +231,7 @@ document.getElementById('form-gallery').addEventListener('submit', async (e) => 
 
 async function loadGallery() {
     const list = document.getElementById('list-gallery');
-    const { data, error } = await supabaseClient.from('gallery').select('*').order('created_at', { ascending: false });
+    const { data, error } = await supabaseClient.from('gallery').select('*').order('order_index', { ascending: true }).order('created_at', { ascending: false });
     if (error) { list.innerHTML = 'Error loading gallery.'; return; }
     
     // Group by album name
@@ -245,7 +245,7 @@ async function loadGallery() {
         <div class="border border-gray-200 rounded-lg p-4 bg-gray-50/50">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="font-bold text-lg text-gray-800">${albumName} <span class="text-sm font-normal text-gray-500">(${albums[albumName].length} photos)</span></h3>
-                <button onclick="deleteAlbum('${albumName}')" class="text-red-500 text-sm hover:underline font-medium">Delete Entire Album</button>
+                <button onclick="openEditGallery('`${albumName}`')" class="text-blue-500 text-sm hover:underline font-medium mr-4">Edit Album</button><button onclick="deleteAlbum('`${albumName}`')" class="text-red-500 text-sm hover:underline font-medium">Delete Entire Album</button>
             </div>
             <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
                 ${albums[albumName].map(photo => `
@@ -423,5 +423,113 @@ window.openEditMerch = async (id) => {
         
         closeEditModal();
         loadMerch();
+    });
+};
+
+
+// EDIT GALLERY
+let currentEditAlbum = null;
+
+window.renderEditGalleryImages = () => {
+    return currentEditImages.map((photo, idx) => `
+        <div class="flex items-center gap-4 mb-2 bg-gray-50 p-3 rounded border">
+            <img src="${photo.image_url}" class="w-16 h-16 object-cover rounded shadow-sm border border-gray-200">
+            <div class="flex flex-col gap-1">
+                ${idx > 0 ? `<button type="button" onclick="window.moveGalleryImage(${idx}, -1)" class="text-xs bg-white border px-2 py-1 rounded hover:bg-gray-100 shadow-sm"><i class="fas fa-arrow-up"></i> Move Up</button>` : ''}
+                ${idx < currentEditImages.length - 1 ? `<button type="button" onclick="window.moveGalleryImage(${idx}, 1)" class="text-xs bg-white border px-2 py-1 rounded hover:bg-gray-100 shadow-sm"><i class="fas fa-arrow-down"></i> Move Down</button>` : ''}
+            </div>
+            <button type="button" onclick="window.deleteGalleryImage(${idx})" class="ml-auto text-red-500 hover:text-red-700 bg-white border px-3 py-1 rounded shadow-sm"><i class="fas fa-trash"></i></button>
+        </div>
+    `).join('');
+};
+
+window.moveGalleryImage = (idx, direction) => {
+    const temp = currentEditImages[idx];
+    currentEditImages[idx] = currentEditImages[idx + direction];
+    currentEditImages[idx + direction] = temp;
+    document.getElementById('edit-gl-images-container').innerHTML = window.renderEditGalleryImages();
+};
+
+window.deleteGalleryImage = async (idx) => {
+    if(!confirm('Delete this photo immediately?')) return;
+    const photo = currentEditImages[idx];
+    if(photo.id) {
+        await supabaseClient.from('gallery').delete().eq('id', photo.id);
+    }
+    currentEditImages.splice(idx, 1);
+    document.getElementById('edit-gl-images-container').innerHTML = window.renderEditGalleryImages();
+    loadGallery();
+};
+
+window.openEditGallery = async (albumName) => {
+    loader.classList.remove('hidden');
+    const { data, error } = await supabaseClient.from('gallery').select('*').eq('album_name', albumName).order('order_index', { ascending: true }).order('created_at', { ascending: false });
+    loader.classList.add('hidden');
+    if (error) return alert('Error fetching gallery');
+    
+    currentEditAlbum = albumName;
+    currentEditImages = data; // Array of objects {id, image_url, album_name}
+    
+    document.getElementById('edit-modal-title').textContent = `Edit Album: ${albumName}`;
+    document.getElementById('edit-modal-content').innerHTML = `
+        <form id="form-edit-gallery" class="space-y-4">
+            <div><label class="block text-sm text-gray-600 mb-1">Rename Album (Optional)</label><input type="text" id="edit-gl-album-name" value="${albumName}" required class="w-full border rounded p-2 text-lg font-bold"></div>
+            
+            <div class="mt-4 p-4 border rounded bg-gray-50/50 max-h-[40vh] overflow-y-auto">
+                <label class="block text-sm font-bold text-gray-800 mb-3 uppercase tracking-wider">Rearrange Photos</label>
+                <div id="edit-gl-images-container" class="mb-4">
+                    ${window.renderEditGalleryImages()}
+                </div>
+            </div>
+            
+            <div class="mt-4 p-4 border rounded bg-gray-50/50">
+                <label class="block text-sm font-bold text-gray-800 mb-2 uppercase tracking-wider">Add More Photos to this Album</label>
+                <input type="file" id="edit-gl-new-images" accept="image/*" multiple class="w-full border rounded p-2 bg-white">
+            </div>
+            
+            <button type="submit" class="bg-[#F97316] text-white px-6 py-3 rounded-lg font-bold w-full mt-4 text-lg tracking-wide shadow-md hover:bg-orange-600 transition-colors">Save & Update Order</button>
+            <p id="edit-gl-status" class="text-sm text-gray-500 mt-2 text-center"></p>
+        </form>
+    `;
+    
+    document.getElementById('edit-modal').classList.remove('hidden');
+
+    document.getElementById('form-edit-gallery').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const statusEl = document.getElementById('edit-gl-status');
+        const newAlbumName = document.getElementById('edit-gl-album-name').value;
+        statusEl.textContent = 'Saving changes...';
+        
+        // 1. Upload new photos if any
+        const files = document.getElementById('edit-gl-new-images').files;
+        if (files.length > 0) {
+            statusEl.textContent = `Uploading ${files.length} new photos...`;
+            for (let i = 0; i < files.length; i++) {
+                const url = await uploadImage(files[i]);
+                currentEditImages.push({ album_name: newAlbumName, image_url: url, isNew: true });
+            }
+        }
+        
+        // 2. Update order and rename
+        statusEl.textContent = 'Updating photo arrangement...';
+        for (let idx = 0; idx < currentEditImages.length; idx++) {
+            const photo = currentEditImages[idx];
+            if (photo.isNew) {
+                await supabaseClient.from('gallery').insert([{
+                    album_name: newAlbumName,
+                    image_url: photo.image_url,
+                    order_index: idx
+                }]);
+            } else {
+                await supabaseClient.from('gallery').update({
+                    order_index: idx,
+                    album_name: newAlbumName
+                }).eq('id', photo.id);
+            }
+            statusEl.textContent = `Updating photo arrangement... (${idx+1}/${currentEditImages.length})`;
+        }
+        
+        closeEditModal();
+        loadGallery();
     });
 };
