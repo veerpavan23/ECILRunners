@@ -358,11 +358,11 @@ async function loadLiveGallery() {
                 centeredSlides: true,
                 slidesPerView: 'auto',
                 coverflowEffect: {
-                    rotate: 30,
-                    stretch: 0,
-                    depth: 100,
+                    rotate: 0,
+                    stretch: -60,
+                    depth: 400,
                     modifier: 1,
-                    slideShadows: true,
+                    slideShadows: true
                 },
                 navigation: {
                     nextEl: '.swiper-button-next',
@@ -437,4 +437,5 @@ async function loadLiveMerch() {
         console.error("Failed to fetch live merch:", err);
     }
 }
+
 
