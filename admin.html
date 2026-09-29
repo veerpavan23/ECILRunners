@@ -95,7 +95,23 @@
                 </div>
 
                 <!-- Placeholders for others -->
-                <div id="tab-gallery" class="tab-content hidden max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-6"><h2 class="text-xl font-bold">Gallery Management (Coming Soon)</h2></div>
+                                <div id="tab-gallery" class="tab-content hidden max-w-4xl mx-auto space-y-6">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h2 class="text-xl font-bold mb-4">Upload Gallery Photos</h2>
+                        <form id="form-gallery" class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label class="block text-sm text-gray-600 mb-1">Album / Event Name</label><input type="text" id="gl-album" placeholder="e.g. Monsoon Run 2024" required class="w-full border rounded p-2"></div>
+                                <div><label class="block text-sm text-gray-600 mb-1">Select Photos (Multiple)</label><input type="file" id="gl-images" accept="image/*" multiple required class="w-full border rounded p-1 bg-gray-50"></div>
+                            </div>
+                            <button type="submit" class="bg-[#F97316] text-white px-6 py-2 rounded font-bold">Upload to Album</button>
+                            <p id="gl-status" class="text-sm text-gray-500 mt-2 font-medium"></p>
+                        </form>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h2 class="text-xl font-bold mb-4">Current Albums</h2>
+                        <div id="list-gallery" class="space-y-6">Loading...</div>
+                    </div>
+                </div>
                 <div id="tab-orders" class="tab-content hidden max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-6"><h2 class="text-xl font-bold">Razorpay Orders (Coming in Phase 2)</h2></div>
                 <div id="tab-users" class="tab-content hidden max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-6"><h2 class="text-xl font-bold">User Management (Coming Soon)</h2></div>
                 
@@ -108,5 +124,6 @@
     <script src="admin.js"></script>
 </body>
 </html>
+
 
 

@@ -174,8 +174,80 @@ window.deleteRecord = async (table, id) => {
     loader.classList.add('hidden');
 };
 
+// GALLERY CRUD
+document.getElementById('form-gallery').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    loader.classList.remove('hidden');
+    const statusEl = document.getElementById('gl-status');
+    try {
+        const albumName = document.getElementById('gl-album').value;
+        const files = document.getElementById('gl-images').files;
+        
+        statusEl.textContent = `Uploading 0 of ${files.length} photos...`;
+        
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const imageUrl = await uploadImage(file);
+            
+            await supabaseClient.from('gallery').insert([{
+                album_name: albumName,
+                image_url: imageUrl
+            }]);
+            statusEl.textContent = `Uploading ${i + 1} of ${files.length} photos...`;
+        }
+        
+        alert('All photos uploaded successfully!');
+        document.getElementById('form-gallery').reset();
+        statusEl.textContent = '';
+        loadGallery();
+    } catch (err) {
+        alert('Error: ' + err.message);
+        statusEl.textContent = 'Upload failed.';
+    }
+    loader.classList.add('hidden');
+});
+
+async function loadGallery() {
+    const list = document.getElementById('list-gallery');
+    const { data, error } = await supabaseClient.from('gallery').select('*').order('created_at', { ascending: false });
+    if (error) { list.innerHTML = 'Error loading gallery.'; return; }
+    
+    // Group by album name
+    const albums = {};
+    data.forEach(photo => {
+        if (!albums[photo.album_name]) albums[photo.album_name] = [];
+        albums[photo.album_name].push(photo);
+    });
+    
+    list.innerHTML = Object.keys(albums).map(albumName => `
+        <div class="border border-gray-200 rounded-lg p-4 bg-gray-50/50">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg text-gray-800">${albumName} <span class="text-sm font-normal text-gray-500">(${albums[albumName].length} photos)</span></h3>
+                <button onclick="deleteAlbum('${albumName}')" class="text-red-500 text-sm hover:underline font-medium">Delete Entire Album</button>
+            </div>
+            <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
+                ${albums[albumName].map(photo => `
+                    <div class="relative group aspect-square">
+                        <img src="${photo.image_url}" class="w-full h-full object-cover rounded shadow-sm border border-gray-200">
+                        <button onclick="deleteRecord('gallery', '${photo.id}')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 text-xs shadow-md transition-opacity">×</button>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `).join('') || 'No albums found.';
+}
+
+window.deleteAlbum = async (albumName) => {
+    if (!confirm(`Are you sure you want to delete ALL photos in "${albumName}"?`)) return;
+    loader.classList.remove('hidden');
+    await supabaseClient.from('gallery').delete().eq('album_name', albumName);
+    loadGallery();
+    loader.classList.add('hidden');
+};
+
 // Override original loadDashboardData to load our specific lists
 function loadDashboardData() {
     loadEvents();
     loadMerch();
+    loadGallery();
 };
