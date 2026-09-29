@@ -119,7 +119,7 @@ async function loadEvents() {
                 <div class="font-bold">${ev.title}</div>
                 <div class="text-sm text-gray-500">${ev.date} | ${ev.location}</div>
             </div>
-            <button onclick="openEditEvent('`${ev.id}')" class="text-blue-500 text-sm hover:underline mr-3">Edit</button><button onclick="deleteRecord('events', '`${ev.id}')" class="ml-auto text-red-500 text-sm">Delete</button>
+            <button onclick="openEditEvent('\${ev.id}')" class="text-blue-500 text-sm hover:underline mr-3">Edit</button><button onclick="deleteRecord('events', '\${ev.id}')" class="ml-auto text-red-500 text-sm">Delete</button>
         </div>
     `).join('') || 'No events found.';
 }
@@ -181,7 +181,7 @@ async function loadMerch() {
                 <div class="font-bold">${mc.title} <span class="text-[#F97316]">${mc.price}</span></div>
                 <div class="text-sm text-gray-500">Sizes: ${mc.sizes} | ${mc.images ? mc.images.length : 1} photos</div>
             </div>
-            <button onclick="openEditMerch('`${mc.id}')" class="text-blue-500 text-sm hover:underline mr-3">Edit</button><button onclick="deleteRecord('merch', '`${mc.id}')" class="ml-auto text-red-500 text-sm hover:underline">Delete</button>
+            <button onclick="openEditMerch('\${mc.id}')" class="text-blue-500 text-sm hover:underline mr-3">Edit</button><button onclick="deleteRecord('merch', '\${mc.id}')" class="ml-auto text-red-500 text-sm hover:underline">Delete</button>
         </div>
     `).join('') || 'No merch found.';
 }
@@ -533,5 +533,6 @@ window.openEditGallery = async (albumName) => {
         loadGallery();
     });
 };
+
 
 
