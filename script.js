@@ -544,3 +544,19 @@ async function loadLiveMerch() {
 
 
 
+
+// Mobile Menu Toggle
+const mobileBtn = document.getElementById('mobile-menu-btn');
+const mobileMenu = document.getElementById('mobile-menu');
+if(mobileBtn && mobileMenu) {
+    mobileBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+    
+    // Close menu when clicking a link
+    document.querySelectorAll('.mobile-link').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+        });
+    });
+}
