@@ -291,7 +291,7 @@ async function loadLiveEvents() {
                     <div class="relative h-48 overflow-hidden">
                         <img src="${ev.image_url || 'assets/events_marathon.jpg'}" alt="Event" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         <div class="absolute top-4 right-4 bg-[#F97316] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-md">
-                            ${ev.date.split(',')[0]}
+                            ${ev.date}
                         </div>
                     </div>
                     <div class="p-6">
@@ -300,7 +300,7 @@ async function loadLiveEvents() {
                             <span class="uppercase tracking-wider text-xs">${ev.location}</span>
                         </div>
                         <h3 class="text-xl font-bold text-gray-900 mb-2">${ev.title}</h3>
-                        <p class="text-gray-600 text-sm mb-6 line-clamp-2">Join us for this amazing ECIL Runners event. See you at the starting line!</p>
+                        <p class="text-gray-600 text-sm mb-6 line-clamp-2">${ev.description || 'Join us for this amazing ECIL Runners event. See you at the starting line!'}</p>
                         <div class="flex justify-between items-center pt-4 border-t border-gray-100">
                             <span class="font-bold text-gray-900">FREE</span>
                             <button class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#F97316] group-hover:text-white transition-colors">
@@ -560,3 +560,4 @@ if(mobileBtn && mobileMenu) {
         });
     });
 }
+
