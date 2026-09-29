@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | ECIL Runners</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans text-gray-800">
+    
+    <!-- Login Screen -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center bg-gradient-to-r from-[#fffbeb] via-[#fef3c7] to-[#fffbeb]">
+        <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border border-yellow-200">
+            <div class="text-center mb-8">
+                <img src="assets/logo.png" alt="Logo" class="h-12 mx-auto mix-blend-multiply mb-4">
+                <h2 class="text-2xl font-bold text-gray-900">Admin Portal</h2>
+            </div>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F97316] focus:border-[#F97316] outline-none" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F97316] focus:border-[#F97316] outline-none" required>
+                </div>
+                <button type="submit" class="w-full bg-[#F97316] text-white py-2 rounded-lg font-bold hover:bg-orange-600 transition-colors">Login</button>
+                <p id="login-error" class="text-red-500 text-sm text-center hidden"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Dashboard -->
+    <div id="dashboard-screen" class="hidden min-h-screen flex flex-col">
+        <nav class="bg-white shadow-sm border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <img src="assets/logo.png" alt="Logo" class="h-8 mix-blend-multiply">
+                <h1 class="text-xl font-bold text-gray-800">Dashboard</h1>
+            </div>
+            <button id="logout-btn" class="text-gray-500 hover:text-red-500 font-medium">Logout</button>
+        </nav>
+        
+        <div class="flex-1 flex overflow-hidden">
+            <!-- Sidebar -->
+            <aside class="w-64 bg-white border-r border-gray-200 p-4 space-y-2">
+                <button class="w-full text-left px-4 py-2 rounded-lg bg-orange-50 text-[#F97316] font-bold" data-tab="events">Events</button>
+                <button class="w-full text-left px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="merch">Merchandise</button>
+                <button class="w-full text-left px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="gallery">Gallery</button>
+                <button class="w-full text-left px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="orders">Orders (Razorpay)</button>
+            </aside>
+            
+            <!-- Content Area -->
+            <main class="flex-1 p-8 overflow-y-auto bg-gray-50">
+                <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-2xl font-bold mb-6" id="current-tab-title">Manage Events</h2>
+                    <p class="text-gray-500">Database connection pending...</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
