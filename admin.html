@@ -81,12 +81,8 @@
                                                 <form id="form-merch" class="space-y-4">
                             <div class="grid grid-cols-2 gap-4">
                                 <div><label class="block text-sm text-gray-600 mb-1">Category</label>
-                                    <select id="mc-category" class="w-full border rounded p-2">
-                                        <option value="Mens Collection">Mens Collection</option>
-                                        <option value="Womens Collection">Womens Collection</option>
-                                        <option value="Kids Collection">Kids Collection</option>
-                                        <option value="Accessories">Accessories</option>
-                                    </select>
+                                    <input type="text" id="mc-category" list="category-options" placeholder="e.g. Mens Collection" required class="w-full border rounded p-2">
+                                    <datalist id="category-options"></datalist>
                                 </div>
                                 <div><label class="block text-sm text-gray-600 mb-1">Item Name</label><input type="text" id="mc-title" required class="w-full border rounded p-2"></div>
                                 <div><label class="block text-sm text-gray-600 mb-1">Price</label><input type="text" id="mc-price" placeholder="e.g. ?499" required class="w-full border rounded p-2"></div>
@@ -133,6 +129,7 @@
     <script src="admin.js"></script>
 </body>
 </html>
+
 
 
 

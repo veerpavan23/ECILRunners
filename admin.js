@@ -161,9 +161,18 @@ document.getElementById('form-merch').addEventListener('submit', async (e) => {
 });
 
 async function loadMerch() {
+    
     const list = document.getElementById('list-merch');
     const { data, error } = await supabaseClient.from('merch').select('*').order('created_at', { ascending: false });
     if (error) { list.innerHTML = 'Error loading merch.'; return; }
+    
+    // Extract unique categories and populate datalist
+    const categories = [...new Set(data.map(item => item.category).filter(Boolean))];
+    const datalist = document.getElementById('category-options');
+    if (datalist) {
+        datalist.innerHTML = categories.map(cat => `<option value="${cat}">`).join('');
+    }
+
     list.innerHTML = data.map(mc => `
         <div class="flex items-center gap-4 p-3 border rounded">
             ${mc.images && mc.images.length > 0 ? `<img src="${mc.images[0]}" class="w-16 h-16 object-cover rounded border">` : (mc.image_url ? `<img src="${mc.image_url}" class="w-16 h-16 object-cover rounded border">` : `<div class="w-16 h-16 bg-gray-200 rounded"></div>`)}
@@ -264,4 +273,5 @@ function loadDashboardData() {
     loadMerch();
     loadGallery();
 };
+
 
