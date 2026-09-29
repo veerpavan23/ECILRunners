@@ -317,7 +317,7 @@ async function loadLiveEvents() {
 }
 
 // Load events when page loads
-document.addEventListener('DOMContentLoaded', () => { loadLiveEvents(); loadLiveGallery(); });
+document.addEventListener('DOMContentLoaded', () => { loadLiveEvents(); loadLiveGallery(); loadLiveMerch(); });
 
 
 async function loadLiveGallery() {
@@ -343,5 +343,38 @@ async function loadLiveGallery() {
         }
     } catch (err) {
         console.error("Failed to fetch live gallery:", err);
+    }
+}
+
+
+async function loadLiveMerch() {
+    const container = document.getElementById('merch-container');
+    if (!container) return;
+
+    try {
+        const { data, error } = await supabaseClient.from('merch').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+            container.innerHTML = data.map(mc => `
+                <div class="bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 group">
+                    <div class="relative h-64 p-6 flex items-center justify-center bg-white">
+                        <img src="${mc.image_url || 'assets/merch_tshirt.jpg'}" alt="Merchandise" class="max-h-full object-contain group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-lg font-bold text-gray-900">${mc.title}</h3>
+                            <span class="text-[#F97316] font-bold">${mc.price}</span>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-4">Sizes: ${mc.sizes}</p>
+                        <button class="w-full bg-gray-900 text-white py-3 rounded-xl font-bold tracking-wide hover:bg-[#F97316] transition-colors flex items-center justify-center gap-2">
+                            Buy via WhatsApp
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+    } catch (err) {
+        console.error("Failed to fetch live merch:", err);
     }
 }
