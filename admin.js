@@ -97,6 +97,7 @@ document.getElementById('form-event').addEventListener('submit', async (e) => {
             date: document.getElementById('ev-date').value,
             location: document.getElementById('ev-location').value,
             description: document.getElementById('ev-description').value,
+            price: document.getElementById('ev-price').value,
             image_url: imageUrl
         }]);
         if (error) throw error;
@@ -301,6 +302,8 @@ window.openEditEvent = async (id) => {
             <div><label class="block text-sm text-gray-600 mb-1">Event Title</label><input type="text" id="edit-ev-title" value="${data.title}" required class="w-full border rounded p-2"></div>
             <div><label class="block text-sm text-gray-600 mb-1">Date & Time</label><input type="text" id="edit-ev-date" value="${data.date}" required class="w-full border rounded p-2"></div>
             <div><label class="block text-sm text-gray-600 mb-1">Location</label><input type="text" id="edit-ev-location" value="${data.location}" required class="w-full border rounded p-2"></div>
+            <div><label class="block text-sm text-gray-600 mb-1">Price</label><input type="text" id="edit-ev-price" value="${data.price || 'FREE'}" required class="w-full border rounded p-2"></div>
+            <div class="col-span-2"><label class="block text-sm text-gray-600 mb-1">Description</label><textarea id="edit-ev-description" required class="w-full border rounded p-2" rows="2">${data.description || 'Join us for this amazing ECIL Runners event. See you at the starting line!'}</textarea></div>
             <div>
                 <label class="block text-sm text-gray-600 mb-1">Current Image</label>
                 <img src="${data.image_url}" class="w-32 h-32 object-cover rounded mb-2 border">
@@ -330,6 +333,7 @@ window.openEditEvent = async (id) => {
             date: document.getElementById('edit-ev-date').value,
             location: document.getElementById('edit-ev-location').value,
             description: document.getElementById('edit-ev-description').value,
+            price: document.getElementById('edit-ev-price').value,
             image_url: imageUrl
         }).eq('id', currentEditId);
         
@@ -535,6 +539,7 @@ window.openEditGallery = async (albumName) => {
         loadGallery();
     });
 };
+
 
 
 
