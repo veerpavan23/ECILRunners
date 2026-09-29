@@ -484,8 +484,6 @@ async function loadLiveMerch() {
             });
 
             // We will replace the container's parent innerHTML to inject category headers
-            const parent = container.parentElement;
-            
             let html = '';
             for (const [catName, items] of Object.entries(categories)) {
                 html += `
@@ -524,7 +522,7 @@ async function loadLiveMerch() {
                 `;
             }
             
-            parent.innerHTML = html;
+            container.innerHTML = html;
 
             // Initialize the mini product swipers
             new Swiper('.product-swiper', {
@@ -543,6 +541,7 @@ async function loadLiveMerch() {
         console.error("Failed to fetch live merch:", err);
     }
 }
+
 
 
 
