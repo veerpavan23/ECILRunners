@@ -503,8 +503,24 @@
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="script.js"></script>
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="fixed inset-0 bg-black/95 z-[100] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
+        <button id="lightbox-close" class="absolute top-6 right-6 text-white hover:text-[#F97316] z-50 transition-colors">
+            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+        <h3 id="lightbox-title" class="absolute top-6 left-6 text-[#F97316] text-xl md:text-2xl font-bold font-syncopate z-50 uppercase tracking-widest"></h3>
+        
+        <div class="swiper lightbox-swiper w-full h-[85vh] mt-16">
+            <div class="swiper-wrapper" id="lightbox-container">
+                <!-- Fullscreen Slides injected here -->
+            </div>
+            <div class="swiper-button-next !text-[#F97316]"></div>
+            <div class="swiper-button-prev !text-[#F97316]"></div>
+        </div>
+    </div>
 </body>
 </html>
+
 
 
 
