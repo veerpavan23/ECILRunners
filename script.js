@@ -534,13 +534,8 @@ async function loadLiveMerch() {
                 nested: true // Important if inside another swiper, but safe to add anyway
             });
         }
-    } catch (err) {
-        console.error("Failed to fetch live merch:", err);
-    }
-} catch (err) {
-        console.error("Failed to fetch live merch:", err);
-    }
-}
+} catch (err) { console.error("Failed to fetch live merch:", err); } }
+
 
 
 
