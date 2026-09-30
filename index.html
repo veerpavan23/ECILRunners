@@ -198,7 +198,7 @@
             </div>
         </section>
 
-                <!-- Strava Community Section -->
+                        <!-- Strava Community Section -->
         <section class="py-16 border-y border-gray-100 bg-white/40 backdrop-blur-sm relative z-10">
             <div class="max-w-7xl mx-auto px-4 sm:px-16 lg:px-24 w-full">
                 <div class="flex flex-col md:flex-row items-center justify-between gap-12">
@@ -207,15 +207,34 @@
                             <span class="w-8 h-px bg-[#F97316]"></span> Join The Club
                         </h2>
                         <h3 class="text-4xl md:text-5xl font-syncopate font-bold text-gray-900 mb-6">Track. Share. <br>Dominate.</h3>
-                        <p class="text-gray-600 text-lg mb-8 leading-relaxed font-light">
-                            We use Strava to track our miles, push our limits, and cheer each other on. Check out our live club activity feed and see what our runners are achieving right now!
+                        <p class="text-gray-600 text-lg mb-4 leading-relaxed font-light">
+                            We use Strava to track our miles, push our limits, and cheer each other on. Check out our live club activity feed and weekly stats!
                         </p>
+                        
+                        <!-- Live Active Runners Count from API -->
+                        <div class="mb-8 flex items-center gap-4 bg-white p-4 rounded-2xl shadow-sm border border-gray-100 max-w-sm">
+                            <div class="w-12 h-12 bg-[#F97316]/10 text-[#F97316] rounded-full flex items-center justify-center text-2xl">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div>
+                                <div id="stat-runners" class="text-3xl font-syncopate font-bold text-gray-900 leading-none">...</div>
+                                <div class="text-xs uppercase tracking-widest text-gray-500 font-bold mt-1">Active Runners</div>
+                            </div>
+                        </div>
+
+                        <!-- Strava Weekly Summary Widget -->
+                        <div class="bg-white p-2 rounded-2xl shadow-md border border-gray-100 mb-8 max-w-[316px]">
+                            <iframe allowtransparency='true' frameborder='0' height='160' scrolling='no' src='https://www.strava.com/clubs/572051/latest-rides/f297232a2c41ca5b6329a90eac7e5876fdc169a5?show_rides=false' width='300' class="rounded-xl"></iframe>
+                        </div>
+
                         <a href="https://strava.app.link/a3QTJsNGP6b" target="_blank" class="inline-flex items-center gap-3 bg-[#FC4C02] text-white px-8 py-4 rounded-full font-bold text-sm tracking-widest uppercase hover:bg-gray-900 transition-all shadow-lg group">
                             <i class="fab fa-strava text-xl"></i> Join on Strava
                             <i class="fas fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
                         </a>
                     </div>
+                    
                     <div class="flex-shrink-0" data-aos="fade-left">
+                        <!-- Strava Latest Activity Widget -->
                         <div class="bg-white p-2 rounded-2xl shadow-2xl border border-gray-100 transform md:rotate-2 hover:rotate-0 transition-transform duration-500 max-w-[316px] mx-auto md:mx-0">
                             <iframe allowtransparency='true' frameborder='0' height='454' scrolling='no' src='https://www.strava.com/clubs/572051/latest-rides/f297232a2c41ca5b6329a90eac7e5876fdc169a5?show_rides=true' width='300' class="rounded-xl"></iframe>
                         </div>
@@ -465,6 +484,7 @@
     </div>
 </body>
 </html>
+
 
 
 
