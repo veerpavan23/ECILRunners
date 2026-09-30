@@ -81,6 +81,23 @@
 </style>
 </head>
 <body class="bg-transparent text-gray-900 font-sans antialiased selection:bg-[#F97316] selection:text-white relative">
+<!-- FOREGROUND NIGHT OVERLAY (Prevents blurring from frosted glass) -->
+<div class="hidden dark:block fixed inset-0 pointer-events-none" style="z-index: 40; overflow: hidden;">
+    <!-- Milky Way Band -->
+    <div class="absolute inset-0 opacity-40 mix-blend-screen" style="background: linear-gradient(135deg, transparent 35%, rgba(255,255,255,0.03) 45%, rgba(30,58,138,0.1) 48%, rgba(255,255,255,0.08) 50%, rgba(30,58,138,0.1) 52%, rgba(255,255,255,0.03) 55%, transparent 65%); filter: blur(20px);"></div>
+    
+    <!-- Twinkling Stars Layer -->
+    <div class="absolute inset-0" style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1.5px); background-size: 50px 50px; opacity: 0.6;"></div>
+    <div class="absolute inset-0 animate-twinkle" style="background-image: radial-gradient(circle, #ffffff 1.5px, transparent 2px); background-size: 90px 90px; background-position: 20px 20px;"></div>
+    <div class="absolute inset-0 animate-twinkle-slow" style="background-image: radial-gradient(circle, #93c5fd 2px, transparent 3px); background-size: 150px 150px; background-position: 50px 50px; opacity: 0.8;"></div>
+    
+    <!-- Shooting Stars -->
+    <div class="absolute top-0 right-0 w-full h-full overflow-hidden">
+        <div class="absolute top-0 right-[20%] w-[4px] h-[150px] bg-gradient-to-b from-transparent via-white to-white rounded-full blur-[1px] transform rotate-45 animate-shooting-star" style="box-shadow: 0 0 20px 5px rgba(255,255,255,0.6);"></div>
+        <div class="absolute top-[30%] right-[60%] w-[3px] h-[120px] bg-gradient-to-b from-transparent via-blue-300 to-white rounded-full blur-[1px] transform rotate-45 animate-shooting-star" style="animation-delay: 8s; box-shadow: 0 0 15px 3px rgba(147,197,253,0.6);"></div>
+    </div>
+</div>
+
 <!-- FOREGROUND BIRD OVERLAY (Prevents blurring from frosted glass) -->
 <div class="fixed inset-0 pointer-events-none" style="z-index: 40; overflow: hidden;">
     <div class="absolute top-[25%] left-[-300px]" style="width: 400px; animation: fly-across 25s linear infinite; animation-delay: -10s;">
@@ -119,13 +136,11 @@
         <!-- Base Dusk/Dawn Sky -->
         <div class="absolute inset-0 bg-gradient-to-b from-[#2b1b3d] via-[#1b2745] to-[#0b1021]"></div>
         
-        <!-- Deep Midnight Sky -->
-        <div class="absolute inset-0 bg-gradient-to-b from-[#090a0f] via-[#111827] to-[#1e1b4b] transition-opacity duration-75" style="opacity: var(--arc-progress, 0);"></div>
+        <!-- Deep Midnight Sky (Extreme dark at edges, dark blue glow when moon is up) -->
+        <div class="absolute inset-0 bg-[#020617] transition-opacity duration-75"></div>
+        <div class="absolute inset-0 transition-opacity duration-75" style="opacity: var(--arc-progress, 0); background: radial-gradient(circle at calc(50% + var(--arc-x, 0vw)) var(--moon-y, 20vh), rgba(30, 58, 138, 0.9) 0%, rgba(15, 23, 42, 0.8) 40%, transparent 80%);"></div>
         
-        <!-- Dynamic Moonlight Glow tracking the Moon -->
-        <div class="absolute inset-0 transition-opacity duration-75" style="opacity: var(--arc-progress, 0); background: radial-gradient(circle at calc(50% + var(--arc-x, 0vw)) var(--moon-y, 20vh), rgba(148, 163, 184, 0.5) 0%, rgba(30, 58, 138, 0.2) 50%, transparent 80%);"></div>
-        
-                <!-- Twinkling Stars Layer -->
+        <!-- Twinkling Stars Layer (MOVED TO FOREGROUND) -->
         <div class="absolute inset-0" style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1.5px); background-size: 30px 30px; opacity: 0.6;"></div>
         <div class="absolute inset-0 animate-twinkle" style="background-image: radial-gradient(circle, #ffffff 1.5px, transparent 2px); background-size: 70px 70px; background-position: 20px 20px;"></div>
         <div class="absolute inset-0 animate-twinkle-slow" style="background-image: radial-gradient(circle, #e2e8f0 2px, transparent 3px); background-size: 110px 110px; background-position: 50px 50px; opacity: 0.8;"></div>
@@ -642,6 +657,7 @@
     </a>
 </body>
 </html>
+
 
 
 
