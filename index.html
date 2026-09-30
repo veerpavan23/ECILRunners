@@ -83,11 +83,7 @@
 <body class="bg-transparent text-gray-900 font-sans antialiased selection:bg-[#F97316] selection:text-white relative">
 <!-- CELESTIAL BODIES (Sun & Moon) - Brought forward to z-30 to float over frosted glass -->
 <div class="fixed inset-0 pointer-events-none mix-blend-screen" style="z-index: 30; overflow: hidden;">
-    <!-- Day Mode Sun -->
-    <div class="dark:hidden absolute inset-0">
-        <!-- The Sun -->
-        <div id="the-sun" class="absolute left-1/2 bottom-0 w-32 h-32 bg-white rounded-full blur-[1px] shadow-[0_0_120px_60px_#fde047,0_0_250px_100px_#ea580c] transition-transform duration-75 ease-out" style="transform: translate(calc(-50% + -40vw), 150px);"></div>
-    </div>
+    
     
     <!-- Night Mode Moon -->
     <div class="hidden dark:block absolute inset-0">
@@ -192,9 +188,12 @@
 <div id="sky-background" class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-black">
     
     <!-- DAY MODE -->
-    <div class="absolute inset-0 transition-opacity duration-1000 opacity-100 dark:opacity-0">
-        <!-- Base Dawn/Dusk Sky -->
-        <div class="absolute inset-0 bg-gradient-to-b from-[#ff9a44] via-[#fc6076] to-[#ffecd2]"></div>
+      <div class="absolute inset-0 transition-opacity duration-1000 opacity-100 dark:opacity-0">
+          <!-- Base Dawn/Dusk Sky -->
+          <div class="absolute inset-0 bg-gradient-to-b from-[#ff9a44] via-[#fc6076] to-[#ffecd2]"></div>
+          
+          <!-- The Sun (Moved back to deep background to avoid blocking text) -->
+          <div id="the-sun" class="absolute left-1/2 bottom-0 w-32 h-32 bg-white rounded-full blur-[1px] shadow-[0_0_120px_60px_#fde047,0_0_250px_100px_#ea580c] transition-transform duration-75 ease-out" style="transform: translate(calc(-50% + -40vw), 150px);"></div>
         
         <!-- Midday Bright Sky -->
         <div class="absolute inset-0 bg-gradient-to-b from-[#4facfe] via-[#00f2fe] to-[#a18cd1] transition-opacity duration-75" style="opacity: var(--arc-progress, 0);"></div>
@@ -706,6 +705,7 @@
     </a>
 </body>
 </html>
+
 
 
 
