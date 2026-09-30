@@ -81,21 +81,35 @@
 </style>
 </head>
 <body class="bg-transparent text-gray-900 font-sans antialiased selection:bg-[#F97316] selection:text-white relative">
-<!-- FOREGROUND NIGHT OVERLAY (Prevents blurring from frosted glass) -->
+<!-- FOREGROUND NIGHT OVERLAY (Photorealistic Milky Way & Stars) -->
 <div class="hidden dark:block fixed inset-0 pointer-events-none" style="z-index: 40; overflow: hidden;">
-    <!-- Milky Way Band -->
-    <div class="absolute inset-0 opacity-40 mix-blend-screen" style="background: linear-gradient(135deg, transparent 35%, rgba(255,255,255,0.03) 45%, rgba(30,58,138,0.1) 48%, rgba(255,255,255,0.08) 50%, rgba(30,58,138,0.1) 52%, rgba(255,255,255,0.03) 55%, transparent 65%); filter: blur(20px);"></div>
     
-    <!-- Twinkling Stars Layer -->
-    <div class="absolute inset-0" style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1.5px); background-size: 50px 50px; opacity: 0.6;"></div>
-    <div class="absolute inset-0 animate-twinkle" style="background-image: radial-gradient(circle, #ffffff 1.5px, transparent 2px); background-size: 90px 90px; background-position: 20px 20px;"></div>
-    <div class="absolute inset-0 animate-twinkle-slow" style="background-image: radial-gradient(circle, #93c5fd 2px, transparent 3px); background-size: 150px 150px; background-position: 50px 50px; opacity: 0.8;"></div>
+    <!-- Photorealistic Milky Way (mix-blend-screen removes the black background of the photo, leaving only stars!) -->
+    <div class="absolute inset-0 opacity-70 mix-blend-screen" style="background-image: url('https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center; filter: contrast(1.2) brightness(1.1);"></div>
     
-    <!-- Shooting Stars -->
-    <div class="absolute top-0 right-0 w-full h-full overflow-hidden">
-        <div class="absolute top-0 right-[20%] w-[4px] h-[150px] bg-gradient-to-b from-transparent via-white to-white rounded-full blur-[1px] transform rotate-45 animate-shooting-star" style="box-shadow: 0 0 20px 5px rgba(255,255,255,0.6);"></div>
-        <div class="absolute top-[30%] right-[60%] w-[3px] h-[120px] bg-gradient-to-b from-transparent via-blue-300 to-white rounded-full blur-[1px] transform rotate-45 animate-shooting-star" style="animation-delay: 8s; box-shadow: 0 0 15px 3px rgba(147,197,253,0.6);"></div>
-    </div>
+    <!-- Animate a slow subtle pulse to simulate atmospheric twinkling across the whole sky -->
+    <div class="absolute inset-0 opacity-30 mix-blend-screen animate-pulse" style="background-image: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'); background-size: cover; background-position: center; animation-duration: 4s;"></div>
+
+    <!-- Natural Shooting Stars -->
+    <style>
+        @keyframes natural-shooting-star {
+            0% { transform: translate(0, 0) rotate(-45deg) scale(0); opacity: 0; }
+            10% { transform: translate(-5vw, 5vh) rotate(-45deg) scale(1); opacity: 1; }
+            100% { transform: translate(-50vw, 50vh) rotate(-45deg) scale(0); opacity: 0; }
+        }
+        .shooting-star-natural {
+            position: absolute;
+            width: 150px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), #fff);
+            animation: natural-shooting-star 1.5s linear infinite;
+            filter: drop-shadow(0 0 4px #fff);
+        }
+    </style>
+    
+    <div class="shooting-star-natural" style="top: 10%; right: 10%; animation-delay: 3s; animation-duration: 1.2s;"></div>
+    <div class="shooting-star-natural" style="top: -5%; right: 40%; animation-delay: 8s; animation-duration: 1.5s;"></div>
+    <div class="shooting-star-natural" style="top: 30%; right: -5%; animation-delay: 15s; animation-duration: 1s;"></div>
 </div>
 
 <!-- FOREGROUND BIRD OVERLAY (Prevents blurring from frosted glass) -->
@@ -657,6 +671,7 @@
     </a>
 </body>
 </html>
+
 
 
 
