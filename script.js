@@ -610,14 +610,14 @@ window.addEventListener('scroll', () => {
     // Arc (0 at top, 1 in middle, 0 at bottom)
     const arcProgress = Math.sin(progress * Math.PI);
     
-    // Pass arc progress to CSS for dynamic sky brightness
-        document.documentElement.style.setProperty('--arc-progress', arcProgress);
-    document.documentElement.style.setProperty('--arc-x', xPosVw + 'vw');
-    document.documentElement.style.setProperty('--moon-y', yPosPx + 'px');
-    
     // Calculate X and Y positions for celestial bodies
     const xPosVw = (progress - 0.5) * 80; // Arcs from -40vw to +40vw
     const yPosPx = 150 - (arcProgress * (window.innerHeight * 0.7 + 150)); // Arcs from 150px (below screen) to high up
+    
+    // Pass arc progress to CSS for dynamic sky brightness and tracking
+    document.documentElement.style.setProperty('--arc-progress', arcProgress);
+    document.documentElement.style.setProperty('--arc-x', xPosVw + 'vw');
+    document.documentElement.style.setProperty('--moon-y', yPosPx + 'px');
     
     const sun = document.getElementById('the-sun');
     const moon = document.getElementById('the-moon');
@@ -626,6 +626,7 @@ window.addEventListener('scroll', () => {
     if (sun) sun.style.transform = transformStr;
     if (moon) moon.style.transform = transformStr;
 });
+
 
 
 
