@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ECIL Runners - Run The Future</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -60,8 +65,8 @@
         5% { transform: translate(-500px, 500px) rotate(45deg); opacity: 0; }
         100% { transform: translate(-500px, 500px) rotate(45deg); opacity: 0; }
     }
-    .animate-fly-slow { animation: fly-slow 30s linear infinite; }
-    .animate-fly-slower { animation: fly-slow 45s linear infinite; }
+    .animate-fly-slow { animation: fly-slow 20s linear infinite; }
+    .animate-fly-slower { animation: fly-slow 30s linear infinite; }
     .animate-shooting-star { animation: shooting-star 15s linear infinite; }
 </style>
 </head>
@@ -562,6 +567,8 @@
     </a>
 </body>
 </html>
+
+
 
 
 
