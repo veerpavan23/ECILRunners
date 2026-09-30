@@ -611,8 +611,12 @@ window.addEventListener('scroll', () => {
     const arcProgress = Math.sin(progress * Math.PI);
     
     // Calculate X and Y positions for celestial bodies
-    const xPosVw = (progress - 0.5) * 80; // Arcs from -40vw to +40vw
-    const yPosPx = 150 - (arcProgress * (window.innerHeight * 0.7 + 150)); // Arcs from 150px (below screen) to high up
+    // Arcs from -47.5vw to +47.5vw (perfectly frames the runner at the finish line)
+    const xPosVw = (progress - 0.5) * 95; 
+    
+    // Asymmetrical Y: Starts hidden at sunrise (120), arcs high, ends exactly behind runner at sunset (-30)
+    const baseY = 120 - (progress * 150);
+    const yPosPx = baseY - (arcProgress * (window.innerHeight * 0.65));
     
     // Pass arc progress to CSS for dynamic sky brightness and tracking
     document.documentElement.style.setProperty('--arc-progress', arcProgress);
@@ -626,6 +630,7 @@ window.addEventListener('scroll', () => {
     if (sun) sun.style.transform = transformStr;
     if (moon) moon.style.transform = transformStr;
 });
+
 
 
 
