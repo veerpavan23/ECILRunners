@@ -616,7 +616,9 @@ window.addEventListener('scroll', () => {
     const xPosCalc = 'calc(-50% + ' + ((progress - 0.5) * 100) + 'vw + ' + xPosOffset + 'px)';
     
     // Asymmetrical Y: Starts hidden at sunrise (120). At progress 1, y is -37, exactly matching runner's vertical center.
-    const baseY = 120 - (progress * 157);
+        // Y-Axis: Sun rests exactly on the horizon (y = 37px) at BOTH sunrise (start) and sunset (end).
+    // The peak of the arc pushes it high into the sky in the middle of the scroll.
+    const baseY = 37;
     const yPosPx = baseY - (arcProgress * (window.innerHeight * 0.65));
     
     // Pass arc progress to CSS for dynamic sky brightness and tracking
@@ -631,6 +633,7 @@ window.addEventListener('scroll', () => {
     if (sun) sun.style.transform = transformStr;
     if (moon) moon.style.transform = transformStr;
 });
+
 
 
 
