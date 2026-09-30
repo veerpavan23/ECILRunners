@@ -85,22 +85,7 @@
 <div class="fixed inset-0 pointer-events-none mix-blend-screen" style="z-index: 30; overflow: hidden;">
     
     
-    <!-- Night Mode Moon -->
-    <div class="hidden dark:block absolute inset-0">
-        <!-- The Moon with Photorealistic Craters and Dynamic Lighting -->
-          <div id="the-moon" class="absolute left-1/2 bottom-0 w-32 h-32 rounded-full transition-transform duration-75 ease-out mix-blend-screen shadow-[0_0_60px_20px_rgba(255,255,255,0.7),0_0_120px_40px_rgba(147,197,253,0.4)]" style="transform: translate(calc(-50% + -40vw), 150px);">
-              
-              <!-- Massive Atmospheric Glow that moves with the moon -->
-              <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200vw] h-[200vw] rounded-full pointer-events-none transition-opacity duration-75" style="opacity: var(--arc-progress, 0); background: radial-gradient(circle, rgba(30, 58, 138, 0.5) 0%, rgba(15, 23, 42, 0.4) 30%, transparent 50%); z-index: -1;"></div>
-              
-              <!-- Cropped & Brightened Moon Container -->
-              <div class="absolute inset-0 rounded-full overflow-hidden">
-                  <img src="https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?q=80&w=400" alt="Moon" class="w-full h-full rounded-full object-cover scale-[1.35]" style="filter: brightness(1.7) contrast(0.7);">
-                  
-                  <!-- Inner white wash to soften craters and create bright glowing edges -->
-                  <div class="absolute inset-0 rounded-full pointer-events-none bg-white/30 shadow-[inset_0_0_20px_10px_rgba(255,255,255,1)]"></div>
-              </div>
-          </div>
+    </div>
     </div>
 </div>
 
@@ -203,6 +188,20 @@
                                 </div><!-- NIGHT MODE -->
       <div class="absolute inset-0 transition-opacity duration-1000 opacity-0 dark:opacity-100 bg-[#020617] overflow-hidden">
           
+          <!-- The Moon with Photorealistic Craters and Dynamic Lighting (Moved back to deep background to avoid blocking UI) -->
+          <div id="the-moon" class="absolute left-1/2 bottom-0 w-32 h-32 rounded-full transition-transform duration-75 ease-out mix-blend-screen shadow-[0_0_60px_20px_rgba(255,255,255,0.7),0_0_120px_40px_rgba(147,197,253,0.4)]" style="transform: translate(calc(-50% + -40vw), 150px);">
+              
+              <!-- Massive Atmospheric Glow that moves with the moon -->
+              <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200vw] h-[200vw] rounded-full pointer-events-none transition-opacity duration-75" style="opacity: var(--arc-progress, 0); background: radial-gradient(circle, rgba(30, 58, 138, 0.5) 0%, rgba(15, 23, 42, 0.4) 30%, transparent 50%); z-index: -1;"></div>
+              
+              <!-- Cropped & Brightened Moon Container -->
+              <div class="absolute inset-0 rounded-full overflow-hidden">
+                  <img src="https://images.unsplash.com/photo-1522030299830-16b8d3d049fe?q=80&w=400" alt="Moon" class="w-full h-full rounded-full object-cover scale-[1.35]" style="filter: brightness(1.7) contrast(0.7);">
+                  
+                  <!-- Inner white wash to soften craters and create bright glowing edges -->
+                  <div class="absolute inset-0 rounded-full pointer-events-none bg-white/30 shadow-[inset_0_0_20px_10px_rgba(255,255,255,1)]"></div>
+              </div>
+          </div>
           
       </div>
   </div>
@@ -705,6 +704,7 @@
     </a>
 </body>
 </html>
+
 
 
 
