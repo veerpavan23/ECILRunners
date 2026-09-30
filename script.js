@@ -600,18 +600,29 @@ if (themeToggle) {
     });
 }
 
-// Parallax Sun & Moon
+// Parallax Sun, Moon & Brightness Arc
 window.addEventListener('scroll', () => {
     const scrollY = window.scrollY;
     const docHeight = document.body.offsetHeight - window.innerHeight;
-    const scrollPercent = scrollY / (docHeight || 1);
+    let progress = scrollY / (docHeight || 1);
+    progress = Math.max(0, Math.min(1, progress));
     
-    // Max rise height is 60vh
-    const riseAmount = scrollPercent * (window.innerHeight * 1.8);
+    // Arc (0 at top, 1 in middle, 0 at bottom)
+    const arcProgress = Math.sin(progress * Math.PI);
+    
+    // Pass arc progress to CSS for dynamic sky brightness
+    document.documentElement.style.setProperty('--arc-progress', arcProgress);
+    
+    // Calculate X and Y positions for celestial bodies
+    const xPosVw = (progress - 0.5) * 80; // Arcs from -40vw to +40vw
+    const yPosPx = 150 - (arcProgress * (window.innerHeight * 0.7 + 150)); // Arcs from 150px (below screen) to high up
     
     const sun = document.getElementById('the-sun');
     const moon = document.getElementById('the-moon');
-    if (sun) sun.style.transform = 'translate(-50%, -' + riseAmount + 'px)';
-    if (moon) moon.style.transform = 'translate(-50%, -' + riseAmount + 'px)';
+    const transformStr = 'translate(calc(-50% + ' + xPosVw + 'vw), ' + yPosPx + 'px)';
+    
+    if (sun) sun.style.transform = transformStr;
+    if (moon) moon.style.transform = transformStr;
 });
+
 
