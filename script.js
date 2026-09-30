@@ -599,3 +599,18 @@ if (themeToggle) {
         themeToggle.innerHTML = isDark ? '<i class="fas fa-sun text-xl"></i>' : '<i class="fas fa-moon text-xl"></i>';
     });
 }
+
+// Parallax Sun & Moon
+window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    const docHeight = document.body.offsetHeight - window.innerHeight;
+    const scrollPercent = scrollY / (docHeight || 1);
+    
+    // Max rise height is 60vh
+    const riseAmount = scrollPercent * (window.innerHeight * 0.7);
+    
+    const sun = document.getElementById('the-sun');
+    const moon = document.getElementById('the-moon');
+    if (sun) sun.style.transform = 	ranslate(-50%, -\px);
+    if (moon) moon.style.transform = 	ranslate(-50%, -\px);
+});

@@ -13,29 +13,29 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 <style>
-    /* Dark Mode Overrides */
-    html.dark body { background-color: #111827 !important; color: #f9fafb !important; }
-    html.dark .bg-white { background-color: #1f2937 !important; }
+        /* Dark Mode Overrides */
+    html.dark body { color: #f9fafb !important; }
     html.dark .text-gray-900 { color: #ffffff !important; }
     html.dark .text-gray-800 { color: #f3f4f6 !important; }
     html.dark .text-gray-600 { color: #9ca3af !important; }
     html.dark .text-gray-500 { color: #6b7280 !important; }
-    html.dark .bg-gray-50 { background-color: #374151 !important; }
-        html.dark .bg-white\/10, html.dark .bg-white\/20, html.dark .bg-white\/30, html.dark .bg-white\/40, html.dark .bg-white\/50, html.dark .bg-white\/60, html.dark .bg-white\/70, html.dark .bg-white\/80, html.dark .bg-white\/90 { 
-        background-color: rgba(31, 41, 55, 0.5) !important; 
+    
+    /* Glassmorphism for readability */
+    html.dark .bg-white { background-color: rgba(31, 41, 55, 0.85) !important; }
+    html.dark .bg-gray-50 { background-color: rgba(31, 41, 55, 0.6) !important; }
+    html.dark section { background-color: rgba(17, 24, 39, 0.6) !important; backdrop-filter: blur(12px) !important; }
+    section { backdrop-filter: blur(12px); background-color: rgba(255, 255, 255, 0.5); }
+    
+    html.dark .bg-white\/10, html.dark .bg-white\/20, html.dark .bg-white\/30, html.dark .bg-white\/40, html.dark .bg-white\/50, html.dark .bg-white\/60, html.dark .bg-white\/70, html.dark .bg-white\/80, html.dark .bg-white\/90 { 
+        background-color: transparent !important; 
     }
-    html.dark .bg-white\/95 { background-color: rgba(31, 41, 55, 0.95) !important; }
     
-    /* Gradients and Borders */
-    html.dark .bg-gradient-to-b.from-white\/90 { background-image: linear-gradient(to bottom, rgba(17,24,39,0.95), rgba(17,24,39,0.7), rgba(17,24,39,0.95)) !important; }
-    html.dark .bg-gradient-to-r.from-\[\#fffbeb\] { background-image: linear-gradient(to right, #1f2937, #111827, #1f2937) !important; border-color: #374151 !important; }
-    html.dark .border-gray-100 { border-color: #374151 !important; }
-    html.dark .border-gray-200 { border-color: #4b5563 !important; }
-    html.dark .border-white { border-color: #1f2937 !important; }
+    html.dark .bg-gradient-to-r.from-\[\#fffbeb\] { background-image: linear-gradient(to right, rgba(31,41,55,0.9), rgba(17,24,39,0.9), rgba(31,41,55,0.9)) !important; border-color: rgba(55,65,81,0.5) !important; }
+    html.dark .border-gray-100 { border-color: rgba(55, 65, 81, 0.3) !important; }
+    html.dark .border-gray-200 { border-color: rgba(75, 85, 99, 0.3) !important; }
+    html.dark .border-white { border-color: rgba(31, 41, 55, 0.5) !important; }
     
-        /* Specific Fixes */
-    html.dark #navbar { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5); }
-    html.dark .shadow-lg, html.dark .shadow-2xl { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important; }
+    html.dark #navbar { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5); background-color: rgba(17, 24, 39, 0.9) !important; }
     
     /* Logo and Runner Fixes for Dark Mode */
     html.dark #navbar img[src="assets/logo.png"] {
@@ -44,13 +44,25 @@
         border-radius: 0.5rem !important;
         mix-blend-mode: normal !important;
     }
-        html.dark #scroll-runner {
-        mix-blend-mode: normal !important;
-    }
+    html.dark #scroll-runner { mix-blend-mode: normal !important; }
     html.dark #runner-gif, html.dark #runner-canvas {
         filter: invert(1) !important;
         mix-blend-mode: screen !important;
     }
+
+    /* Custom Background Animations */
+    @keyframes fly-slow {
+        0% { transform: translateX(0) translateY(0); }
+        100% { transform: translateX(120vw) translateY(-100px); }
+    }
+    @keyframes shooting-star {
+        0% { transform: translate(0, 0) rotate(45deg); opacity: 1; }
+        5% { transform: translate(-500px, 500px) rotate(45deg); opacity: 0; }
+        100% { transform: translate(-500px, 500px) rotate(45deg); opacity: 0; }
+    }
+    .animate-fly-slow { animation: fly-slow 30s linear infinite; }
+    .animate-fly-slower { animation: fly-slow 45s linear infinite; }
+    .animate-shooting-star { animation: shooting-star 15s linear infinite; }
 </style>
 </head>
 <body class="bg-white text-gray-800 font-sans antialiased selection:bg-[#F97316] selection:text-white relative">
@@ -206,11 +218,7 @@
         
         <!-- Hero Section -->
         <section id="home" class="relative min-h-screen flex items-center pt-20 bg-white/30 backdrop-blur-md">
-                        <!-- Cinematic Video Background -->
-            <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover z-0 opacity-40 mix-blend-overlay">
-                <source src="https://assets.mixkit.co/videos/preview/mixkit-runners-in-a-marathon-41829-large.mp4" type="video/mp4">
-            </video>
-            <div class="absolute inset-0 bg-gradient-to-b from-white/90 via-white/50 to-white/90 z-0"></div>
+                        
             
             <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-16 lg:px-24 w-full">
                 <div data-aos="fade-right" data-aos-duration="1000">
@@ -554,6 +562,7 @@
     </a>
 </body>
 </html>
+
 
 
 
