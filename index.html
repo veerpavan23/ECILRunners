@@ -118,15 +118,15 @@
         <!-- Dynamic Moonlight Glow tracking the Moon -->
         <div class="absolute inset-0 transition-opacity duration-75" style="opacity: var(--arc-progress, 0); background: radial-gradient(circle at calc(50% + var(--arc-x, 0vw)) var(--moon-y, 20vh), rgba(148, 163, 184, 0.5) 0%, rgba(30, 58, 138, 0.2) 50%, transparent 80%);"></div>
         
-        <!-- Twinkling Stars Layer -->
-        <div class="absolute inset-0" style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1px); background-size: 40px 40px; opacity: 0.5;"></div>
-        <div class="absolute inset-0 animate-twinkle" style="background-image: radial-gradient(circle, #ffffff 1.5px, transparent 1.5px); background-size: 90px 90px; background-position: 20px 20px;"></div>
-        <div class="absolute inset-0 animate-twinkle-slow" style="background-image: radial-gradient(circle, #ffffff 2px, transparent 2px); background-size: 140px 140px; background-position: 60px 40px;"></div>
+                <!-- Twinkling Stars Layer -->
+        <div class="absolute inset-0" style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1.5px); background-size: 30px 30px; opacity: 0.6;"></div>
+        <div class="absolute inset-0 animate-twinkle" style="background-image: radial-gradient(circle, #ffffff 1.5px, transparent 2px); background-size: 70px 70px; background-position: 20px 20px;"></div>
+        <div class="absolute inset-0 animate-twinkle-slow" style="background-image: radial-gradient(circle, #e2e8f0 2px, transparent 3px); background-size: 110px 110px; background-position: 50px 50px; opacity: 0.8;"></div>
         
         <!-- Shooting Star -->
         <div class="absolute top-0 right-0 w-full h-full overflow-hidden">
-            <div class="absolute top-[10%] right-[20%] w-[2px] h-[120px] bg-gradient-to-b from-transparent to-white transform rotate-45 animate-shooting-star"></div>
-            <div class="absolute top-[30%] right-[40%] w-[2px] h-[100px] bg-gradient-to-b from-transparent to-white transform rotate-45 animate-shooting-star" style="animation-delay: 5s;"></div>
+            <div class="absolute top-0 right-[20%] w-[4px] h-[150px] bg-gradient-to-b from-transparent via-white to-white rounded-full blur-[1px] transform rotate-45 animate-shooting-star" style="box-shadow: 0 0 20px 5px rgba(255,255,255,0.4);"></div>
+            <div class="absolute top-[20%] right-[50%] w-[3px] h-[120px] bg-gradient-to-b from-transparent via-blue-200 to-white rounded-full blur-[1px] transform rotate-45 animate-shooting-star" style="animation-delay: 6s; box-shadow: 0 0 15px 3px rgba(191,219,254,0.4);"></div>
         </div>
         
         <!-- The Moon -->
@@ -635,6 +635,7 @@
     </a>
 </body>
 </html>
+
 
 
 
