@@ -304,28 +304,14 @@
         <div id="the-sun" class="absolute left-1/2 bottom-0 w-32 h-32 bg-white rounded-full blur-[1px] shadow-[0_0_120px_60px_#fde047,0_0_250px_100px_#ea580c] transition-transform duration-75 ease-out" style="transform: translate(calc(-50% + -40vw), 150px);"></div>
         
                                 </div><!-- NIGHT MODE -->
-    <div class="absolute inset-0 transition-opacity duration-1000 opacity-0 dark:opacity-100">
-        <!-- Base Dusk/Dawn Sky -->
-        <div class="absolute inset-0 bg-gradient-to-b from-[#2b1b3d] via-[#1b2745] to-[#0b1021]"></div>
-        
-        <!-- Deep Midnight Sky (Extreme dark at edges, dark blue glow when moon is up) -->
-        <div class="absolute inset-0 bg-[#020617] transition-opacity duration-75"></div>
-        <div class="absolute inset-0 transition-opacity duration-75" style="opacity: var(--arc-progress, 0); background: radial-gradient(circle at calc(50% + var(--arc-x, 0vw)) var(--moon-y, 20vh), rgba(30, 58, 138, 0.9) 0%, rgba(15, 23, 42, 0.8) 40%, transparent 80%);"></div>
-        
-        <!-- Twinkling Stars Layer (MOVED TO FOREGROUND) -->
-        <div class="absolute inset-0" style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1.5px); background-size: 30px 30px; opacity: 0.6;"></div>
-        <div class="absolute inset-0 animate-twinkle" style="background-image: radial-gradient(circle, #ffffff 1.5px, transparent 2px); background-size: 70px 70px; background-position: 20px 20px;"></div>
-        <div class="absolute inset-0 animate-twinkle-slow" style="background-image: radial-gradient(circle, #e2e8f0 2px, transparent 3px); background-size: 110px 110px; background-position: 50px 50px; opacity: 0.8;"></div>
-        
-        <!-- Shooting Star -->
-        <div class="absolute top-0 right-0 w-full h-full overflow-hidden">
-            <div class="absolute top-0 right-[20%] w-[4px] h-[150px] bg-gradient-to-b from-transparent via-white to-white rounded-full blur-[1px] transform rotate-45 animate-shooting-star" style="box-shadow: 0 0 20px 5px rgba(255,255,255,0.4);"></div>
-            <div class="absolute top-[20%] right-[50%] w-[3px] h-[120px] bg-gradient-to-b from-transparent via-blue-200 to-white rounded-full blur-[1px] transform rotate-45 animate-shooting-star" style="animation-delay: 6s; box-shadow: 0 0 15px 3px rgba(191,219,254,0.4);"></div>
-        </div>
-        
-        <!-- The Moon -->
-        <div id="the-moon" class="absolute left-1/2 bottom-0 w-28 h-28 bg-[#E2E8F0] rounded-full shadow-[inset_-15px_-15px_30px_rgba(0,0,0,0.5),inset_5px_5px_15px_rgba(255,255,255,0.9),0_0_80px_rgba(226,232,240,0.8)] transition-transform duration-75 ease-out" style="transform: translate(calc(-50% + -40vw), 150px);">
-            <div class="absolute top-[20%] left-[20%] w-6 h-6 bg-black/20 rounded-full blur-[1px]"></div>
+      <div class="absolute inset-0 transition-opacity duration-1000 opacity-0 dark:opacity-100 bg-[#020617] overflow-hidden">
+          
+          <!-- The Moon -->
+          <div id="the-moon" class="absolute left-1/2 bottom-0 w-28 h-28 bg-[#E2E8F0] rounded-full shadow-[inset_-15px_-15px_30px_rgba(0,0,0,0.5),inset_5px_5px_15px_rgba(255,255,255,0.9),0_0_80px_rgba(226,232,240,0.8)] transition-transform duration-75 ease-out" style="transform: translate(calc(-50% + -40vw), 150px);">
+            <!-- Massive Atmospheric Glow that moves with the moon -->
+              <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200vw] h-[200vw] rounded-full pointer-events-none transition-opacity duration-75" style="opacity: var(--arc-progress, 0); background: radial-gradient(circle, rgba(30, 58, 138, 0.4) 0%, rgba(15, 23, 42, 0.8) 30%, transparent 50%); z-index: -1;"></div>
+              
+              <div class="absolute top-[20%] left-[20%] w-6 h-6 bg-black/20 rounded-full blur-[1px]"></div>
             <div class="absolute bottom-[30%] right-[25%] w-10 h-10 bg-black/15 rounded-full blur-[2px]"></div>
         </div>
     </div>
@@ -829,6 +815,7 @@
     </a>
 </body>
 </html>
+
 
 
 
