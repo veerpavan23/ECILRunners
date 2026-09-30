@@ -582,3 +582,20 @@ async function loadStravaStats() {
     }
 }
 document.addEventListener('DOMContentLoaded', loadStravaStats);
+
+// Dark Mode Toggle Logic
+const themeToggle = document.getElementById('theme-toggle');
+if (themeToggle) {
+    // Check saved theme
+    if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+        themeToggle.innerHTML = '<i class="fas fa-sun text-xl"></i>';
+    }
+    
+    themeToggle.addEventListener('click', () => {
+        document.documentElement.classList.toggle('dark');
+        const isDark = document.documentElement.classList.contains('dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        themeToggle.innerHTML = isDark ? '<i class="fas fa-sun text-xl"></i>' : '<i class="fas fa-moon text-xl"></i>';
+    });
+}
