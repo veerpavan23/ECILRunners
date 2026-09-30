@@ -607,10 +607,11 @@ window.addEventListener('scroll', () => {
     const scrollPercent = scrollY / (docHeight || 1);
     
     // Max rise height is 60vh
-    const riseAmount = scrollPercent * (window.innerHeight * 0.7);
+    const riseAmount = scrollPercent * (window.innerHeight * 1.8);
     
     const sun = document.getElementById('the-sun');
     const moon = document.getElementById('the-moon');
     if (sun) sun.style.transform = 'translate(-50%, -' + riseAmount + 'px)';
     if (moon) moon.style.transform = 'translate(-50%, -' + riseAmount + 'px)';
 });
+

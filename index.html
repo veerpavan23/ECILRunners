@@ -71,26 +71,28 @@
 </style>
 </head>
 <body class="bg-transparent text-gray-900 font-sans antialiased selection:bg-[#F97316] selection:text-white relative">
-<!-- Cinematic Timelapse Video Background -->
+<!-- Interactive Parallax Sky Background -->
 <div id="sky-background" class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none bg-black">
-    <!-- Day Timelapse (Sunrise) -->
-    <div class="absolute inset-0 transition-opacity duration-[2000ms] ease-in-out opacity-100 dark:opacity-0">
-        <iframe class="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-h-[100vh] min-w-[177.77vh] transform -translate-x-1/2 -translate-y-1/2 scale-125 opacity-80" 
-                src="https://www.youtube.com/embed/wnhvanMdx4s?autoplay=1&mute=1&controls=0&loop=1&playlist=wnhvanMdx4s&showinfo=0&rel=0&modestbranding=1&playsinline=1" 
-                frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen>
-        </iframe>
-        <!-- Soft overlay to ensure text is readable -->
-        <div class="absolute inset-0 bg-white/40"></div>
+    
+    <!-- Day Sky (Realistic Morning) -->
+    <div class="absolute inset-0 transition-opacity duration-[2000ms] ease-in-out opacity-100 dark:opacity-0 bg-gradient-to-b from-[#87CEEB] via-[#E0F6FF] to-[#FFE4E1]">
+        <!-- Photorealistic Sun (Blinding white center with massive layered orange/yellow glow) -->
+        <div id="the-sun" class="absolute left-1/2 transform -translate-x-1/2 bottom-[-100px] w-48 h-48 bg-white rounded-full blur-[1px] shadow-[0_0_120px_60px_#fde047,0_0_250px_100px_#ea580c] transition-transform duration-75 ease-out"></div>
     </div>
     
-    <!-- Night Timelapse (Starry Sky) -->
-    <div class="absolute inset-0 transition-opacity duration-[2000ms] ease-in-out opacity-0 dark:opacity-100">
-        <iframe class="absolute top-1/2 left-1/2 w-[100vw] h-[56.25vw] min-h-[100vh] min-w-[177.77vh] transform -translate-x-1/2 -translate-y-1/2 scale-125 opacity-70" 
-                src="https://www.youtube.com/embed/Wl2sDEpjqQI?autoplay=1&mute=1&controls=0&loop=1&playlist=Wl2sDEpjqQI&showinfo=0&rel=0&modestbranding=1&playsinline=1" 
-                frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen>
-        </iframe>
-        <!-- Soft overlay to ensure text is readable -->
-        <div class="absolute inset-0 bg-black/60"></div>
+    <!-- Night Sky (Deep Space) -->
+    <div class="absolute inset-0 transition-opacity duration-[2000ms] ease-in-out opacity-0 dark:opacity-100 bg-gradient-to-b from-[#0B1021] via-[#1B2745] to-[#2B1B3D]">
+        <!-- Realistic Stars (Layered for depth) -->
+        <div class="absolute inset-0" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 50px 50px; opacity: 0.5;"></div>
+        <div class="absolute inset-0" style="background-image: radial-gradient(#ffffff 1.5px, transparent 1.5px); background-size: 100px 100px; background-position: 25px 25px; opacity: 0.3;"></div>
+        
+        <!-- Photorealistic Moon (Silver with 3D inner shadow volume and soft glow) -->
+        <div id="the-moon" class="absolute left-1/2 transform -translate-x-1/2 bottom-[-100px] w-36 h-36 bg-[#E2E8F0] rounded-full shadow-[inset_-15px_-15px_30px_rgba(0,0,0,0.3),inset_5px_5px_15px_rgba(255,255,255,0.8),0_0_60px_rgba(226,232,240,0.4)] transition-transform duration-75 ease-out">
+            <!-- Subtle Moon Craters using semi-transparent overlays -->
+            <div class="absolute top-[20%] left-[20%] w-8 h-8 bg-black/10 rounded-full blur-[2px]"></div>
+            <div class="absolute bottom-[30%] right-[25%] w-12 h-12 bg-black/10 rounded-full blur-[3px]"></div>
+            <div class="absolute top-[40%] right-[15%] w-6 h-6 bg-black/10 rounded-full blur-[1px]"></div>
+        </div>
     </div>
 </div>
 </div>
@@ -590,6 +592,7 @@
     </a>
 </body>
 </html>
+
 
 
 
