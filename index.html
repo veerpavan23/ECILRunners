@@ -192,11 +192,11 @@
           <!-- Base Dawn/Dusk Sky -->
           <div class="absolute inset-0 bg-gradient-to-b from-[#ff9a44] via-[#fc6076] to-[#ffecd2]"></div>
           
-          <!-- The Sun (Moved back to deep background to avoid blocking text) -->
+          <!-- Midday Bright Sky -->
+          <div class="absolute inset-0 bg-gradient-to-b from-[#4facfe] via-[#00f2fe] to-[#a18cd1] transition-opacity duration-75" style="opacity: var(--arc-progress, 0);"></div>
+          
+          <!-- The Sun (Moved back to deep background to avoid blocking text, MUST BE AFTER MIDDAY SKY TO NOT BE BLUE) -->
           <div id="the-sun" class="absolute left-1/2 bottom-0 w-32 h-32 bg-white rounded-full blur-[1px] shadow-[0_0_120px_60px_#fde047,0_0_250px_100px_#ea580c] transition-transform duration-75 ease-out" style="transform: translate(calc(-50% + -40vw), 150px);"></div>
-        
-        <!-- Midday Bright Sky -->
-        <div class="absolute inset-0 bg-gradient-to-b from-[#4facfe] via-[#00f2fe] to-[#a18cd1] transition-opacity duration-75" style="opacity: var(--arc-progress, 0);"></div>
         
         
         
@@ -705,6 +705,7 @@
     </a>
 </body>
 </html>
+
 
 
 
