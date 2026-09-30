@@ -13,12 +13,27 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 <style>
-    /* Dark Mode Magic */
-    html.dark { filter: invert(1) hue-rotate(180deg); background-color: #111; }
-    html.dark img, html.dark video, html.dark iframe, html.dark .no-invert, html.dark [data-aos] {
-        filter: invert(1) hue-rotate(180deg);
-    }
-    html.dark .no-invert img, html.dark .no-invert video { filter: none; }
+    /* Dark Mode Overrides */
+    html.dark body { background-color: #111827 !important; color: #f9fafb !important; }
+    html.dark .bg-white { background-color: #1f2937 !important; }
+    html.dark .text-gray-900 { color: #ffffff !important; }
+    html.dark .text-gray-800 { color: #f3f4f6 !important; }
+    html.dark .text-gray-600 { color: #9ca3af !important; }
+    html.dark .text-gray-500 { color: #6b7280 !important; }
+    html.dark .bg-gray-50 { background-color: #374151 !important; }
+    html.dark .bg-white\/30, html.dark .bg-white\/40 { background-color: rgba(31, 41, 55, 0.7) !important; }
+    html.dark .bg-white\/95 { background-color: rgba(31, 41, 55, 0.95) !important; }
+    
+    /* Gradients and Borders */
+    html.dark .bg-gradient-to-b.from-white\/90 { background-image: linear-gradient(to bottom, rgba(17,24,39,0.95), rgba(17,24,39,0.7), rgba(17,24,39,0.95)) !important; }
+    html.dark .bg-gradient-to-r.from-\[\#fffbeb\] { background-image: linear-gradient(to right, #1f2937, #111827, #1f2937) !important; border-color: #374151 !important; }
+    html.dark .border-gray-100 { border-color: #374151 !important; }
+    html.dark .border-gray-200 { border-color: #4b5563 !important; }
+    html.dark .border-white { border-color: #1f2937 !important; }
+    
+    /* Specific Fixes */
+    html.dark #navbar { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5); }
+    html.dark .shadow-lg, html.dark .shadow-2xl { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important; }
 </style>
 </head>
 <body class="bg-white text-gray-800 font-sans antialiased selection:bg-[#F97316] selection:text-white relative">
@@ -517,11 +532,12 @@
         </div>
     </div>
     <!-- Floating WhatsApp Button -->
-    <a href="https://wa.me/919999999999" target="_blank" class="fixed bottom-6 right-6 bg-[#25D366] text-white w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-2xl hover:scale-110 transition-transform z-50 no-invert">
+    <a href="https://wa.me/919999999999" target="_blank" class="fixed bottom-6 left-6 bg-[#25D366] text-white w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-2xl hover:scale-110 transition-transform z-50 no-invert">
         <i class="fab fa-whatsapp"></i>
     </a>
 </body>
 </html>
+
 
 
 
