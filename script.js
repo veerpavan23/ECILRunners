@@ -611,6 +611,6 @@ window.addEventListener('scroll', () => {
     
     const sun = document.getElementById('the-sun');
     const moon = document.getElementById('the-moon');
-    if (sun) sun.style.transform = 	ranslate(-50%, -\px);
-    if (moon) moon.style.transform = 	ranslate(-50%, -\px);
+    if (sun) sun.style.transform = 'translate(-50%, -' + riseAmount + 'px)';
+    if (moon) moon.style.transform = 'translate(-50%, -' + riseAmount + 'px)';
 });
