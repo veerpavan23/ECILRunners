@@ -565,3 +565,20 @@ if(mobileBtn && mobileMenu) {
 
 
 
+
+// Auto-fetch Strava Active Runners
+async function loadStravaStats() {
+    try {
+        const res = await fetch('/api/strava');
+        const data = await res.json();
+        if (data.success && data.activeRunners) {
+            const runnersEl = document.getElementById('stat-runners');
+            if (runnersEl) {
+                runnersEl.innerHTML = data.activeRunners + '<span class="text-[#F97316]">+</span>';
+            }
+        }
+    } catch (err) {
+        console.error('Failed to load Strava stats:', err);
+    }
+}
+document.addEventListener('DOMContentLoaded', loadStravaStats);
