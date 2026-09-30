@@ -610,10 +610,10 @@ window.addEventListener('scroll', () => {
     // Arc (0 at top, 1 in middle, 0 at bottom)
     const arcProgress = Math.sin(progress * Math.PI);
     
-    // Mathematically lock the Sun's X position to the Runner's exact X center
+        // Mathematically lock the Sun's X position to the Runner's exact X center
     // Runner center ranges from 43px at start to (100vw - 5px) at end
     const xPosOffset = ((1 - progress) * 43) - (progress * 5);
-    const xPosCalc = calc(-50% + vw + px);
+    const xPosCalc = 'calc(-50% + ' + ((progress - 0.5) * 100) + 'vw + ' + xPosOffset + 'px)';
     
     // Asymmetrical Y: Starts hidden at sunrise (120). At progress 1, y is -37, exactly matching runner's vertical center.
     const baseY = 120 - (progress * 157);
@@ -621,16 +621,17 @@ window.addEventListener('scroll', () => {
     
     // Pass arc progress to CSS for dynamic sky brightness and tracking
     document.documentElement.style.setProperty('--arc-progress', arcProgress);
-    document.documentElement.style.setProperty('--arc-x', calc(vw + px));
+    document.documentElement.style.setProperty('--arc-x', 'calc(' + ((progress - 0.5) * 100) + 'vw + ' + xPosOffset + 'px)');
     document.documentElement.style.setProperty('--moon-y', yPosPx + 'px');
     
     const sun = document.getElementById('the-sun');
     const moon = document.getElementById('the-moon');
-    const transformStr = 	ranslate(, px);
+    const transformStr = 'translate(' + xPosCalc + ', ' + yPosPx + 'px)';
     
     if (sun) sun.style.transform = transformStr;
     if (moon) moon.style.transform = transformStr;
 });
+
 
 
 
