@@ -29,6 +29,7 @@ function updateScroll() {
     const docHeight = cachedDocHeight || 1;
     let scrollPercent = scrollTop / docHeight;
     if (isNaN(scrollPercent)) scrollPercent = 0;
+    scrollPercent = Math.max(0, Math.min(1, scrollPercent));
     
     if(scrollTrack && scrollRunner) {
         scrollTrack.style.width = `${scrollPercent * 100}%`;
