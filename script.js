@@ -169,8 +169,15 @@ if (closeStravaBtn) {
     });
 }
 
+let ticking = false;
 window.addEventListener('scroll', () => {
-    updateScroll();
+    if (!ticking) {
+        window.requestAnimationFrame(() => {
+            updateScroll();
+            ticking = false;
+        });
+        ticking = true;
+    }
     
     // Clear the timeout throughout the scroll
     window.clearTimeout(isScrollingTimeout);
@@ -194,7 +201,6 @@ window.addEventListener('scroll', () => {
 });
 
 window.addEventListener('resize', updateScroll);
-updateScroll(); // init
 
 
 // Hero Particle Canvas
@@ -622,7 +628,15 @@ if (themeToggle) {
 let parallaxDocHeight = document.body.offsetHeight - window.innerHeight;
 window.addEventListener('resize', () => parallaxDocHeight = document.body.offsetHeight - window.innerHeight);
 
+let tickingParallax = false;
 window.addEventListener('scroll', () => {
+    if (!tickingParallax) {
+        window.requestAnimationFrame(() => {
+            updateScroll();
+            tickingParallax = false;
+        });
+        tickingParallax = true;
+    }
     const scrollY = window.scrollY;
     const docHeight = parallaxDocHeight || 1;
     let progress = scrollY / (docHeight || 1);
@@ -812,6 +826,7 @@ if (typeof supabaseClient !== 'undefined') {
         }
     });
 }
+
 
 
 
