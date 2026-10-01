@@ -659,27 +659,26 @@ window.addEventListener('scroll', () => {
         tickingParallax = true;
     }
     const scrollY = window.scrollY;
-    const docHeight = parallaxDocHeight || 1;
-    let progress = scrollY / (docHeight || 1);
+    const docHeight = cachedDocHeight || 1;
+    let progress = scrollY / docHeight;
     progress = Math.max(0, Math.min(1, progress));
     
-    // Arc (0 at top, 1 in middle, 0 at bottom)
+        // Arc (0 at top, 1 in middle, 0 at bottom)
     const arcProgress = Math.sin(progress * Math.PI);
     
-        // Mathematically lock the Sun's X position to the Runner's exact X center
-    // Runner center ranges from 43px at start to (100vw - 5px) at end
-    const xPosOffset = ((1 - progress) * 43) - (progress * 5);
-    const xPosCalc = 'calc(-50% + ' + ((progress - 0.5) * 100) + 'vw + ' + xPosOffset + 'px)';
+    // Mathematically lock the Sun's X position to the Runner's exact X center
+    const screenWidth = window.innerWidth;
+    const runnerCenterX = (progress * (screenWidth - 48)) + 24;
+    const sunX = runnerCenterX - (screenWidth / 2);
+    const xPosCalc = 'calc(-50% + ' + sunX + 'px)';
     
-    // Asymmetrical Y: Starts hidden at sunrise (120). At progress 1, y is -37, exactly matching runner's vertical center.
-        // Y-Axis: Sun rests exactly on the horizon (y = 37px) at BOTH sunrise (start) and sunset (end).
-    // The peak of the arc pushes it high into the sky in the middle of the scroll.
-    const baseY = 37;
+    // Y-Axis: Sun rests exactly behind the runner at start and finish.
+    const baseY = 45;
     const yPosPx = baseY - (arcProgress * (window.innerHeight * 0.65));
     
     // Pass arc progress to CSS for dynamic sky brightness and tracking
     document.documentElement.style.setProperty('--arc-progress', arcProgress);
-    document.documentElement.style.setProperty('--arc-x', 'calc(' + ((progress - 0.5) * 100) + 'vw + ' + xPosOffset + 'px)');
+    document.documentElement.style.setProperty('--arc-x', runnerCenterX + 'px');
     document.documentElement.style.setProperty('--moon-y', yPosPx + 'px');
     
     const sun = document.getElementById('the-sun');
@@ -847,6 +846,9 @@ if (typeof supabaseClient !== 'undefined') {
         }
     });
 }
+
+
+
 
 
 
