@@ -20,8 +20,29 @@ const runnerGif = document.getElementById('runner-gif');
 const runnerCanvas = document.getElementById('runner-canvas');
 const ctx = runnerCanvas ? runnerCanvas.getContext('2d') : null;
 
-let cachedDocHeight = document.body.offsetHeight - window.innerHeight;
-window.addEventListener('resize', () => cachedDocHeight = document.body.offsetHeight - window.innerHeight);
+let cachedDocHeight = Math.max(
+    document.body.scrollHeight, document.documentElement.scrollHeight,
+    document.body.offsetHeight, document.documentElement.offsetHeight,
+    document.body.clientHeight, document.documentElement.clientHeight
+) - window.innerHeight;
+
+// Update doc height precisely using ResizeObserver to catch lazy loaded content and AOS changes
+const resizeObserver = new ResizeObserver(() => {
+    cachedDocHeight = Math.max(
+        document.body.scrollHeight, document.documentElement.scrollHeight,
+        document.body.offsetHeight, document.documentElement.offsetHeight,
+        document.body.clientHeight, document.documentElement.clientHeight
+    ) - window.innerHeight;
+});
+resizeObserver.observe(document.body);
+window.addEventListener('resize', () => {
+    cachedDocHeight = Math.max(
+        document.body.scrollHeight, document.documentElement.scrollHeight,
+        document.body.offsetHeight, document.documentElement.offsetHeight,
+        document.body.clientHeight, document.documentElement.clientHeight
+    ) - window.innerHeight;
+});
+
 
 function updateScroll() {
     // Progress Bar
@@ -625,8 +646,8 @@ if (themeToggle) {
 }
 
 // Parallax Sun, Moon & Brightness Arc
-let parallaxDocHeight = document.body.offsetHeight - window.innerHeight;
-window.addEventListener('resize', () => parallaxDocHeight = document.body.offsetHeight - window.innerHeight);
+let parallaxDocHeight = cachedDocHeight; // Reuse the perfectly calculated height
+
 
 let tickingParallax = false;
 window.addEventListener('scroll', () => {
@@ -826,6 +847,7 @@ if (typeof supabaseClient !== 'undefined') {
         }
     });
 }
+
 
 
 
