@@ -20,10 +20,13 @@ const runnerGif = document.getElementById('runner-gif');
 const runnerCanvas = document.getElementById('runner-canvas');
 const ctx = runnerCanvas ? runnerCanvas.getContext('2d') : null;
 
+let cachedDocHeight = document.body.offsetHeight - window.innerHeight;
+window.addEventListener('resize', () => cachedDocHeight = document.body.offsetHeight - window.innerHeight);
+
 function updateScroll() {
     // Progress Bar
     const scrollTop = window.scrollY;
-    const docHeight = document.body.offsetHeight - window.innerHeight;
+    const docHeight = cachedDocHeight || 1;
     let scrollPercent = scrollTop / docHeight;
     if (isNaN(scrollPercent)) scrollPercent = 0;
     
@@ -166,8 +169,14 @@ window.addEventListener('scroll', () => {
     // Set a timeout to run after scrolling ends
     isScrollingTimeout = setTimeout(function() {
         if (runnerGif && runnerCanvas) {
+            if(ctx) { 
+                runnerCanvas.width = runnerGif.clientWidth || 38; 
+                runnerCanvas.height = runnerGif.clientHeight || 38; 
+                ctx.clearRect(0,0,runnerCanvas.width,runnerCanvas.height); 
+                ctx.drawImage(runnerGif, 0, 0, runnerCanvas.width, runnerCanvas.height); 
+            }
             runnerGif.classList.add('hidden');
-            if(ctx) { runnerCanvas.width = runnerGif.width || 80; runnerCanvas.height = runnerGif.height || 80; ctx.clearRect(0,0,runnerCanvas.width,runnerCanvas.height); ctx.drawImage(runnerGif, 0, 0, runnerCanvas.width, runnerCanvas.height); } runnerCanvas.classList.remove('hidden');
+            runnerCanvas.classList.remove('hidden');
         }
         if (hudHr) {
             hudHr.innerText = '72'; // Reset HR
@@ -601,9 +610,12 @@ if (themeToggle) {
 }
 
 // Parallax Sun, Moon & Brightness Arc
+let parallaxDocHeight = document.body.offsetHeight - window.innerHeight;
+window.addEventListener('resize', () => parallaxDocHeight = document.body.offsetHeight - window.innerHeight);
+
 window.addEventListener('scroll', () => {
     const scrollY = window.scrollY;
-    const docHeight = document.body.offsetHeight - window.innerHeight;
+    const docHeight = parallaxDocHeight || 1;
     let progress = scrollY / (docHeight || 1);
     progress = Math.max(0, Math.min(1, progress));
     
