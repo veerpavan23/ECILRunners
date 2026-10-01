@@ -299,8 +299,23 @@
                         <a href="https://www.facebook.com/groups/235470701400018/?ref=share" target="_blank" class="text-gray-600 hover:text-[#1877F2] transition-colors"><i class="fab fa-facebook-f text-lg"></i></a>
                         <a href="https://strava.app.link/a3QTJsNGP6b" target="_blank" class="text-gray-600 hover:text-[#FC4C02] transition-colors"><i class="fab fa-strava text-lg"></i></a>
                     </div>
-                    <button id="theme-toggle" class="text-gray-800 hover:text-[#F97316] transition-colors"><i class="fas fa-moon text-xl"></i></button>
-                      <button onclick="alert('Google Auth will open here!')"" class="bg-[#F97316] text-white px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase hover:bg-gray-900 transition-all shadow-md hover:shadow-lg flex items-center gap-2"><img src="https://www.svgrepo.com/show/475656/google-color.svg" class="h-4 w-4 bg-white rounded-full p-[2px]"> Sign In</button>
+                    <button id="theme-toggle" class="text-gray-800 hover:text-[#F97316] transition-colors w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/50"><i class="fas fa-moon text-xl"></i></button>
+                    <button id="nav-login-btn" class="bg-[#F97316] text-white px-6 py-2 rounded-full text-xs font-bold tracking-widest uppercase hover:bg-gray-900 transition-all shadow-md hover:shadow-lg flex items-center gap-2">Sign In</button>
+                    
+                    <!-- Logged in state (Hidden initially) -->
+                    <div id="nav-user-menu" class="hidden relative group cursor-pointer ml-2">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-white border-2 border-[#F97316] overflow-hidden flex items-center justify-center shadow-sm">
+                                <img id="nav-avatar" src="" alt="User" class="w-full h-full object-cover hidden">
+                                <i id="nav-avatar-fallback" class="fas fa-user text-gray-500"></i>
+                            </div>
+                        </div>
+                        <!-- Dropdown -->
+                        <div class="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 overflow-hidden z-50">
+                            <a href="#" id="nav-profile-link" class="block px-4 py-3 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 font-bold border-b border-gray-100 dark:border-gray-700 transition-colors">My Profile</a>
+                            <button id="nav-logout-btn" class="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 font-bold transition-colors">Sign Out</button>
+                        </div>
+                    </div>
                 </div>
             </div>
     </div>
@@ -734,8 +749,55 @@
     <a href="https://wa.me/919999999999" target="_blank" class="fixed bottom-32 right-6 bg-[#25D366] text-white w-14 h-14 rounded-full flex items-center justify-center text-3xl shadow-2xl hover:scale-110 transition-transform z-50 no-invert">
         <i class="fab fa-whatsapp"></i>
     </a>
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="fixed inset-0 bg-black/60 z-[110] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300 backdrop-blur-sm">
+        <div class="bg-white dark:bg-gray-900 w-full max-w-md rounded-3xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300 border border-gray-100 dark:border-gray-800 m-4" id="auth-modal-content">
+            <div class="p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-syncopate font-bold text-gray-900 dark:text-white" id="auth-title">Welcome</h3>
+                    <button id="auth-close" class="text-gray-400 hover:text-[#F97316] transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                
+                <p class="text-gray-500 text-sm mb-6 font-light" id="auth-subtitle">Sign in to track your runs and register for events.</p>
+                
+                <!-- Google Login Button (Disabled until client ID is provided) -->
+                <button class="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 py-3 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors mb-6 shadow-sm opacity-50 cursor-not-allowed" title="Google Auth requires Client ID setup in Supabase">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5">
+                    Continue with Google
+                </button>
+                
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="h-px bg-gray-200 dark:bg-gray-700 flex-1"></div>
+                    <span class="text-xs text-gray-400 uppercase tracking-widest font-bold">OR EMAIL</span>
+                    <div class="h-px bg-gray-200 dark:bg-gray-700 flex-1"></div>
+                </div>
+
+                <form id="auth-form" class="space-y-4">
+                    <div>
+                        <input type="email" id="auth-email" placeholder="Email Address" required class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#F97316] focus:border-transparent outline-none transition-all placeholder-gray-400">
+                    </div>
+                    <div>
+                        <input type="password" id="auth-password" placeholder="Password" required class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#F97316] focus:border-transparent outline-none transition-all placeholder-gray-400">
+                    </div>
+                    
+                    <div id="auth-error" class="text-red-500 text-xs font-bold hidden bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800">Error message</div>
+                    
+                    <button type="submit" id="auth-submit-btn" class="w-full bg-[#F97316] text-white py-3.5 rounded-xl font-bold tracking-widest uppercase hover:bg-gray-900 transition-colors shadow-lg shadow-[#F97316]/30 flex items-center justify-center gap-2">
+                        <span>Sign In</span>
+                    </button>
+                </form>
+                
+                <p class="text-center text-sm text-gray-500 mt-6 font-light">
+                    Don't have an account? <a href="#" id="auth-toggle-mode" class="text-[#F97316] font-bold hover:underline">Sign up</a>
+                </p>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
+
 
 
 
