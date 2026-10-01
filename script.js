@@ -676,6 +676,7 @@ const authPassword = document.getElementById('auth-password');
 const authError = document.getElementById('auth-error');
 const authSubmitBtn = document.getElementById('auth-submit-btn');
 const authToggleMode = document.getElementById('auth-toggle-mode');
+const authTogglePrefix = document.getElementById('auth-toggle-prefix');
 const authTitle = document.getElementById('auth-title');
 const navLogoutBtn = document.getElementById('nav-logout-btn');
 
@@ -803,3 +804,4 @@ if (typeof supabaseClient !== 'undefined') {
         }
     });
 }
+
