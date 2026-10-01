@@ -32,10 +32,15 @@ function updateScroll() {
     scrollPercent = Math.max(0, Math.min(1, scrollPercent));
     
     if(scrollTrack && scrollRunner) {
-        scrollTrack.style.width = `${scrollPercent * 100}%`;
+        scrollTrack.style.transform = 'scaleX(' + scrollPercent + ')';
+        scrollTrack.style.transformOrigin = 'left';
         
         // Prevent runner from going off-screen.
-        scrollRunner.style.left = `calc(${scrollPercent * 100}% + ${24 - (scrollPercent * 48)}px)`;
+        const screenWidth = window.innerWidth;
+        const maxScrollX = screenWidth - 48;
+        const currentX = scrollPercent * maxScrollX;
+        scrollRunner.style.transform = 'translate3d(' + currentX + 'px, 0, 0)';
+        scrollRunner.style.left = '0';
         
         let velocity = Math.abs(scrollTop - (window.lastScrollTop || 0));
 
@@ -69,12 +74,15 @@ function updateScroll() {
             }
             
             // Prevent HUD from going off-screen left/right
-            let screenX = 24 + scrollPercent * (window.innerWidth - 48);
+        const screenWidth = window.innerWidth;
+        const maxScrollX = screenWidth - 48;
+        const currentX = scrollPercent * maxScrollX;
+        let screenX = 24 + currentX;
             let hudShift = 0;
             if (screenX < 100) hudShift = 100 - screenX; // 100px buffer for left edge
             if (screenX > window.innerWidth - 100) hudShift = (window.innerWidth - 100) - screenX; // 100px buffer for right edge
-            runnerHud.style.left = `${screenX}px`;
-            runnerHud.style.transform = `translateX(calc(-50% + ${hudShift}px))`;
+        runnerHud.style.left = '0';
+            runnerHud.style.transform = 'translate3d(calc(' + currentX + 'px - 50% + 24px + ' + hudShift + 'px), -10px, 0)';
             
             // Distance (Assume page is a 10k run)
             let currentDist = (scrollPercent * 10).toFixed(1);
@@ -804,4 +812,7 @@ if (typeof supabaseClient !== 'undefined') {
         }
     });
 }
+
+
+
 
