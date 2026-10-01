@@ -59,7 +59,7 @@
             <form id="profile-form" class="p-8 sm:p-12">
                 <!-- Avatar Upload Section -->
                 <div class="flex flex-col sm:flex-row items-center gap-8 mb-12 pb-12 border-b border-gray-100 dark:border-gray-700">
-                    <div class="relative group cursor-pointer">
+                    <div class="relative group cursor-pointer" onclick="document.getElementById('profile-avatar-upload').click()">
                         <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-50 dark:border-gray-900 shadow-xl bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                             <img id="profile-avatar-preview" src="" alt="Avatar" class="w-full h-full object-cover hidden">
                             <i id="profile-avatar-fallback" class="fas fa-user text-5xl text-gray-400 dark:text-gray-500"></i>
@@ -67,12 +67,11 @@
                         <div class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                             <i class="fas fa-camera text-white text-2xl"></i>
                         </div>
-                        <!-- We will just use a URL input for now to avoid dealing with Supabase Storage buckets, or let them upload to storage later -->
                     </div>
                     <div class="text-center sm:text-left flex-1">
                         <h3 class="text-xl font-bold mb-2">Profile Photo</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Upload a high-res photo for the leaderboard.</p>
-                        <input type="file" id="profile-avatar-upload" accept="image/*" class="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:tracking-widest file:uppercase file:bg-[#F97316]/10 file:text-[#F97316] hover:file:bg-[#F97316]/20 transition-all cursor-pointer">
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-0">Click your avatar to upload a new high-res photo for the leaderboard.</p>
+                        <input type="file" id="profile-avatar-upload" accept="image/*" class="hidden">
                         <input type="hidden" id="profile-avatar-url">
                     </div>
                 </div>
@@ -160,5 +159,6 @@
     <script src="profile.js"></script>
 </body>
 </html>
+
 
 
