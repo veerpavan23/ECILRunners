@@ -72,7 +72,8 @@
                     <div class="text-center sm:text-left flex-1">
                         <h3 class="text-xl font-bold mb-2">Profile Photo</h3>
                         <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Upload a high-res photo for the leaderboard.</p>
-                        <input type="url" id="profile-avatar-url" placeholder="Paste image URL here..." class="w-full bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-[#F97316] outline-none transition-all">
+                        <input type="file" id="profile-avatar-upload" accept="image/*" class="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:tracking-widest file:uppercase file:bg-[#F97316]/10 file:text-[#F97316] hover:file:bg-[#F97316]/20 transition-all cursor-pointer">
+                        <input type="hidden" id="profile-avatar-url">
                     </div>
                 </div>
 
@@ -159,4 +160,5 @@
     <script src="profile.js"></script>
 </body>
 </html>
+
 

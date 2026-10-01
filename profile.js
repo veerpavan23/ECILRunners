@@ -67,17 +67,44 @@ async function loadProfile() {
     }
 }
 
-// Update avatar preview when URL changes
-if (inputAvatar) {
-    inputAvatar.addEventListener('input', (e) => {
-        const url = e.target.value;
-        if (url) {
-            avatarPreview.src = url;
+// Handle Avatar Upload to Supabase Storage
+const avatarUpload = document.getElementById('profile-avatar-upload');
+if (avatarUpload) {
+    avatarUpload.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            avatarPreview.src = event.target.result;
             avatarPreview.classList.remove('hidden');
             avatarFallback.classList.add('hidden');
-        } else {
-            avatarPreview.classList.add('hidden');
-            avatarFallback.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+
+        saveBtn.disabled = true;
+        saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Uploading Image...</span>';
+        msgBox.classList.add('hidden');
+        
+        try {
+            const { data: { user } } = await supabaseClient.auth.getUser();
+            const fileExt = file.name.split('.').pop();
+            const fileName = user.id + '-' + Math.random() + '.' + fileExt;
+
+            const { error: uploadError } = await supabaseClient.storage.from('avatars').upload(fileName, file, { upsert: true });
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabaseClient.storage.from('avatars').getPublicUrl(fileName);
+            
+            inputAvatar.value = publicUrl;
+            msgBox.textContent = 'Image uploaded! Click Save Profile to apply.';
+            msgBox.className = 'mb-6 p-4 rounded-xl text-sm font-bold text-center bg-green-50 text-green-600 block';
+        } catch (error) {
+            msgBox.textContent = "Upload failed: " + error.message + " (Check if 'avatars' storage bucket exists)";
+            msgBox.className = 'mb-6 p-4 rounded-xl text-sm font-bold text-center bg-red-50 text-red-600 block';
+        } finally {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<i class="fas fa-save"></i> <span>Save Profile</span>';
         }
     });
 }
@@ -124,4 +151,5 @@ if (form) {
 
 // Init
 document.addEventListener('DOMContentLoaded', loadProfile);
+
 
