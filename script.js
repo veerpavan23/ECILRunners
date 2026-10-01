@@ -758,7 +758,7 @@ if(authForm) {
             authError.classList.remove('hidden');
         } finally {
             authSubmitBtn.disabled = false;
-            authSubmitBtn.innerHTML = <span> + originalText + </span>;
+            authSubmitBtn.innerHTML = '<span>' + originalText + '</span>';
         }
     });
 }
