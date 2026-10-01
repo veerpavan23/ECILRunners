@@ -655,3 +655,151 @@ window.addEventListener('scroll', () => {
 
 
 
+
+// ==========================================
+// AUTHENTICATION LOGIC
+// ==========================================
+let currentUser = null;
+let isSignUpMode = false;
+
+// DOM Elements
+const navLoginBtn = document.getElementById('nav-login-btn');
+const navUserMenu = document.getElementById('nav-user-menu');
+const navAvatar = document.getElementById('nav-avatar');
+const navAvatarFallback = document.getElementById('nav-avatar-fallback');
+const authModal = document.getElementById('auth-modal');
+const authModalContent = document.getElementById('auth-modal-content');
+const authClose = document.getElementById('auth-close');
+const authForm = document.getElementById('auth-form');
+const authEmail = document.getElementById('auth-email');
+const authPassword = document.getElementById('auth-password');
+const authError = document.getElementById('auth-error');
+const authSubmitBtn = document.getElementById('auth-submit-btn');
+const authToggleMode = document.getElementById('auth-toggle-mode');
+const authTitle = document.getElementById('auth-title');
+const navLogoutBtn = document.getElementById('nav-logout-btn');
+
+// Open/Close Modal
+function openAuthModal() {
+    if(!authModal) return;
+    authModal.classList.remove('hidden');
+    authModal.classList.add('flex');
+    setTimeout(() => {
+        authModal.classList.remove('opacity-0');
+        if(authModalContent) authModalContent.classList.remove('scale-95');
+    }, 10);
+}
+
+function closeAuthModal() {
+    if(!authModal) return;
+    authModal.classList.add('opacity-0');
+    if(authModalContent) authModalContent.classList.add('scale-95');
+    setTimeout(() => {
+        authModal.classList.add('hidden');
+        authModal.classList.remove('flex');
+    }, 300);
+}
+
+if(navLoginBtn) navLoginBtn.addEventListener('click', openAuthModal);
+if(authClose) authClose.addEventListener('click', closeAuthModal);
+// Close modal when clicking outside
+if(authModal) {
+    authModal.addEventListener('click', (e) => {
+        if(e.target === authModal) closeAuthModal();
+    });
+}
+
+// Toggle Sign In / Sign Up
+if(authToggleMode) {
+    authToggleMode.addEventListener('click', (e) => {
+        e.preventDefault();
+        isSignUpMode = !isSignUpMode;
+        if(authTitle) authTitle.innerText = isSignUpMode ? 'Create Account' : 'Welcome Back';
+        if(authSubmitBtn) authSubmitBtn.querySelector('span').innerText = isSignUpMode ? 'Sign Up' : 'Sign In';
+        if(authToggleMode) authToggleMode.innerText = isSignUpMode ? 'Sign in instead' : 'Sign up';
+        if(authError) authError.classList.add('hidden');
+    });
+}
+
+// Handle Form Submit
+if(authForm) {
+    authForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if(!supabaseClient) {
+            authError.innerText = "Database connection error.";
+            authError.classList.remove('hidden');
+            return;
+        }
+        
+        const email = authEmail.value;
+        const password = authPassword.value;
+        
+        authSubmitBtn.disabled = true;
+        const originalText = authSubmitBtn.querySelector('span').innerText;
+        authSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Processing...</span>';
+        authError.classList.add('hidden');
+        
+        try {
+            if (isSignUpMode) {
+                const { data, error } = await supabaseClient.auth.signUp({ email, password });
+                if (error) throw error;
+                if (data?.user?.identities?.length === 0) {
+                    throw new Error("User already exists. Please sign in.");
+                }
+                alert("Account created successfully!");
+                closeAuthModal();
+            } else {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                closeAuthModal();
+            }
+        } catch (error) {
+            authError.innerText = error.message;
+            authError.classList.remove('hidden');
+        } finally {
+            authSubmitBtn.disabled = false;
+            authSubmitBtn.innerHTML = <span> + originalText + </span>;
+        }
+    });
+}
+
+// Logout
+if(navLogoutBtn) {
+    navLogoutBtn.addEventListener('click', async () => {
+        if(supabaseClient) {
+            await supabaseClient.auth.signOut();
+            window.location.reload();
+        }
+    });
+}
+
+// Listen to Auth State changes
+if (typeof supabaseClient !== 'undefined') {
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+        currentUser = session?.user || null;
+        
+        // Ensure nav elements exist (they might be hidden on mobile)
+        const desktopLoginBtns = document.querySelectorAll('#nav-login-btn');
+        const desktopUserMenus = document.querySelectorAll('#nav-user-menu');
+        
+        if (currentUser) {
+            desktopLoginBtns.forEach(btn => btn.classList.add('hidden'));
+            desktopUserMenus.forEach(menu => menu.classList.remove('hidden'));
+            
+            // Try to set avatar if google auth was used (fallback to default)
+            const avatars = document.querySelectorAll('#nav-avatar');
+            const fallbacks = document.querySelectorAll('#nav-avatar-fallback');
+            
+            if (currentUser.user_metadata?.avatar_url) {
+                avatars.forEach(a => { a.src = currentUser.user_metadata.avatar_url; a.classList.remove('hidden'); });
+                fallbacks.forEach(f => f.classList.add('hidden'));
+            } else {
+                avatars.forEach(a => a.classList.add('hidden'));
+                fallbacks.forEach(f => f.classList.remove('hidden'));
+            }
+        } else {
+            desktopLoginBtns.forEach(btn => btn.classList.remove('hidden'));
+            desktopUserMenus.forEach(menu => menu.classList.add('hidden'));
+        }
+    });
+}
