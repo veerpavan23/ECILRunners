@@ -23,6 +23,7 @@ const form = document.getElementById('profile-form');
 const msgBox = document.getElementById('profile-msg');
 const saveBtn = document.getElementById('profile-save-btn');
 const inputEmail = document.getElementById('profile-email');
+const inputPhone = document.getElementById('profile-phone');
 const inputName = document.getElementById('profile-name');
 const inputAge = document.getElementById('profile-age');
 const inputGender = document.getElementById('profile-gender');
@@ -50,6 +51,7 @@ async function loadProfile() {
     const meta = user.user_metadata || {};
     
     if (meta.full_name) inputName.value = meta.full_name;
+    if (meta.phone) inputPhone.value = meta.phone;
     if (meta.age) inputAge.value = meta.age;
     if (meta.gender) inputGender.value = meta.gender;
     if (meta.group) inputGroup.value = meta.group;
@@ -91,6 +93,7 @@ if (form) {
         
         const updates = {
             full_name: inputName.value,
+            phone: inputPhone.value,
             age: inputAge.value,
             gender: inputGender.value,
             group: inputGroup.value,
@@ -121,3 +124,4 @@ if (form) {
 
 // Init
 document.addEventListener('DOMContentLoaded', loadProfile);
+
