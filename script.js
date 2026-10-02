@@ -855,3 +855,29 @@ if (typeof supabaseClient !== 'undefined') {
 
 
 
+
+// Google OAuth Login
+const googleLoginBtn = document.getElementById('google-login-btn');
+const modalGoogleLoginBtn = document.getElementById('modal-google-login-btn');
+
+async function triggerGoogleLogin() {
+    try {
+        const { data, error } = await supabaseClient.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin + window.location.pathname
+            }
+        });
+        if (error) throw error;
+    } catch (error) {
+        if (authError) {
+            authError.textContent = error.message;
+            authError.classList.remove('hidden');
+        } else {
+            alert(error.message);
+        }
+    }
+}
+
+if (googleLoginBtn) googleLoginBtn.addEventListener('click', triggerGoogleLogin);
+if (modalGoogleLoginBtn) modalGoogleLoginBtn.addEventListener('click', triggerGoogleLogin);
