@@ -555,8 +555,8 @@ async function loadLiveMerch() {
                                             <span class="text-[#F97316] font-bold text-lg whitespace-nowrap">${mc.price}</span>
                                         </div>
                                         <p class="text-sm text-gray-500 mb-6">Sizes: ${mc.sizes}</p>
-                                        <button class="w-full bg-gray-900 text-white py-3 rounded-xl font-bold tracking-wide hover:bg-[#F97316] transition-colors flex items-center justify-center gap-2">
-                                            Buy via WhatsApp
+                                        <button onclick="triggerRazorpay(this)" data-title="`${mc.title}`" data-price="`${mc.price}`" class="w-full bg-gray-900 text-white py-3 rounded-xl font-bold tracking-wide hover:bg-[#F97316] transition-colors flex items-center justify-center gap-2">
+                                            Buy Now (Razorpay)
                                         </button>
                                     </div>
                                 </div>
@@ -907,3 +907,66 @@ async function fetchRunnerOfTheMonth() {
     }
 }
 fetchRunnerOfTheMonth();
+
+
+// Razorpay Integration
+async function triggerRazorpay(btn) {
+    if (!currentUser) {
+        alert("Please sign in first to purchase merchandise.");
+        openAuthModal();
+        return;
+    }
+
+    const title = btn.getAttribute('data-title');
+    const priceStr = btn.getAttribute('data-price');
+    // Extract numbers from price string (e.g. '?500' -> 500)
+    let amountStr = priceStr.replace(/\D/g, '');
+    let amount = parseInt(amountStr, 10);
+    
+    if (isNaN(amount) || amount <= 0) {
+        amount = 500; // Fallback to 500 INR
+    }
+
+    // Optional: prompt for size
+    const size = prompt("What size would you like? (S, M, L, XL, XXL)");
+    if (!size) return;
+
+    var options = {
+        "key": "rzp_test_TiuzwhnFy7axHJ", // User's Test Key
+        "amount": (amount * 100).toString(), // Razorpay expects amount in paise
+        "currency": "INR",
+        "name": "ECIL Runners",
+        "description": title + " (Size: " + size + ")",
+        "image": "https://ecil-runners.vercel.app/assets/logo.png",
+        "handler": async function (response) {
+            alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
+            
+            // Save to database
+            try {
+                await supabaseClient.from('merch_orders').insert([{
+                    user_id: currentUser.id,
+                    item_name: title,
+                    size: size,
+                    amount: amount,
+                    razorpay_payment_id: response.razorpay_payment_id,
+                    status: 'SUCCESS'
+                }]);
+                console.log("Order saved to database!");
+            } catch (err) {
+                console.error("Failed to save order to database:", err);
+            }
+        },
+        "prefill": {
+            "name": currentUser.user_metadata?.full_name || "ECIL Runner",
+            "email": currentUser.email
+        },
+        "theme": {
+            "color": "#F97316"
+        }
+    };
+    var rzp1 = new Razorpay(options);
+    rzp1.on('payment.failed', function (response){
+        alert("Payment Failed. Reason: " + response.error.description);
+    });
+    rzp1.open();
+}
