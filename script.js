@@ -555,7 +555,7 @@ async function loadLiveMerch() {
                                             <span class="text-[#F97316] font-bold text-lg whitespace-nowrap">${mc.price}</span>
                                         </div>
                                         <p class="text-sm text-gray-500 mb-6">Sizes: ${mc.sizes}</p>
-                                        <button onclick="triggerRazorpay(this)" data-title="`${mc.title}`" data-price="`${mc.price}`" class="w-full bg-gray-900 text-white py-3 rounded-xl font-bold tracking-wide hover:bg-[#F97316] transition-colors flex items-center justify-center gap-2">
+                                        <button onclick="triggerRazorpay(this)" data-title="${mc.title}" data-price="${mc.price}" class="w-full bg-gray-900 text-white py-3 rounded-xl font-bold tracking-wide hover:bg-[#F97316] transition-colors flex items-center justify-center gap-2">
                                             Buy Now (Razorpay)
                                         </button>
                                     </div>
@@ -970,3 +970,4 @@ async function triggerRazorpay(btn) {
     });
     rzp1.open();
 }
+
