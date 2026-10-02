@@ -881,3 +881,29 @@ async function triggerGoogleLogin() {
 
 if (googleLoginBtn) googleLoginBtn.addEventListener('click', triggerGoogleLogin);
 if (modalGoogleLoginBtn) modalGoogleLoginBtn.addEventListener('click', triggerGoogleLogin);
+
+
+// Fetch Dynamic Runner of the Month
+async function fetchRunnerOfTheMonth() {
+    try {
+        if (typeof supabaseClient === 'undefined') return;
+        const { data, error } = await supabaseClient
+            .from('runner_of_the_month')
+            .select('*')
+            .eq('id', 1)
+            .single();
+            
+        if (data) {
+            const nameEl = document.getElementById('spotlight-name');
+            const descEl = document.getElementById('spotlight-desc');
+            const imgEl = document.getElementById('spotlight-img');
+            
+            if (nameEl) nameEl.textContent = data.name;
+            if (descEl) descEl.textContent = " + data.quote + ";
+            if (imgEl && data.image_url) imgEl.src = data.image_url;
+        }
+    } catch (e) {
+        console.log('Using static fallback for Runner of the Month.');
+    }
+}
+fetchRunnerOfTheMonth();
