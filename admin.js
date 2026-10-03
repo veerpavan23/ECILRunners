@@ -627,8 +627,47 @@ async function markAttended(regId, eventId) {
 document.querySelectorAll('[data-tab]').forEach(btn => {
     btn.addEventListener('click', () => {
         if (btn.dataset.tab === 'attendance') loadAttendanceEvents();
+        if (btn.dataset.tab === 'users') loadUsers();
     });
 });
 
 
 
+
+
+// --- USER MANAGEMENT ---
+async function loadUsers() {
+    const tbody = document.getElementById('users-list-body');
+    const countBadge = document.getElementById('users-total-count');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4"><i class="fas fa-spinner fa-spin mr-2"></i> Loading users...</td></tr>';
+    
+    const { data, error, count } = await supabaseClient
+        .from('profiles')
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false });
+        
+    if (error) {
+        tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-red-500">Error loading users.</td></tr>';
+        return;
+    }
+    
+    if (countBadge) countBadge.textContent = `Total: ${count}`;
+    
+    if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4">No users found.</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = data.map(user => {
+        const date = new Date(user.created_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+        return `
+            <tr class="bg-white border-b hover:bg-gray-50">
+                <td class="px-6 py-4 font-bold text-gray-900">${user.full_name || 'Unknown'}</td>
+                <td class="px-6 py-4">${user.email || 'N/A'}</td>
+                <td class="px-6 py-4 font-mono text-xs text-gray-400">${date}</td>
+            </tr>
+        `;
+    }).join('');
+}
