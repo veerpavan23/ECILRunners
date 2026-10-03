@@ -568,10 +568,6 @@ async function loadEventRegistrations(eventId) {
     }
     list.innerHTML = 'Loading runners...';
     
-    // We need to fetch registrations and the users' emails/names
-    // Because we just use auth.users, we might not have names easily without a profiles table, 
-    // but we can just show user_id or if we have a profiles table we join.
-    // For now we just show the raw data we can get.
     const { data, error } = await supabaseClient
         .from('event_registrations')
         .select('*')
@@ -587,8 +583,24 @@ async function loadEventRegistrations(eventId) {
         return;
     }
     
-        list.innerHTML = data.map(reg => `
-        <div class="flex justify-between items-center p-3 border rounded-lg bg-gray-50">
+    const totalRegistered = data.length;
+    const totalAttended = data.filter(r => r.status === 'attended').length;
+    
+    let html = `
+        <div class="flex gap-4 mb-4">
+            <div class="bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 w-1/2">
+                <span class="text-xs text-gray-500 uppercase tracking-widest font-bold block">Total Registered</span>
+                <span class="text-2xl font-bold text-gray-900">${totalRegistered}</span>
+            </div>
+            <div class="bg-orange-50 px-4 py-2 rounded-lg border border-orange-100 w-1/2">
+                <span class="text-xs text-[#F97316] uppercase tracking-widest font-bold block">Total Attended</span>
+                <span class="text-2xl font-bold text-[#F97316]">${totalAttended}</span>
+            </div>
+        </div>
+    `;
+    
+    html += data.map(reg => `
+        <div class="flex justify-between items-center p-3 border rounded-lg bg-gray-50 mb-2">
             <div>
                 <div class="font-bold text-gray-800 text-sm">${reg.user_name || 'Unknown Runner'}</div>
                 <div class="font-mono text-xs text-gray-400">${reg.user_email || reg.user_id.substring(0,8)}</div>
@@ -601,6 +613,8 @@ async function loadEventRegistrations(eventId) {
             </div>
         </div>
     `).join('');
+    
+    list.innerHTML = html;
 }
 
 async function markAttended(regId, eventId) {
@@ -615,5 +629,6 @@ document.querySelectorAll('[data-tab]').forEach(btn => {
         if (btn.dataset.tab === 'attendance') loadAttendanceEvents();
     });
 });
+
 
 
