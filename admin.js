@@ -698,17 +698,36 @@ async function loadUsers() {
         return;
     }
     
-    tbody.innerHTML = data.map(user => {
+        tbody.innerHTML = data.map(user => {
         const date = new Date(user.created_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+        const isAdmin = user.is_admin === true;
         return `
             <tr class="bg-white border-b hover:bg-gray-50">
                 <td class="px-6 py-4 font-bold text-gray-900">${user.full_name || 'Unknown'}</td>
                 <td class="px-6 py-4">${user.email || 'N/A'}</td>
                 <td class="px-6 py-4 font-mono text-xs text-gray-400">${date}</td>
+                <td class="px-6 py-4">
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" onchange="toggleAdmin('${user.id}', this.checked)" class="sr-only peer" ${isAdmin ? 'checked' : ''}>
+                        <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#F97316]"></div>
+                        <span class="ms-3 text-xs font-bold text-gray-500">${isAdmin ? 'ADMIN' : 'User'}</span>
+                    </label>
+                </td>
             </tr>
         `;
     }).join('');
 }
+
+async function toggleAdmin(userId, makeAdmin) {
+    const { error } = await supabaseClient.from('profiles').update({ is_admin: makeAdmin }).eq('id', userId);
+    if (error) {
+        alert("Error updating permissions. Do you have permission?");
+        loadUsers(); 
+    } else {
+        loadUsers(); 
+    }
+}
+
 
 
 
