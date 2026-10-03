@@ -154,11 +154,72 @@
                 </div>
             </form>
         </div>
+
+        <!-- ECIL RUNNER'S PASSPORT SECTION -->
+        <div class="mt-12 mb-8 text-center">
+            <h2 class="text-3xl font-syncopate font-bold mb-2 text-[#F97316]">ECIL Runner's Passport</h2>
+            <p class="text-gray-500 dark:text-gray-400 font-light text-sm max-w-2xl mx-auto">Track your runs, attend community events, and build your Trophy Cabinet to earn points and climb the ECIL Leaderboard.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <!-- Pillar 1: Strava -->
+            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-8 text-center relative overflow-hidden">
+                <div class="w-16 h-16 bg-orange-100 dark:bg-orange-900/30 text-[#F97316] rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fab fa-strava text-3xl"></i>
+                </div>
+                <h3 class="font-syncopate font-bold text-lg mb-2">Strava Stats</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-6 h-10">Auto-sync your daily training kilometers.</p>
+                
+                <div id="strava-unconnected">
+                    <button id="connect-strava-btn" class="w-full bg-[#FC4C02] text-white py-3 rounded-xl font-bold tracking-wide hover:bg-[#E34402] transition-colors shadow-lg shadow-orange-500/30 flex justify-center items-center gap-2">
+                        Connect Strava
+                    </button>
+                </div>
+                
+                <div id="strava-connected" class="hidden">
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 mb-4">
+                        <div class="text-3xl font-syncopate font-bold text-[#F97316]" id="strava-total-km">0</div>
+                        <div class="text-xs font-bold tracking-widest text-gray-400 uppercase mt-1">Total KM Logged</div>
+                    </div>
+                    <button id="sync-strava-btn" class="w-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 py-2 rounded-xl text-sm font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                        <i class="fas fa-sync-alt mr-2"></i> Sync Now
+                    </button>
+                </div>
+            </div>
+
+            <!-- Pillar 2: Community -->
+            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-8 text-center">
+                <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-users text-2xl"></i>
+                </div>
+                <h3 class="font-syncopate font-bold text-lg mb-2">Community</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-6 h-10">Weekend ECIL runs attended.</p>
+                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+                    <div class="text-3xl font-syncopate font-bold text-blue-500" id="community-events-count">0</div>
+                    <div class="text-xs font-bold tracking-widest text-gray-400 uppercase mt-1">Events Attended</div>
+                </div>
+            </div>
+
+            <!-- Pillar 3: Trophy Cabinet -->
+            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-700 p-8 text-center">
+                <div class="w-16 h-16 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-trophy text-2xl"></i>
+                </div>
+                <h3 class="font-syncopate font-bold text-lg mb-2">Trophy Cabinet</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-6 h-10">Official external races completed.</p>
+                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4 mb-4">
+                    <div class="text-3xl font-syncopate font-bold text-yellow-500" id="trophy-count">0</div>
+                    <div class="text-xs font-bold tracking-widest text-gray-400 uppercase mt-1">Medals Earned</div>
+                </div>
+                <button onclick="alert('Add Race feature coming soon!')" class="text-xs font-bold text-[#F97316] hover:underline uppercase tracking-widest">+ Add a Race</button>
+            </div>
+        </div>
     </main>
 
     <script src="profile.js"></script>
 </body>
 </html>
+
 
 
 
