@@ -649,22 +649,26 @@ async function loadStravaStats() {
 document.addEventListener('DOMContentLoaded', loadStravaStats);
 
 // Dark Mode Toggle Logic
-const themeToggle = document.getElementById('theme-toggle');
-if (themeToggle) {
-    // Check saved theme
-    if (localStorage.getItem('theme') === 'dark') {
-        document.documentElement.classList.add('dark');
-        themeToggle.innerHTML = '<i class="fas fa-sun text-xl"></i>';
-    }
-    
+const themeToggles = document.querySelectorAll('#theme-toggle');
+
+if (localStorage.getItem('theme') === 'dark') {
+    document.documentElement.classList.add('dark');
+    themeToggles.forEach(btn => {
+        btn.innerHTML = '<i class="fas fa-sun text-xl"></i>';
+    });
+}
+
+themeToggles.forEach(themeToggle => {
     themeToggle.addEventListener('click', () => {
         document.documentElement.classList.toggle('dark');
         const isDark = document.documentElement.classList.contains('dark');
         localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        themeToggle.innerHTML = isDark ? '<i class="fas fa-sun text-xl"></i>' : '<i class="fas fa-moon text-xl"></i>';
+        
+        themeToggles.forEach(btn => {
+            btn.innerHTML = isDark ? '<i class="fas fa-sun text-xl"></i>' : '<i class="fas fa-moon text-xl"></i>';
+        });
     });
-}
-
+});
 // Parallax Sun, Moon & Brightness Arc
 let parallaxDocHeight = cachedDocHeight; // Reuse the perfectly calculated height
 
@@ -1037,6 +1041,7 @@ async function rsvpForEvent(eventId, buttonElement) {
         buttonElement.disabled = false;
     }
 }
+
 
 
 
