@@ -681,6 +681,14 @@ async function loadUsers() {
     
     tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4"><i class="fas fa-spinner fa-spin mr-2"></i> Loading users...</td></tr>';
     
+    // Check if the current user is a super_admin
+    const { data: sessionData } = await supabaseClient.auth.getSession();
+    let isSuperAdmin = false;
+    if (sessionData?.session?.user) {
+        const { data: currentProfile } = await supabaseClient.from('profiles').select('super_admin').eq('id', sessionData.session.user.id).single();
+        isSuperAdmin = currentProfile?.super_admin === true;
+    }
+
     const { data, error, count } = await supabaseClient
         .from('profiles')
         .select('*', { count: 'exact' })
@@ -698,17 +706,22 @@ async function loadUsers() {
         return;
     }
     
-        tbody.innerHTML = data.map(user => {
+    tbody.innerHTML = data.map(user => {
         const date = new Date(user.created_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
         const isAdmin = user.is_admin === true;
+        const disableToggle = !isSuperAdmin;
+        
         return `
             <tr class="bg-white border-b hover:bg-gray-50">
-                <td class="px-6 py-4 font-bold text-gray-900">${user.full_name || 'Unknown'}</td>
+                <td class="px-6 py-4 font-bold text-gray-900">
+                    ${user.full_name || 'Unknown'}
+                    ${user.super_admin ? '<span class="ml-2 bg-purple-100 text-purple-800 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-widest">Super Admin</span>' : ''}
+                </td>
                 <td class="px-6 py-4">${user.email || 'N/A'}</td>
                 <td class="px-6 py-4 font-mono text-xs text-gray-400">${date}</td>
                 <td class="px-6 py-4">
-                    <label class="inline-flex items-center cursor-pointer">
-                        <input type="checkbox" onchange="toggleAdmin('${user.id}', this.checked)" class="sr-only peer" ${isAdmin ? 'checked' : ''}>
+                    <label class="inline-flex items-center ${disableToggle ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}">
+                        <input type="checkbox" onchange="toggleAdmin('${user.id}', this.checked)" class="sr-only peer" ${isAdmin ? 'checked' : ''} ${disableToggle ? 'disabled' : ''}>
                         <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#F97316]"></div>
                         <span class="ms-3 text-xs font-bold text-gray-500">${isAdmin ? 'ADMIN' : 'User'}</span>
                     </label>
@@ -717,7 +730,6 @@ async function loadUsers() {
         `;
     }).join('');
 }
-
 async function toggleAdmin(userId, makeAdmin) {
     const { error } = await supabaseClient.from('profiles').update({ is_admin: makeAdmin }).eq('id', userId);
     if (error) {
@@ -727,6 +739,7 @@ async function toggleAdmin(userId, makeAdmin) {
         loadUsers(); 
     }
 }
+
 
 
 
