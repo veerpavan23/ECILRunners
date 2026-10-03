@@ -3,83 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - ECIL Runners</title>
+    <title>Admin Dashboard | ECIL Runners</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f9fafb; }
-        h1, h2, h3, .font-syncopate { font-family: 'Syncopate', sans-serif; }
-    </style>
-</head>
-<body class="text-gray-800">
-    <!-- Navbar -->
-    <nav class="fixed w-full z-50 transition-all duration-300 bg-white/90 backdrop-blur-md shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <a href="index.html" class="flex items-center gap-3">
-                    <img src="assets/logo.png" alt="ECIL Runners" class="h-12 w-auto object-contain">
-                    <span class="font-syncopate font-bold text-xl tracking-wider text-gray-900 hidden sm:block">ECIL RUNNERS</span>
-                </a>
-                <div class="flex items-center gap-4">
-                    <a href="index.html" class="text-sm font-bold tracking-widest uppercase text-gray-600 hover:text-[#F97316]">Back to Site</a>
-                </div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">`n</head>
+<body class="bg-gray-50 min-h-screen font-sans text-gray-800">
+    
+    <!-- Login Screen -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center bg-gradient-to-r from-[#fffbeb] via-[#fef3c7] to-[#fffbeb]">
+        <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full border border-yellow-200">
+            <div class="text-center mb-8">
+                <img src="assets/logo.png" alt="Logo" class="h-12 mx-auto mix-blend-multiply mb-4">
+                <h2 class="text-2xl font-bold text-gray-900">Admin Portal</h2>
             </div>
-        </div>
-    </nav>
-
-    <div class="pt-32 pb-24 max-w-4xl mx-auto px-4">
-        <div class="mb-10 text-center">
-            <h1 class="text-3xl font-syncopate font-bold text-gray-900 mb-2">Admin Dashboard</h1>
-            <p class="text-gray-500">Manage website content seamlessly.</p>
-            <div id="admin-error" class="hidden mt-4 bg-red-100 text-red-700 p-4 rounded-xl text-sm font-medium"></div>
-        </div>
-
-        <!-- Manage Runner of the Month -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8" id="admin-panel" style="display: none;">
-            <h2 class="text-xl font-syncopate font-bold text-gray-900 mb-6 flex items-center gap-3">
-                <i class="fas fa-star text-[#F97316]"></i> Update Runner of the Month
-            </h2>
-            
-            <div class="space-y-6">
+            <form id="login-form" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Runner Name</label>
-                    <input type="text" id="rotm-name" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-[#F97316] focus:border-[#F97316] block p-3">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F97316] focus:border-[#F97316] outline-none" required>
                 </div>
-                
                 <div>
-                    <label class="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Inspirational Quote</label>
-                    <textarea id="rotm-quote" rows="3" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-xl focus:ring-[#F97316] focus:border-[#F97316] block p-3"></textarea>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#F97316] focus:border-[#F97316] outline-none" required>
                 </div>
-
-                <div>
-                    <label class="block text-xs font-bold tracking-widest text-gray-500 uppercase mb-2">Runner Photo</label>
-                    <div class="flex items-center gap-4">
-                        <img id="rotm-preview" src="" class="w-20 h-20 rounded-full object-cover border-2 border-gray-200 hidden">
-                        <label class="cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                            <i class="fas fa-camera mr-2"></i> Upload New Photo
-                            <input type="file" id="rotm-file" class="hidden" accept="image/*">
-                        </label>
-                        <span id="upload-status" class="text-sm text-gray-500 hidden"><i class="fas fa-spinner fa-spin mr-1"></i> Uploading...</span>
-                    </div>
-                    <input type="hidden" id="rotm-image-url">
-                </div>
-
-                <button id="save-rotm" class="w-full bg-[#F97316] hover:bg-[#ea580c] text-white font-bold py-3 px-4 rounded-xl transition-colors mt-4 flex justify-center items-center gap-2">
-                    <i class="fas fa-save"></i> Save Changes
-                </button>
-                <div id="save-success" class="hidden text-green-600 text-sm font-bold text-center mt-2"><i class="fas fa-check-circle mr-1"></i> Successfully updated!</div>
-            </div>
-        </div>
-        
-        <div id="loading-state" class="text-center py-12 text-gray-500">
-            <i class="fas fa-spinner fa-spin text-3xl mb-4"></i>
-            <p>Authenticating...</p>
+                <button type="submit" class="w-full bg-[#F97316] text-white py-2 rounded-lg font-bold hover:bg-orange-600 transition-colors">Login</button>
+                <p id="login-error" class="text-red-500 text-sm text-center hidden"></p>
+            </form>
         </div>
     </div>
 
-    <!-- We will reuse the same supabase client from script.js config indirectly by declaring it here -->
-    <script src="admin.js"></script>
+    <!-- Main Dashboard -->
+    <div id="dashboard-screen" class="hidden min-h-screen flex flex-col">
+        <nav class="bg-white shadow-sm border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <img src="assets/logo.png" alt="Logo" class="h-8 mix-blend-multiply">
+                <h1 class="text-xl font-bold text-gray-800">Dashboard</h1>
+            </div>
+            <button id="logout-btn" class="text-gray-500 hover:text-red-500 font-medium">Logout</button>
+        </nav>
+        
+        <div class="flex-1 flex overflow-hidden">
+            <!-- Sidebar -->
+            <aside class="w-64 bg-white border-r border-gray-200 p-4 space-y-2">
+                <button class="w-full text-left px-4 py-2 rounded-lg bg-orange-50 text-[#F97316] font-bold" data-tab="events">Events</button>
+                <button class="w-full text-left px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="merch">Merchandise</button>
+                <button class="w-full text-left px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="gallery">Gallery</button>
+                <button class="w-full text-left px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="orders">Orders (Razorpay)</button>
+                <button class="w-full text-left px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="users">Manage Users</button>
+            </aside>
+            
+            <!-- Content Area -->
+                        <main class="flex-1 p-8 overflow-y-auto bg-gray-50 relative">
+                
+                <!-- Events Tab -->
+                <div id="tab-events" class="tab-content max-w-4xl mx-auto space-y-6">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h2 class="text-xl font-bold mb-4">Add New Event</h2>
+                        <form id="form-event" class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label class="block text-sm text-gray-600 mb-1">Title</label><input type="text" id="ev-title" required class="w-full border rounded p-2"></div>
+                                <div><label class="block text-sm text-gray-600 mb-1">Date</label><input type="text" id="ev-date" placeholder="e.g. October 15, 2024" required class="w-full border rounded p-2"></div>
+                                <div><label class="block text-sm text-gray-600 mb-1">Location</label><input type="text" id="ev-location" required class="w-full border rounded p-2"></div><div><label class="block text-sm text-gray-600 mb-1">Price</label><input type="text" id="ev-price" placeholder="e.g. FREE or $25" required class="w-full border rounded p-2"></div>
+                                <div><label class="block text-sm text-gray-600 mb-1">Image Upload</label><input type="file" id="ev-image" accept="image/*" class="w-full border rounded p-1"></div></div><div class="mt-4"><label class="block text-sm text-gray-600 mb-1">Description (Tag line)</label><textarea id="ev-description" required class="w-full border rounded p-2" rows="2"></textarea>
+                            </div>
+                            <button type="submit" class="bg-[#F97316] text-white px-6 py-2 rounded font-bold">Save Event</button>
+                        </form>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h2 class="text-xl font-bold mb-4">Current Events</h2>
+                        <div id="list-events" class="space-y-3">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- Merch Tab -->
+                <div id="tab-merch" class="tab-content hidden max-w-4xl mx-auto space-y-6">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h2 class="text-xl font-bold mb-4">Add Merchandise</h2>
+                                                <form id="form-merch" class="space-y-4">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div><label class="block text-sm text-gray-600 mb-1">Category</label>
+                                    <input type="text" id="mc-category" list="category-options" placeholder="e.g. Mens Collection" required class="w-full border rounded p-2">
+                                    <datalist id="category-options"></datalist>
+                                </div>
+                                <div><label class="block text-sm text-gray-600 mb-1">Item Name</label><input type="text" id="mc-title" required class="w-full border rounded p-2"></div>
+                                <div><label class="block text-sm text-gray-600 mb-1">Price</label><input type="text" id="mc-price" placeholder="e.g. ?499" required class="w-full border rounded p-2"></div>
+                                <div><label class="block text-sm text-gray-600 mb-1">Sizes Available</label><input type="text" id="mc-sizes" placeholder="e.g. S, M, L, XL" required class="w-full border rounded p-2"></div>
+                                <div class="col-span-2"><label class="block text-sm text-gray-600 mb-1">Product Images (Front, Back, Size Chart)</label><input type="file" id="mc-images" accept="image/*" multiple required class="w-full border rounded p-1 bg-gray-50"></div>
+                            </div>
+                            <button type="submit" class="bg-[#F97316] text-white px-6 py-2 rounded font-bold">Save Merchandise</button>
+                            <p id="mc-status" class="text-sm text-gray-500 mt-2 font-medium"></p>
+                        </form>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h2 class="text-xl font-bold mb-4">Current Merchandise</h2>
+                        <div id="list-merch" class="space-y-3">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- Placeholders for others -->
+                                <div id="tab-gallery" class="tab-content hidden max-w-4xl mx-auto space-y-6">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h2 class="text-xl font-bold mb-4">Upload Gallery Photos</h2>
+                        <form id="form-gallery" class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div><label class="block text-sm text-gray-600 mb-1">Album / Event Name</label><input type="text" id="gl-album" placeholder="e.g. Monsoon Run 2024" required class="w-full border rounded p-2"></div>
+                                <div><label class="block text-sm text-gray-600 mb-1">Select Photos (Multiple)</label><input type="file" id="gl-images" accept="image/*" multiple required class="w-full border rounded p-1 bg-gray-50"></div>
+                            </div>
+                            <button type="submit" class="bg-[#F97316] text-white px-6 py-2 rounded font-bold">Upload to Album</button>
+                            <p id="gl-status" class="text-sm text-gray-500 mt-2 font-medium"></p>
+                        </form>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h2 class="text-xl font-bold mb-4">Current Albums</h2>
+                        <div id="list-gallery" class="space-y-6">Loading...</div>
+                    </div>
+                </div>
+                <div id="tab-orders" class="tab-content hidden max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-6"><h2 class="text-xl font-bold">Razorpay Orders (Coming in Phase 2)</h2></div>
+                <div id="tab-users" class="tab-content hidden max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-6"><h2 class="text-xl font-bold">User Management (Coming Soon)</h2></div>
+                
+                <!-- Loading overlay -->
+                <div id="admin-loader" class="hidden absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center"><div class="text-xl font-bold text-gray-600 animate-pulse">Processing...</div></div>
+            </main>
+        </div>
+    </div>
+
+    <script src="admin.js?v=final2"></script>
+    <!-- Generic Edit Modal -->
+    <div id="edit-modal" class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center backdrop-blur-sm">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 relative">
+            <button onclick="closeEditModal()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors"><i class="fas fa-times text-2xl"></i></button>
+            <h2 id="edit-modal-title" class="text-2xl font-syncopate font-bold mb-6 border-b pb-2">Edit Item</h2>
+            <div id="edit-modal-content"></div>
+        </div>
+    </div>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
