@@ -327,11 +327,32 @@ async function loadLiveEvents() {
     if (!container) return;
 
     try {
-        const { data, error } = await supabaseClient.from('events').select('*').order('created_at', { ascending: false }).limit(3);
-        if (error) throw error;
+        const { data: { user } } = await supabaseClient.auth.getUser();
         
-        if (data && data.length > 0) {
-            container.innerHTML = data.map(ev => `
+        // Fetch events
+        const { data: events, error: eventsError } = await supabaseClient.from('events').select('*').order('created_at', { ascending: false }).limit(3);
+        if (eventsError) throw eventsError;
+        
+        let userRegistrations = [];
+        if (user) {
+            const { data: regs } = await supabaseClient
+                .from('event_registrations')
+                .select('event_id')
+                .eq('user_id', user.id);
+            if (regs) {
+                userRegistrations = regs.map(r => r.event_id);
+            }
+        }
+        
+        if (events && events.length > 0) {
+            container.innerHTML = events.map(ev => {
+                const isRegistered = userRegistrations.includes(ev.id);
+                
+                const buttonHtml = isRegistered 
+                    ? `<button disabled class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-bold"><i class="fas fa-check mr-1"></i> Registered</button>`
+                    : `<button onclick="rsvpForEvent('${ev.id}', this)" class="bg-[#F97316] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-[#ea580c] transition-colors">RSVP</button>`;
+
+                return `
                 <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:-translate-y-2 transition-all duration-300 group">
                     <div class="relative h-48 overflow-hidden">
                         <img src="${ev.image_url || 'assets/events_marathon.jpg'}" alt="Event" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -348,16 +369,12 @@ async function loadLiveEvents() {
                         <p class="text-gray-600 text-sm mb-6 line-clamp-2">${ev.description || 'Join us for this amazing ECIL Runners event. See you at the starting line!'}</p>
                         <div class="flex justify-between items-center pt-4 border-t border-gray-100">
                             <span class="font-bold text-gray-900">${ev.price || 'FREE'}</span>
-                              <button onclick="rsvpForEvent('${ev.id}', this)" class="bg-[#F97316] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-[#ea580c] transition-colors">
-                                  RSVP
-                              </button>
-                            <button class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#F97316] group-hover:text-white transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                            </button>
+                            ${buttonHtml}
                         </div>
                     </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
         }
     } catch (err) {
         console.error("Failed to fetch live events:", err);
@@ -1020,5 +1037,6 @@ async function rsvpForEvent(eventId, buttonElement) {
         buttonElement.disabled = false;
     }
 }
+
 
 
