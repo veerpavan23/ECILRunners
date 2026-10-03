@@ -71,8 +71,21 @@ if (googleBtn) {
 
 // Check session on load
 async function checkSession() {
-    const { data: { session } 
-
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) {
+        // Verify admin status on reload too
+        const { data: profile } = await supabaseClient.from('profiles').select('is_admin').eq('id', session.user.id).single();
+        if (profile && profile.is_admin === true) {
+            loginScreen.classList.add('hidden');
+            dashboardScreen.classList.remove('hidden');
+            loadDashboardData();
+        } else {
+            await supabaseClient.auth.signOut();
+            const errorEl = document.getElementById('login-error');
+            errorEl.textContent = "Access Denied: Your account does not have Admin access.";
+            errorEl.classList.remove('hidden');
+        }
+    }
 }
 checkSession();
 
@@ -696,6 +709,7 @@ async function loadUsers() {
         `;
     }).join('');
 }
+
 
 
 
