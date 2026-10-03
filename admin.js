@@ -547,3 +547,68 @@ window.openEditGallery = async (albumName) => {
 
 
 
+
+
+// --- ATTENDANCE MANAGEMENT ---
+async function loadAttendanceEvents() {
+    const select = document.getElementById('attendance-event-select');
+    if (!select) return;
+    const { data, error } = await supabaseClient.from('events').select('id, title, date').order('created_at', { ascending: false });
+    if (data) {
+        select.innerHTML = '<option value="">Select an Event...</option>' + 
+            data.map(ev => `<option value="${ev.id}">${ev.title} (${ev.date})</option>`).join('');
+    }
+}
+
+async function loadEventRegistrations(eventId) {
+    const list = document.getElementById('attendance-list');
+    if (!eventId) {
+        list.innerHTML = '<p class="text-sm text-gray-500">Select an event above to see registered runners.</p>';
+        return;
+    }
+    list.innerHTML = 'Loading runners...';
+    
+    // We need to fetch registrations and the users' emails/names
+    // Because we just use auth.users, we might not have names easily without a profiles table, 
+    // but we can just show user_id or if we have a profiles table we join.
+    // For now we just show the raw data we can get.
+    const { data, error } = await supabaseClient
+        .from('event_registrations')
+        .select('*')
+        .eq('event_id', eventId);
+        
+    if (error) {
+        list.innerHTML = 'Error loading registrations.';
+        return;
+    }
+    
+    if (data.length === 0) {
+        list.innerHTML = '<p class="text-sm text-gray-500">No one has registered for this event yet.</p>';
+        return;
+    }
+    
+    list.innerHTML = data.map(reg => `
+        <div class="flex justify-between items-center p-3 border rounded-lg bg-gray-50">
+            <span class="font-mono text-xs text-gray-500">User ID: ${reg.user_id.substring(0,8)}...</span>
+            <div>
+                <span class="mr-3 text-sm font-bold ${reg.status === 'attended' ? 'text-green-600' : 'text-orange-500'}">${reg.status.toUpperCase()}</span>
+                <button onclick="markAttended('${reg.id}', '${eventId}')" class="bg-gray-200 hover:bg-green-500 hover:text-white px-3 py-1 rounded text-xs font-bold transition-colors">
+                    Mark Attended
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function markAttended(regId, eventId) {
+    const { error } = await supabaseClient.from('event_registrations').update({ status: 'attended' }).eq('id', regId);
+    if (!error) loadEventRegistrations(eventId);
+    else alert('Failed to mark attended');
+}
+
+// Hook into tab switching to load events
+document.querySelectorAll('[data-tab]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        if (btn.dataset.tab === 'attendance') loadAttendanceEvents();
+    });
+});

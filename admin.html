@@ -47,6 +47,7 @@
                 <button class="w-full text-left px-4 py-2 rounded-lg bg-orange-50 text-[#F97316] font-bold" data-tab="events">Events</button>
                 <button class="w-full text-left px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="merch">Merchandise</button>
                 <button class="w-full text-left px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="gallery">Gallery</button>
+                <button class="w-full text-left px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="attendance">Manage Attendance</button>
                 <button class="w-full text-left px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="orders">Orders (Razorpay)</button>
                 <button class="w-full text-left px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="users">Manage Users</button>
             </aside>
@@ -117,6 +118,21 @@
                         <div id="list-gallery" class="space-y-6">Loading...</div>
                     </div>
                 </div>
+                                <!-- Manage Attendance Tab -->
+                <div id="tab-attendance" class="tab-content hidden max-w-4xl mx-auto space-y-6">
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                        <h2 class="text-xl font-bold mb-4">Mark Event Attendance</h2>
+                        <div class="mb-6">
+                            <label class="block text-sm text-gray-600 mb-2">Select Event to Manage</label>
+                            <select id="attendance-event-select" class="w-full border rounded p-2" onchange="loadEventRegistrations(this.value)">
+                                <option value="">Select an Event...</option>
+                            </select>
+                        </div>
+                        <div id="attendance-list" class="space-y-3">
+                            <p class="text-sm text-gray-500">Select an event above to see registered runners.</p>
+                        </div>
+                    </div>
+                </div>
                 <div id="tab-orders" class="tab-content hidden max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-6"><h2 class="text-xl font-bold">Razorpay Orders (Coming in Phase 2)</h2></div>
                 <div id="tab-users" class="tab-content hidden max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-6"><h2 class="text-xl font-bold">User Management (Coming Soon)</h2></div>
                 
@@ -137,6 +153,7 @@
     </div>
 </body>
 </html>
+
 
 
 
