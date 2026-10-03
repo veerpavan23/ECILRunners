@@ -51,9 +51,42 @@ loginForm.addEventListener('submit', async (e) => {
     loginForm.querySelector('button').textContent = prevText;
 });
 
+// Google Auth
+const googleBtn = document.getElementById('google-login-btn');
+if (googleBtn) {
+    googleBtn.addEventListener('click', async () => {
+        const { error } = await supabaseClient.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                redirectTo: window.location.origin + window.location.pathname
+            }
+        });
+        if (error) {
+            const errorEl = document.getElementById('login-error');
+            errorEl.textContent = error.message;
+            errorEl.classList.remove('hidden');
+        }
+    });
+}
+
 // Check session on load
 async function checkSession() {
     const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) {
+        // Verify admin status on reload too
+        const { data: profile } = await supabaseClient.from('profiles').select('is_admin').eq('id', session.user.id).single();
+        if (profile && profile.is_admin === true) {
+            loginScreen.classList.add('hidden');
+            dashboardScreen.classList.remove('hidden');
+            loadDashboardData();
+        } else {
+            await supabaseClient.auth.signOut();
+            const errorEl = document.getElementById('login-error');
+            errorEl.textContent = "Access Denied: Your Google account does not have Admin access.";
+            errorEl.classList.remove('hidden');
+        }
+    }
+} = await supabaseClient.auth.getSession();
     if (session) {
         // Verify admin status on reload too
         const { data: profile } = await supabaseClient.from('profiles').select('is_admin').eq('id', session.user.id).single();
@@ -688,4 +721,5 @@ async function loadUsers() {
         `;
     }).join('');
 }
+
 
