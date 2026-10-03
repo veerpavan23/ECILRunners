@@ -348,6 +348,9 @@ async function loadLiveEvents() {
                         <p class="text-gray-600 text-sm mb-6 line-clamp-2">${ev.description || 'Join us for this amazing ECIL Runners event. See you at the starting line!'}</p>
                         <div class="flex justify-between items-center pt-4 border-t border-gray-100">
                             <span class="font-bold text-gray-900">${ev.price || 'FREE'}</span>
+                              <button onclick="rsvpForEvent(${ev.id}, this)" class="bg-[#F97316] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-[#ea580c] transition-colors">
+                                  RSVP
+                              </button>
                             <button class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#F97316] group-hover:text-white transition-colors">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                             </button>
@@ -971,3 +974,43 @@ async function triggerRazorpay(btn) {
     rzp1.open();
 }
 
+
+
+
+// --- EVENT RSVP LOGIC ---
+async function rsvpForEvent(eventId, buttonElement) {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) {
+        alert("Please log in to RSVP for events!");
+        return;
+    }
+
+    const originalHtml = buttonElement.innerHTML;
+    buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    buttonElement.disabled = true;
+
+    try {
+        const { error } = await supabaseClient.from('event_registrations').insert([
+            { event_id: eventId, user_id: user.id, status: 'registered' }
+        ]);
+
+        if (error) {
+            if (error.code === '23505') { // Unique violation
+                alert("You are already registered for this event!");
+                buttonElement.innerHTML = '<i class="fas fa-check"></i> Registered';
+                buttonElement.classList.replace('bg-[#F97316]', 'bg-green-500');
+            } else {
+                throw error;
+            }
+        } else {
+            alert("RSVP Successful! See you there!");
+            buttonElement.innerHTML = '<i class="fas fa-check"></i> Registered';
+            buttonElement.classList.replace('bg-[#F97316]', 'bg-green-500');
+        }
+    } catch (err) {
+        console.error("RSVP error:", err);
+        alert("Failed to RSVP. Please try again.");
+        buttonElement.innerHTML = originalHtml;
+        buttonElement.disabled = false;
+    }
+}
