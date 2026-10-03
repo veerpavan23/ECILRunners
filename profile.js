@@ -153,3 +153,134 @@ if (form) {
 document.addEventListener('DOMContentLoaded', loadProfile);
 
 
+
+
+
+// --- PASSPORT & STRAVA LOGIC ---
+const STRAVA_CLIENT_ID = '284134';
+const STRAVA_CLIENT_SECRET = 'bb433af36fb62935c760e8338ccf307998b53eaa';
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const connectStravaBtn = document.getElementById('connect-strava-btn');
+    if (connectStravaBtn) {
+        connectStravaBtn.addEventListener('click', () => {
+            const redirectUri = window.location.origin + window.location.pathname;
+            const authUrl = https://www.strava.com/oauth/authorize?client_id= + STRAVA_CLIENT_ID + &response_type=code&redirect_uri= + encodeURIComponent(redirectUri) + &approval_prompt=force&scope=activity:read_all;
+            window.location.href = authUrl;
+        });
+    }
+
+    // Check for OAuth Code in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
+    if (code) {
+        // Exchange code for tokens
+        try {
+            const res = await fetch('https://www.strava.com/oauth/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    client_id: STRAVA_CLIENT_ID,
+                    client_secret: STRAVA_CLIENT_SECRET,
+                    code: code,
+                    grant_type: 'authorization_code'
+                })
+            });
+            const data = await res.json();
+            if (data.access_token) {
+                // Save tokens to user metadata in Supabase
+                const { error } = await supabaseClient.auth.updateUser({
+                    data: { 
+                        strava_access_token: data.access_token,
+                        strava_refresh_token: data.refresh_token,
+                        strava_athlete_id: data.athlete.id
+                    }
+                });
+                if (error) throw error;
+                
+                // Clear the URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+                alert("Strava Connected Successfully!");
+                
+                // Reload profile data
+                loadPassportData();
+            }
+        } catch (err) {
+            console.error("Strava connect error:", err);
+            alert("Failed to connect Strava.");
+        }
+    }
+});
+
+async function loadPassportData() {
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) return;
+
+    const stravaUnconnected = document.getElementById('strava-unconnected');
+    const stravaConnected = document.getElementById('strava-connected');
+    
+    if (user.user_metadata?.strava_access_token) {
+        stravaUnconnected.classList.add('hidden');
+        stravaConnected.classList.remove('hidden');
+        
+        // Fetch runs from Supabase to show total KM
+        const { data: runs, error } = await supabaseClient.from('strava_runs').select('distance_meters').eq('user_id', user.id);
+        if (runs) {
+            let totalMeters = runs.reduce((sum, run) => sum + run.distance_meters, 0);
+            document.getElementById('strava-total-km').textContent = (totalMeters / 1000).toFixed(1);
+        }
+
+        // Handle Sync Button
+        document.getElementById('sync-strava-btn').onclick = async () => {
+            document.getElementById('sync-strava-btn').innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Syncing...';
+            try {
+                // Fetch recent runs from Strava
+                const res = await fetch(https://www.strava.com/api/v3/athlete/activities?per_page=30, {
+                    headers: { 'Authorization': 'Bearer ' + user.user_metadata.strava_access_token }
+                });
+                const activities = await res.json();
+                
+                if (activities.message === "Authorization Error") {
+                    // Token expired, need refresh logic here (simplified for prototype)
+                    alert("Strava token expired. Please disconnect and reconnect.");
+                } else if (Array.isArray(activities)) {
+                    // Upsert into Supabase
+                    for (let act of activities) {
+                        if (act.type === 'Run' || act.type === 'VirtualRun') {
+                            await supabaseClient.from('strava_runs').upsert({
+                                user_id: user.id,
+                                strava_activity_id: act.id,
+                                distance_meters: act.distance,
+                                moving_time_seconds: act.moving_time,
+                                start_date: act.start_date,
+                                average_speed: act.average_speed
+                            }, { onConflict: 'strava_activity_id' });
+                        }
+                    }
+                    loadPassportData(); // reload UI
+                }
+            } catch (err) {
+                console.error("Sync error:", err);
+            }
+            document.getElementById('sync-strava-btn').innerHTML = '<i class="fas fa-sync-alt mr-2"></i> Sync Now';
+        };
+
+    } else {
+        stravaUnconnected.classList.remove('hidden');
+        stravaConnected.classList.add('hidden');
+    }
+
+    // Load Community & Trophy placeholders (would fetch from DB here)
+    const { count: communityCount } = await supabaseClient.from('event_attendance').select('*', { count: 'exact' }).eq('user_id', user.id);
+    if (communityCount !== null) document.getElementById('community-events-count').textContent = communityCount;
+
+    const { count: trophyCount } = await supabaseClient.from('trophy_cabinet').select('*', { count: 'exact' }).eq('user_id', user.id);
+    if (trophyCount !== null) document.getElementById('trophy-count').textContent = trophyCount;
+}
+
+// Call loadPassportData after main profile loads
+const originalLoadProfile = loadProfile;
+loadProfile = async () => {
+    await originalLoadProfile();
+    await loadPassportData();
+};
