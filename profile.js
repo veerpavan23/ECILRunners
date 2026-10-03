@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (connectStravaBtn) {
         connectStravaBtn.addEventListener('click', () => {
             const redirectUri = window.location.origin + window.location.pathname;
-            const authUrl = https://www.strava.com/oauth/authorize?client_id= + STRAVA_CLIENT_ID + &response_type=code&redirect_uri= + encodeURIComponent(redirectUri) + &approval_prompt=force&scope=activity:read_all;
+            const authUrl = 'https://www.strava.com/oauth/authorize?client_id=' + STRAVA_CLIENT_ID + '&response_type=code&redirect_uri=' + encodeURIComponent(redirectUri) + '&approval_prompt=force&scope=activity:read_all';
             window.location.href = authUrl;
         });
     }
@@ -284,3 +284,4 @@ loadProfile = async () => {
     await originalLoadProfile();
     await loadPassportData();
 };
+
