@@ -587,13 +587,16 @@ async function loadEventRegistrations(eventId) {
         return;
     }
     
-    list.innerHTML = data.map(reg => `
+        list.innerHTML = data.map(reg => `
         <div class="flex justify-between items-center p-3 border rounded-lg bg-gray-50">
-            <span class="font-mono text-xs text-gray-500">User ID: ${reg.user_id.substring(0,8)}...</span>
             <div>
-                <span class="mr-3 text-sm font-bold ${reg.status === 'attended' ? 'text-green-600' : 'text-orange-500'}">${reg.status.toUpperCase()}</span>
+                <div class="font-bold text-gray-800 text-sm">${reg.user_name || 'Unknown Runner'}</div>
+                <div class="font-mono text-xs text-gray-400">${reg.user_email || reg.user_id.substring(0,8)}</div>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="text-xs font-bold ${reg.status === 'attended' ? 'text-green-600' : 'text-orange-500'} uppercase tracking-widest">${reg.status}</span>
                 <button onclick="markAttended('${reg.id}', '${eventId}')" class="bg-gray-200 hover:bg-green-500 hover:text-white px-3 py-1 rounded text-xs font-bold transition-colors">
-                    Mark Attended
+                    <i class="fas fa-check"></i>
                 </button>
             </div>
         </div>
@@ -612,3 +615,4 @@ document.querySelectorAll('[data-tab]').forEach(btn => {
         if (btn.dataset.tab === 'attendance') loadAttendanceEvents();
     });
 });
+

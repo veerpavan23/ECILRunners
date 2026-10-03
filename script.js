@@ -990,8 +990,14 @@ async function rsvpForEvent(eventId, buttonElement) {
     buttonElement.disabled = true;
 
     try {
-        const { error } = await supabaseClient.from('event_registrations').insert([
-            { event_id: eventId, user_id: user.id, status: 'registered' }
+                const { error } = await supabaseClient.from('event_registrations').insert([
+            { 
+                event_id: eventId, 
+                user_id: user.id, 
+                status: 'registered',
+                user_name: user.user_metadata?.full_name || 'Unknown Runner',
+                user_email: user.email || ''
+            }
         ]);
 
         if (error) {
@@ -1014,4 +1020,5 @@ async function rsvpForEvent(eventId, buttonElement) {
         buttonElement.disabled = false;
     }
 }
+
 
