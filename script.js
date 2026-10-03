@@ -348,7 +348,7 @@ async function loadLiveEvents() {
                         <p class="text-gray-600 text-sm mb-6 line-clamp-2">${ev.description || 'Join us for this amazing ECIL Runners event. See you at the starting line!'}</p>
                         <div class="flex justify-between items-center pt-4 border-t border-gray-100">
                             <span class="font-bold text-gray-900">${ev.price || 'FREE'}</span>
-                              <button onclick="rsvpForEvent(${ev.id}, this)" class="bg-[#F97316] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-[#ea580c] transition-colors">
+                              <button onclick="rsvpForEvent('${ev.id}', this)" class="bg-[#F97316] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-[#ea580c] transition-colors">
                                   RSVP
                               </button>
                             <button class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-[#F97316] group-hover:text-white transition-colors">
@@ -1014,3 +1014,4 @@ async function rsvpForEvent(eventId, buttonElement) {
         buttonElement.disabled = false;
     }
 }
+
