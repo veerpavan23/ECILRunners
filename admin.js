@@ -18,35 +18,52 @@ loginForm.addEventListener('submit', async (e) => {
     const errorEl = document.getElementById('login-error');
     
     errorEl.classList.add('hidden');
+    const prevText = loginForm.querySelector('button').textContent;
+    loginForm.querySelector('button').textContent = 'Verifying...';
     
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
+    const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
         email: email,
         password: password,
     });
     
-    if (error) {
-        errorEl.textContent = error.message;
+    if (authError) {
+        errorEl.textContent = authError.message;
         errorEl.classList.remove('hidden');
-    } else {
-        loginScreen.classList.add('hidden');
-        dashboardScreen.classList.remove('hidden');
-        loadDashboardData();
+        loginForm.querySelector('button').textContent = prevText;
+        return;
+    } 
+    
+    // Check if the user is actually an admin
+    const { data: profile } = await supabaseClient.from('profiles').select('is_admin').eq('id', authData.user.id).single();
+    
+    if (!profile || profile.is_admin !== true) {
+        await supabaseClient.auth.signOut();
+        errorEl.textContent = "Access Denied: You are not an authorized administrator.";
+        errorEl.classList.remove('hidden');
+        loginForm.querySelector('button').textContent = prevText;
+        return;
     }
-});
-
-logoutBtn.addEventListener('click', async () => {
-    await supabaseClient.auth.signOut();
-    dashboardScreen.classList.add('hidden');
-    loginScreen.classList.remove('hidden');
+    
+    // Success!
+    loginScreen.classList.add('hidden');
+    dashboardScreen.classList.remove('hidden');
+    loadDashboardData();
+    loginForm.querySelector('button').textContent = prevText;
 });
 
 // Check session on load
 async function checkSession() {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (session) {
-        loginScreen.classList.add('hidden');
-        dashboardScreen.classList.remove('hidden');
-        loadDashboardData();
+        // Verify admin status on reload too
+        const { data: profile } = await supabaseClient.from('profiles').select('is_admin').eq('id', session.user.id).single();
+        if (profile && profile.is_admin === true) {
+            loginScreen.classList.add('hidden');
+            dashboardScreen.classList.remove('hidden');
+            loadDashboardData();
+        } else {
+            await supabaseClient.auth.signOut();
+        }
     }
 }
 checkSession();
@@ -671,3 +688,4 @@ async function loadUsers() {
         `;
     }).join('');
 }
+
