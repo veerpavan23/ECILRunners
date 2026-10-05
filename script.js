@@ -649,25 +649,43 @@ async function loadStravaStats() {
 document.addEventListener('DOMContentLoaded', loadStravaStats);
 
 // Dark Mode Toggle Logic
-const themeToggles = document.querySelectorAll('#theme-toggle');
-
-if (localStorage.getItem('theme') === 'dark') {
-    document.documentElement.classList.add('dark');
-    themeToggles.forEach(btn => {
-        btn.innerHTML = '<i class="fas fa-sun text-xl"></i>';
+function updateThemeButtons(isDark) {
+    const toggles = document.querySelectorAll('.theme-toggle-btn, #theme-toggle');
+    toggles.forEach(btn => {
+        const icon = btn.querySelector('i');
+        if (icon) {
+            icon.className = isDark ? 'fas fa-sun text-xl' : 'fas fa-moon text-xl';
+        } else {
+            btn.innerHTML = isDark ? '<i class="fas fa-sun text-xl"></i>' : '<i class="fas fa-moon text-xl"></i>';
+        }
     });
 }
 
-themeToggles.forEach(themeToggle => {
-    themeToggle.addEventListener('click', () => {
-        document.documentElement.classList.toggle('dark');
-        const isDark = document.documentElement.classList.contains('dark');
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        
-        themeToggles.forEach(btn => {
-            btn.innerHTML = isDark ? '<i class="fas fa-sun text-xl"></i>' : '<i class="fas fa-moon text-xl"></i>';
-        });
-    });
+function initTheme() {
+    const isDark = document.documentElement.classList.contains('dark') || localStorage.getItem('theme') === 'dark';
+    if (isDark) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+    updateThemeButtons(isDark);
+}
+
+// Initial update on page load
+initTheme();
+
+// Event delegation on document ensures all current and future theme toggle buttons always work reliably
+document.addEventListener('click', (e) => {
+    const toggleBtn = e.target.closest('.theme-toggle-btn, #theme-toggle');
+    if (!toggleBtn) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    document.documentElement.classList.toggle('dark');
+    const isDark = document.documentElement.classList.contains('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    updateThemeButtons(isDark);
 });
 // Parallax Sun, Moon & Brightness Arc
 let parallaxDocHeight = cachedDocHeight; // Reuse the perfectly calculated height
@@ -1041,6 +1059,7 @@ async function rsvpForEvent(eventId, buttonElement) {
         buttonElement.disabled = false;
     }
 }
+
 
 
 
