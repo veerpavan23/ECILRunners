@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancellation & Refund Policy - ECIL Runners Society</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], syncopate: ['Syncopate', 'sans-serif'] }
+                }
+            }
+        };
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-[#0B0F19] text-gray-800 dark:text-gray-200 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Top Navigation -->
+    <nav class="fixed w-full z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 transition-colors">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-3">
+                <img src="assets/logo.png" alt="ECIL Runners" class="h-10 w-auto object-contain">
+                <span class="font-syncopate font-bold text-sm tracking-wider text-gray-900 dark:text-white hidden sm:inline">ECIL RUNNERS</span>
+            </a>
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="text-xs font-bold uppercase tracking-widest text-[#F97316] hover:text-gray-900 dark:hover:text-white transition-colors">
+                    <i class="fas fa-arrow-left mr-1"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="flex-grow pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+        <div class="bg-white dark:bg-gray-900 rounded-3xl p-8 sm:p-12 shadow-sm border border-gray-200 dark:border-gray-800">
+            <div class="border-b border-gray-100 dark:border-gray-800 pb-6 mb-8">
+                <span class="text-xs font-bold uppercase tracking-widest text-[#F97316]">Returns & Cancellations</span>
+                <h1 class="text-3xl sm:text-4xl font-syncopate font-bold text-gray-900 dark:text-white mt-2">Refund & Cancellation Policy</h1>
+                <p class="text-xs text-gray-400 mt-2">Last updated: October 2026 | Effective for ECIL Runners Society</p>
+            </div>
+
+            <div class="space-y-8 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">1. Overview</h2>
+                    <p>At <strong>ECIL Runners Society</strong>, we strive to ensure our members and participants have a seamless experience when purchasing official club merchandise or registering for organized running events. This policy sets out clear guidelines on how cancellations, returns, and refunds are handled.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">2. Event Registrations & Race Fees</h2>
+                    <ul class="list-disc pl-5 mt-2 space-y-2">
+                        <li><strong>Standard Weekly Runs:</strong> Free community runs do not require any payments and are open to all registered community members.</li>
+                        <li><strong>Paid Special Events / Timed 10Ks / Half Marathons:</strong> Registration fees cover race bibs, timing chips, hydration, breakfast, and finisher medals. Unless explicitly mentioned otherwise on the event page, event registration fees are <strong>non-refundable</strong> once confirmed.</li>
+                        <li><strong>Event Postponement or Cancellation by Society:</strong> In the rare event of severe weather, municipal restrictions, or force majeure where the Society cancels an event, participants will be offered the choice of a <strong>100% full refund</strong> or a free transfer of registration to the rescheduled date.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">3. Official Merchandise (T-Shirts, Caps, & Gear)</h2>
+                    <ul class="list-disc pl-5 mt-2 space-y-2">
+                        <li><strong>Size Exchanges:</strong> If your running T-shirt or singlet does not fit comfortably, you may request a size exchange within <strong>7 days</strong> of receiving the item, provided the item is unworn, unwashed, and in its original condition with tags intact (subject to size availability).</li>
+                        <li><strong>Defective or Damaged Products:</strong> If you receive a damaged or misprinted merchandise item, please report it within <strong>48 hours</strong> of receipt with a photo to <a href="mailto:contact@ecilrunners.com" class="text-[#F97316] underline">contact@ecilrunners.com</a>. We will arrange a replacement or issue a full refund.</li>
+                        <li><strong>Order Cancellation:</strong> You may cancel a merchandise order within <strong>24 hours</strong> of placing it online, provided the merchandise batch has not already been dispatched or handed over for custom printing.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">4. Refund Processing Time</h2>
+                    <p>Approved refunds are processed through our payment gateway partner (<strong>Razorpay</strong>) back to the original source payment method (UPI, Bank Account, or Credit/Debit Card). In accordance with standard banking cycles in India, refunds typically reflect in your account within <strong>5 to 7 working days</strong> from the date of approval.</p>
+                </section>
+
+                <section class="border-t border-gray-100 dark:border-gray-800 pt-6">
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">5. How to Request a Refund or Exchange</h2>
+                    <p>To request assistance with an order or registration, please contact our support team:</p>
+                    <ul class="mt-2 space-y-1 text-xs">
+                        <li><strong>Email:</strong> <a href="mailto:contact@ecilrunners.com" class="text-[#F97316] underline">contact@ecilrunners.com</a></li>
+                        <li><strong>Subject Line:</strong> Refund / Exchange Request - [Order / Payment ID]</li>
+                        <li><strong>Response Time:</strong> We review and respond to all requests within 24 to 48 hours.</li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-8 text-center text-xs text-gray-400">
+        <p>&copy; 2026 ECIL Runners Society. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms & Conditions - ECIL Runners Society</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], syncopate: ['Syncopate', 'sans-serif'] }
+                }
+            }
+        };
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-[#0B0F19] text-gray-800 dark:text-gray-200 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Top Navigation -->
+    <nav class="fixed w-full z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 transition-colors">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-3">
+                <img src="assets/logo.png" alt="ECIL Runners" class="h-10 w-auto object-contain">
+                <span class="font-syncopate font-bold text-sm tracking-wider text-gray-900 dark:text-white hidden sm:inline">ECIL RUNNERS</span>
+            </a>
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="text-xs font-bold uppercase tracking-widest text-[#F97316] hover:text-gray-900 dark:hover:text-white transition-colors">
+                    <i class="fas fa-arrow-left mr-1"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="flex-grow pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+        <div class="bg-white dark:bg-gray-900 rounded-3xl p-8 sm:p-12 shadow-sm border border-gray-200 dark:border-gray-800">
+            <div class="border-b border-gray-100 dark:border-gray-800 pb-6 mb-8">
+                <span class="text-xs font-bold uppercase tracking-widest text-[#F97316]">Legal & Compliance</span>
+                <h1 class="text-3xl sm:text-4xl font-syncopate font-bold text-gray-900 dark:text-white mt-2">Terms & Conditions</h1>
+                <p class="text-xs text-gray-400 mt-2">Last updated: October 2026 | Effective for ECIL Runners Society</p>
+            </div>
+
+            <div class="space-y-8 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">1. About the Society</h2>
+                    <p>Welcome to <strong>ECIL Runners</strong> (referred to as "the Society", "we", "us", or "our"). We are a registered non-profit sports & fitness society committed to promoting running, athletics, and healthy living across the ECIL, Moula Ali, and Secunderabad communities in Hyderabad, Telangana, India. By accessing our website (<strong>https://www.ecilrunners.com</strong>) or participating in our runs and merchandise purchases, you agree to comply with and be bound by these Terms & Conditions.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">2. Membership & User Accounts</h2>
+                    <p>Users must provide accurate, current, and complete information when registering an account, purchasing official merchandise, or RSVPing for club runs. You are responsible for safeguarding your login credentials and notifying us immediately of any unauthorized access to your account.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">3. Physical Fitness & Medical Disclaimer</h2>
+                    <p>Running and athletic training are rigorous physical activities. By participating in any weekly runs, hill challenges, time trials, or official events organized by ECIL Runners Society, you acknowledge that you are physically fit and have consulted a qualified medical professional if necessary. ECIL Runners Society and its organizers shall not be held liable for any personal injury, illness, accident, or loss sustained during voluntary participation in group runs or events.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">4. Merchandise Purchases & Payments</h2>
+                    <p>All online payments for official club merchandise (T-shirts, singlets, caps, and gear) and event fees are securely processed in Indian National Rupees (INR) via our payment gateway partner, <strong>Razorpay Software Private Limited</strong>. Orders are confirmed upon successful completion of payment.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">5. Community Code of Conduct</h2>
+                    <p>ECIL Runners values mutual respect, encouragement, and safety. Any member engaging in abusive behavior, harassment, discrimination, or activities endangering fellow runners on roads or trails may have their membership and website access terminated immediately.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">6. Intellectual Property</h2>
+                    <p>The "ECIL Runners" name, club logos, graphics, event photos, and website layout are the intellectual property of ECIL Runners Society. Unauthorized reproduction or commercial use is strictly prohibited without prior written consent.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">7. Governing Law & Jurisdiction</h2>
+                    <p>These Terms & Conditions are governed by and construed in accordance with the laws of the Republic of India. Any disputes arising in connection with the website or Society activities shall be subject to the exclusive jurisdiction of the competent courts in <strong>Hyderabad / Secunderabad, Telangana</strong>.</p>
+                </section>
+
+                <section class="border-t border-gray-100 dark:border-gray-800 pt-6">
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">8. Contact Information</h2>
+                    <p>If you have any questions regarding these Terms, please reach out to our management committee:</p>
+                    <ul class="mt-2 space-y-1 text-xs">
+                        <li><strong>Organization:</strong> ECIL Runners Society</li>
+                        <li><strong>Location:</strong> ECIL & Moula Ali, Secunderabad, Hyderabad, Telangana, India - 500062</li>
+                        <li><strong>Email:</strong> <a href="mailto:contact@ecilrunners.com" class="text-[#F97316] underline">contact@ecilrunners.com</a></li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-8 text-center text-xs text-gray-400">
+        <p>&copy; 2026 ECIL Runners Society. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

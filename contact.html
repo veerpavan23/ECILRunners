@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - ECIL Runners Society</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], syncopate: ['Syncopate', 'sans-serif'] }
+                }
+            }
+        };
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-[#0B0F19] text-gray-800 dark:text-gray-200 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Top Navigation -->
+    <nav class="fixed w-full z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 transition-colors">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-3">
+                <img src="assets/logo.png" alt="ECIL Runners" class="h-10 w-auto object-contain">
+                <span class="font-syncopate font-bold text-sm tracking-wider text-gray-900 dark:text-white hidden sm:inline">ECIL RUNNERS</span>
+            </a>
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="text-xs font-bold uppercase tracking-widest text-[#F97316] hover:text-gray-900 dark:hover:text-white transition-colors">
+                    <i class="fas fa-arrow-left mr-1"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="flex-grow pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+        <div class="bg-white dark:bg-gray-900 rounded-3xl p-8 sm:p-12 shadow-sm border border-gray-200 dark:border-gray-800">
+            <div class="border-b border-gray-100 dark:border-gray-800 pb-6 mb-8 text-center sm:text-left">
+                <span class="text-xs font-bold uppercase tracking-widest text-[#F97316]">Get in Touch</span>
+                <h1 class="text-3xl sm:text-4xl font-syncopate font-bold text-gray-900 dark:text-white mt-2">Contact Us</h1>
+                <p class="text-xs text-gray-400 mt-2">ECIL Runners Society — Official Community Helpdesk</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                <div class="p-6 rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/30">
+                    <div class="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-950/50 text-[#F97316] flex items-center justify-center text-lg mb-4">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 dark:text-white text-base mb-1">Email Us</h3>
+                    <p class="text-xs text-gray-500 mb-3">For general inquiries, membership, events, and merchandise:</p>
+                    <a href="mailto:contact@ecilrunners.com" class="text-sm font-bold text-[#F97316] hover:underline">contact@ecilrunners.com</a>
+                </div>
+
+                <div class="p-6 rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/30">
+                    <div class="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-950/50 text-[#F97316] flex items-center justify-center text-lg mb-4">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 dark:text-white text-base mb-1">Registered Address</h3>
+                    <p class="text-xs text-gray-500 mb-2">ECIL Runners Society</p>
+                    <p class="text-xs text-gray-700 dark:text-gray-300 leading-relaxed">
+                        ECIL, Moula Ali & AS Rao Nagar Region,<br>
+                        Secunderabad, Hyderabad, Telangana, India - 500062
+                    </p>
+                </div>
+
+                <div class="p-6 rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/30">
+                    <div class="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-950/50 text-[#F97316] flex items-center justify-center text-lg mb-4">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 dark:text-white text-base mb-1">Weekly Meeting Point</h3>
+                    <p class="text-xs text-gray-500 mb-2">Sunday Long Runs (5:00 AM - 7:30 AM)</p>
+                    <p class="text-xs text-gray-700 dark:text-gray-300 leading-relaxed">
+                        Moula Ali Hill / ECIL Main Gate / Ananthagiri Trails.<br>
+                        <em>Check the live events tab on our homepage for weekly venue updates.</em>
+                    </p>
+                </div>
+
+                <div class="p-6 rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/30">
+                    <div class="w-10 h-10 rounded-full bg-orange-100 dark:bg-orange-950/50 text-[#F97316] flex items-center justify-center text-lg mb-4">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="font-bold text-gray-900 dark:text-white text-base mb-1">Community Channels</h3>
+                    <p class="text-xs text-gray-500 mb-3">Connect directly with our 250+ runners:</p>
+                    <div class="flex gap-4">
+                        <a href="https://instagram.com/ecilrunners?igshid=NGVhN2U2NjQ0Yg==" target="_blank" class="text-gray-600 dark:text-gray-300 hover:text-[#E1306C] transition-colors"><i class="fab fa-instagram text-xl"></i></a>
+                        <a href="https://www.facebook.com/groups/235470701400018/?ref=share" target="_blank" class="text-gray-600 dark:text-gray-300 hover:text-[#1877F2] transition-colors"><i class="fab fa-facebook-f text-xl"></i></a>
+                        <a href="https://strava.app.link/a3QTJsNGP6b" target="_blank" class="text-gray-600 dark:text-gray-300 hover:text-[#FC4C02] transition-colors"><i class="fab fa-strava text-xl"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 rounded-2xl bg-orange-50/70 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-900/50 text-center">
+                <p class="text-xs text-gray-700 dark:text-gray-300">
+                    For transaction disputes, payment support, or society governance records, please contact our treasurer/convenor directly at 
+                    <a href="mailto:contact@ecilrunners.com" class="font-bold text-[#F97316] underline">contact@ecilrunners.com</a>.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-8 text-center text-xs text-gray-400">
+        <p>&copy; 2026 ECIL Runners Society. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

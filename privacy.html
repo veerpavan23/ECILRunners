@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - ECIL Runners Society</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], syncopate: ['Syncopate', 'sans-serif'] }
+                }
+            }
+        };
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-[#0B0F19] text-gray-800 dark:text-gray-200 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Top Navigation -->
+    <nav class="fixed w-full z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 transition-colors">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-3">
+                <img src="assets/logo.png" alt="ECIL Runners" class="h-10 w-auto object-contain">
+                <span class="font-syncopate font-bold text-sm tracking-wider text-gray-900 dark:text-white hidden sm:inline">ECIL RUNNERS</span>
+            </a>
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="text-xs font-bold uppercase tracking-widest text-[#F97316] hover:text-gray-900 dark:hover:text-white transition-colors">
+                    <i class="fas fa-arrow-left mr-1"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="flex-grow pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+        <div class="bg-white dark:bg-gray-900 rounded-3xl p-8 sm:p-12 shadow-sm border border-gray-200 dark:border-gray-800">
+            <div class="border-b border-gray-100 dark:border-gray-800 pb-6 mb-8">
+                <span class="text-xs font-bold uppercase tracking-widest text-[#F97316]">Data Protection & Safety</span>
+                <h1 class="text-3xl sm:text-4xl font-syncopate font-bold text-gray-900 dark:text-white mt-2">Privacy Policy</h1>
+                <p class="text-xs text-gray-400 mt-2">Last updated: October 2026 | Effective for ECIL Runners Society</p>
+            </div>
+
+            <div class="space-y-8 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">1. Overview</h2>
+                    <p>ECIL Runners Society ("we", "us", or "our") respects the privacy of our members, participants, and visitors. This Privacy Policy outlines how we collect, use, disclose, and protect your personal information when you use our website (<strong>https://www.ecilrunners.com</strong>) and our services.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">2. Information We Collect</h2>
+                    <p>We collect information necessary to administer running activities, membership, and merchandise fulfillment:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1">
+                        <li><strong>Personal Identity Data:</strong> Full name, email address, contact phone number, age, gender, and profile photo provided during account creation or profile completion.</li>
+                        <li><strong>Activity & Event Data:</strong> Event RSVPs, attendance records, and Strava club/athlete stats (when authorized via official Strava integration).</li>
+                        <li><strong>Merchandise & Transaction Data:</strong> T-shirt/gear size preferences, order items, transaction amounts, and Razorpay payment identifiers. <em>Note: We never store your Credit/Debit Card numbers, CVVs, or Netbanking passwords. All payment instruments are handled securely by Razorpay.</em></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">3. How We Use Your Information</h2>
+                    <p>Your information is used solely to support community operations:</p>
+                    <ul class="list-disc pl-5 mt-2 space-y-1">
+                        <li>To verify event RSVPs, organize bibs/routes, and mark attendance.</li>
+                        <li>To calculate community leaderboards and Runner of the Month recognitions.</li>
+                        <li>To fulfill club merchandise orders and provide order receipts.</li>
+                        <li>To send critical updates regarding Sunday runs, weather advisories, or event schedules.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">4. Payment Processing by Razorpay</h2>
+                    <p>We use <strong>Razorpay</strong> as our secure third-party payment gateway. During payment checkout, your payment information is encrypted and transmitted directly to Razorpay's PCI-DSS compliant infrastructure in accordance with the Reserve Bank of India (RBI) regulations.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">5. Data Sharing & Third Parties</h2>
+                    <p>We do not sell, rent, or trade your personal data to advertisers or third-party marketing companies. Data is only processed through trusted infrastructure services strictly required to run our club platform (Supabase for authentication/database, Vercel for website hosting, and Razorpay for payment processing).</p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">6. Your Rights</h2>
+                    <p>You have the right to review, update, or request the deletion of your account and personal data from our systems at any time by contacting us at <strong>contact@ecilrunners.com</strong>.</p>
+                </section>
+
+                <section class="border-t border-gray-100 dark:border-gray-800 pt-6">
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">7. Contact the Grievance Officer</h2>
+                    <p>For any privacy concerns or questions regarding this policy, please reach out to:</p>
+                    <ul class="mt-2 space-y-1 text-xs">
+                        <li><strong>Organization:</strong> ECIL Runners Society</li>
+                        <li><strong>Location:</strong> ECIL, Secunderabad, Hyderabad, Telangana, India - 500062</li>
+                        <li><strong>Email:</strong> <a href="mailto:contact@ecilrunners.com" class="text-[#F97316] underline">contact@ecilrunners.com</a></li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-8 text-center text-xs text-gray-400">
+        <p>&copy; 2026 ECIL Runners Society. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

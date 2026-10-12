@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shipping & Delivery Policy - ECIL Runners Society</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], syncopate: ['Syncopate', 'sans-serif'] }
+                }
+            }
+        };
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-[#0B0F19] text-gray-800 dark:text-gray-200 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Top Navigation -->
+    <nav class="fixed w-full z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 transition-colors">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-3">
+                <img src="assets/logo.png" alt="ECIL Runners" class="h-10 w-auto object-contain">
+                <span class="font-syncopate font-bold text-sm tracking-wider text-gray-900 dark:text-white hidden sm:inline">ECIL RUNNERS</span>
+            </a>
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="text-xs font-bold uppercase tracking-widest text-[#F97316] hover:text-gray-900 dark:hover:text-white transition-colors">
+                    <i class="fas fa-arrow-left mr-1"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <main class="flex-grow pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto w-full">
+        <div class="bg-white dark:bg-gray-900 rounded-3xl p-8 sm:p-12 shadow-sm border border-gray-200 dark:border-gray-800">
+            <div class="border-b border-gray-100 dark:border-gray-800 pb-6 mb-8">
+                <span class="text-xs font-bold uppercase tracking-widest text-[#F97316]">Merchandise Fulfillment</span>
+                <h1 class="text-3xl sm:text-4xl font-syncopate font-bold text-gray-900 dark:text-white mt-2">Shipping & Delivery Policy</h1>
+                <p class="text-xs text-gray-400 mt-2">Last updated: October 2026 | Effective for ECIL Runners Society</p>
+            </div>
+
+            <div class="space-y-8 text-sm leading-relaxed text-gray-600 dark:text-gray-300">
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">1. Overview</h2>
+                    <p>This Shipping & Delivery Policy applies to official physical merchandise (including custom running T-shirts, singlets, caps, and club accessories) ordered through the <strong>ECIL Runners Society</strong> website (<strong>https://www.ecilrunners.com</strong>).</p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">2. Delivery Methods</h2>
+                    <p>We provide two convenient ways for members and runners to receive their official merchandise:</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                        <div class="p-4 rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+                            <h3 class="font-bold text-[#F97316] mb-1"><i class="fas fa-running mr-2"></i> In-Person Handover (Free & Preferred)</h3>
+                            <p class="text-xs text-gray-600 dark:text-gray-300">Runners can collect their ordered merchandise in person at the meeting point during our scheduled <strong>Sunday Morning Group Runs</strong> (ECIL / Moula Ali / AS Rao Nagar) upon showing their order confirmation or payment ID.</p>
+                        </div>
+                        <div class="p-4 rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
+                            <h3 class="font-bold text-[#F97316] mb-1"><i class="fas fa-shipping-fast mr-2"></i> Courier / Postal Delivery</h3>
+                            <p class="text-xs text-gray-600 dark:text-gray-300">For runners unable to attend the Sunday morning handovers, items are dispatched via reputed local domestic couriers or India Post Speed Post across Hyderabad, Secunderabad, and India.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">3. Processing & Delivery Timelines</h2>
+                    <ul class="list-disc pl-5 mt-2 space-y-2">
+                        <li><strong>In-Stock Items:</strong> Dispatched or available for in-person collection within <strong>2 to 4 business days</strong> from order confirmation.</li>
+                        <li><strong>Custom / Pre-Order Batches (e.g. Annual Season T-Shirts):</strong> Produced in community batches. Estimated delivery windows (typically 10–14 days) are communicated upfront during booking.</li>
+                        <li><strong>Courier Transit Time:</strong> Once dispatched via domestic courier, delivery typically takes <strong>2 to 5 business days</strong> for locations within Telangana/AP, and <strong>4 to 7 business days</strong> for rest of India.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">4. Shipping Charges</h2>
+                    <p>In-person collection at our Sunday run points is always <strong>100% free</strong>. If doorstep courier delivery is opted for, nominal shipping charges (typically ₹50–₹100 depending on location and weight) are clearly displayed during checkout.</p>
+                </section>
+
+                <section>
+                    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-2">5. Order Tracking & Delivery Assistance</h2>
+                    <p>Once your order has been dispatched, tracking details or collection instructions are sent to your registered email address. For any questions regarding order status or delivery coordination, contact our merchandise coordinators:</p>
+                    <ul class="mt-2 space-y-1 text-xs">
+                        <li><strong>Organization:</strong> ECIL Runners Society</li>
+                        <li><strong>Location:</strong> ECIL, Secunderabad, Hyderabad, Telangana, India - 500062</li>
+                        <li><strong>Email:</strong> <a href="mailto:contact@ecilrunners.com" class="text-[#F97316] underline">contact@ecilrunners.com</a></li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-8 text-center text-xs text-gray-400">
+        <p>&copy; 2026 ECIL Runners Society. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

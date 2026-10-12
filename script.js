@@ -973,13 +973,16 @@ async function triggerRazorpay(btn) {
     const size = prompt("What size would you like? (S, M, L, XL, XXL)");
     if (!size) return;
 
+        // Dynamic Razorpay Key: uses Live key if configured, otherwise falls back to test key
+    const RAZORPAY_KEY = window.ENV_RAZORPAY_KEY || "rzp_test_TiuzwhnFy7axHJ";
+
     var options = {
-        "key": "rzp_test_TiuzwhnFy7axHJ", // User's Test Key
-        "amount": (amount * 100).toString(), // Razorpay expects amount in paise
+        "key": RAZORPAY_KEY,
+        "amount": (amount * 100).toString(),
         "currency": "INR",
-        "name": "ECIL Runners",
+        "name": "ECIL Runners Society",
         "description": title + " (Size: " + size + ")",
-        "image": "https://ecil-runners.vercel.app/assets/logo.png",
+        "image": window.location.origin + "/assets/logo.png",
         "handler": async function (response) {
             alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
             
@@ -1059,6 +1062,7 @@ async function rsvpForEvent(eventId, buttonElement) {
         buttonElement.disabled = false;
     }
 }
+
 
 
 
