@@ -322,6 +322,41 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// Robust Event Date Helper: parses various formats like "October 4th, 2026 5AM", "2026-10-15", etc.
+function parseEventDate(dateStr) {
+    if (!dateStr) return null;
+    try {
+        // Strip out ordinal suffixes (1st, 2nd, 3rd, 4th, etc.)
+        let clean = dateStr.replace(/(\d+)(st|nd|rd|th)/gi, '$1').trim();
+        // Remove trailing timing words like "5AM", "6:00 AM", etc. if present for date parsing
+        let parsed = new Date(clean);
+        if (!isNaN(parsed.getTime())) {
+            return parsed;
+        }
+        // Try extracting month and day
+        let match = clean.match(/([a-zA-Z]+)\s+(\d{1,2})(?:,?\s*(\d{4}))?/i);
+        if (match) {
+            let year = match[3] || new Date().getFullYear();
+            let fallback = new Date(`${match[1]} ${match[2]}, ${year}`);
+            if (!isNaN(fallback.getTime())) return fallback;
+        }
+    } catch (e) {
+        console.warn("Date parse error:", e);
+    }
+    return null;
+}
+
+function isEventCompleted(dateStr) {
+    let d = parseEventDate(dateStr);
+    if (!d) return false;
+    let now = new Date();
+    // End of the event day (23:59:59) so morning runs stay valid throughout that day
+    let eventDayEnd = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59);
+    return now.getTime() > eventDayEnd.getTime();
+}
+
+let allEventsCache = [];
+
 async function loadLiveEvents() {
     const container = document.getElementById('events-container');
     if (!container) return;
@@ -329,31 +364,48 @@ async function loadLiveEvents() {
     try {
         const { data: { user } } = await supabaseClient.auth.getUser();
         
-        // Fetch events
-        const { data: events, error: eventsError } = await supabaseClient.from('events').select('*').order('created_at', { ascending: false }).limit(3);
+        // Fetch all events
+        const { data: events, error: eventsError } = await supabaseClient
+            .from('events')
+            .select('*')
+            .order('created_at', { ascending: false });
+            
         if (eventsError) throw eventsError;
+        allEventsCache = events || [];
         
-        let userRegistrations = [];
+        let userRegistrations = {};
         if (user) {
             const { data: regs } = await supabaseClient
                 .from('event_registrations')
-                .select('event_id')
+                .select('event_id, status')
                 .eq('user_id', user.id);
             if (regs) {
-                userRegistrations = regs.map(r => r.event_id);
+                regs.forEach(r => {
+                    userRegistrations[r.event_id] = r.status;
+                });
             }
         }
         
-        if (events && events.length > 0) {
-            container.innerHTML = events.map(ev => {
-                const isRegistered = userRegistrations.includes(ev.id);
+        // Filter strictly UPCOMING events for the home section
+        const upcomingEvents = (events || []).filter(ev => !isEventCompleted(ev.date));
+        
+        if (upcomingEvents.length > 0) {
+            container.innerHTML = upcomingEvents.slice(0, 3).map(ev => {
+                const regStatus = userRegistrations[ev.id];
+                const isRegistered = !!regStatus;
+                const completed = isEventCompleted(ev.date);
                 
-                const buttonHtml = isRegistered 
-                    ? `<button disabled class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-bold"><i class="fas fa-check mr-1"></i> Registered</button>`
-                    : `<button onclick="rsvpForEvent('${ev.id}', this)" class="bg-[#F97316] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-[#ea580c] transition-colors">RSVP</button>`;
+                let buttonHtml = '';
+                if (completed) {
+                    buttonHtml = `<button disabled class="bg-gray-200 dark:bg-gray-800 text-gray-500 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-1.5"><i class="fas fa-flag-checkered text-[#F97316]"></i> Completed</button>`;
+                } else if (isRegistered) {
+                    buttonHtml = `<button disabled class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5"><i class="fas fa-check"></i> Registered</button>`;
+                } else {
+                    buttonHtml = `<button onclick="rsvpForEvent('${ev.id}', this)" class="bg-[#F97316] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-[#ea580c] transition-colors">RSVP</button>`;
+                }
 
                 return `
-                <div class="bg-white rounded-2xl overflow-hidden shadow-lg border border-gray-100 hover:-translate-y-2 transition-all duration-300 group">
+                <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-gray-700 hover:-translate-y-2 transition-all duration-300 group">
                     <div class="relative h-48 overflow-hidden">
                         <img src="${ev.image_url || 'assets/events_marathon.jpg'}" alt="Event" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                         <div class="absolute top-4 right-4 bg-[#F97316] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-md">
@@ -365,20 +417,179 @@ async function loadLiveEvents() {
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                             <span class="uppercase tracking-wider text-xs">${ev.location}</span>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900 mb-2">${ev.title}</h3>
-                        <p class="text-gray-600 text-sm mb-6 line-clamp-2">${ev.description || 'Join us for this amazing ECIL Runners event. See you at the starting line!'}</p>
-                        <div class="flex justify-between items-center pt-4 border-t border-gray-100">
-                            <span class="font-bold text-gray-900">${ev.price || 'FREE'}</span>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">${ev.title}</h3>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-6 line-clamp-2">${ev.description || 'Join us for this amazing ECIL Runners event. See you at the starting line!'}</p>
+                        <div class="flex justify-between items-center pt-4 border-t border-gray-100 dark:border-gray-700">
+                            <span class="font-bold text-gray-900 dark:text-white">${ev.price || 'FREE'}</span>
                             ${buttonHtml}
                         </div>
                     </div>
                 </div>
                 `;
             }).join('');
+        } else {
+            // When all current events are completed, display clean schedule placeholder
+            container.innerHTML = `
+                <div class="col-span-full bg-white/60 dark:bg-gray-800/60 rounded-3xl p-12 text-center border border-gray-200 dark:border-gray-700 backdrop-blur-md">
+                    <div class="w-16 h-16 rounded-full bg-orange-100 dark:bg-orange-950/50 text-[#F97316] flex items-center justify-center text-2xl mx-auto mb-4">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-gray-900 dark:text-white mb-2 font-syncopate">Next Runs Being Scheduled!</h4>
+                    <p class="text-gray-500 text-sm max-w-md mx-auto mb-6">Our past runs have concluded! The race directors are finalizing the upcoming Sunday route and hill challenges.</p>
+                    <button onclick="openCalendarModal()" class="bg-[#F97316] text-white px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider hover:bg-orange-600 transition-colors">
+                        View Past & Complete Calendar
+                    </button>
+                </div>
+            `;
         }
     } catch (err) {
         console.error("Failed to fetch live events:", err);
     }
+}
+
+// Complete Calendar Modal Logic
+async function openCalendarModal() {
+    const modal = document.getElementById('calendar-modal');
+    if (!modal) return;
+    
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        modal.classList.remove('opacity-0');
+    }, 10);
+    
+    renderCalendarEvents('all');
+}
+
+function closeCalendarModal() {
+    const modal = document.getElementById('calendar-modal');
+    if (!modal) return;
+    modal.classList.add('opacity-0');
+    setTimeout(() => {
+        modal.classList.add('hidden');
+    }, 300);
+}
+
+function filterCalendar(type) {
+    ['all', 'upcoming', 'past'].forEach(t => {
+        const tab = document.getElementById(`cal-tab-${t}`);
+        if (tab) {
+            if (t === type) {
+                tab.className = "text-[#F97316] border-b-2 border-[#F97316] pb-1";
+            } else {
+                tab.className = "text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 pb-1";
+            }
+        }
+    });
+    renderCalendarEvents(type);
+}
+
+async function renderCalendarEvents(filterType = 'all') {
+    const content = document.getElementById('calendar-modal-content');
+    if (!content) return;
+    
+    content.innerHTML = '<p class="text-center text-sm text-gray-400 py-8"><i class="fas fa-spinner fa-spin mr-2"></i> Loading calendar...</p>';
+    
+    let events = allEventsCache;
+    if (!events || events.length === 0) {
+        const { data } = await supabaseClient.from('events').select('*').order('created_at', { ascending: false });
+        events = data || [];
+        allEventsCache = events;
+    }
+    
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    let userRegistrations = {};
+    if (user) {
+        const { data: regs } = await supabaseClient.from('event_registrations').select('event_id, status').eq('user_id', user.id);
+        if (regs) {
+            regs.forEach(r => { userRegistrations[r.event_id] = r.status; });
+        }
+    }
+
+    let filtered = events.filter(ev => {
+        const completed = isEventCompleted(ev.date);
+        if (filterType === 'upcoming') return !completed;
+        if (filterType === 'past') return completed;
+        return true;
+    });
+
+    if (filtered.length === 0) {
+        content.innerHTML = `<p class="text-center text-gray-400 py-10 text-sm">No events found under this category.</p>`;
+        return;
+    }
+
+    content.innerHTML = filtered.map(ev => {
+        const completed = isEventCompleted(ev.date);
+        const regStatus = userRegistrations[ev.id];
+        
+        let statusBadge = '';
+        if (completed) {
+            statusBadge = `<span class="bg-gray-100 dark:bg-gray-800 text-gray-500 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1"><i class="fas fa-check-circle text-gray-400"></i> Event Completed</span>`;
+        } else if (regStatus === 'attended') {
+            statusBadge = `<span class="bg-green-100 text-green-700 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1"><i class="fas fa-award"></i> Attended</span>`;
+        } else if (regStatus === 'registered') {
+            statusBadge = `<span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1"><i class="fas fa-ticket-alt"></i> Registered</span>`;
+        } else {
+            statusBadge = `<button onclick="rsvpForEvent('${ev.id}', this)" class="bg-[#F97316] text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-orange-600 transition-colors">RSVP Now</button>`;
+        }
+
+        return `
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800 hover:border-gray-300 transition-colors">
+                <div class="flex items-center gap-4">
+                    <img src="${ev.image_url || 'assets/events_marathon.jpg'}" class="w-16 h-16 rounded-xl object-cover shrink-0">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xs font-bold text-[#F97316] uppercase tracking-wider">${ev.date}</span>
+                            <span class="text-gray-300 dark:text-gray-700">&bull;</span>
+                            <span class="text-xs text-gray-500 font-medium">${ev.location}</span>
+                        </div>
+                        <h4 class="font-bold text-base text-gray-900 dark:text-white">${ev.title}</h4>
+                        <p class="text-xs text-gray-500 line-clamp-1">${ev.description || 'ECIL Runners Community Event'}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end border-t sm:border-t-0 pt-2 sm:pt-0 border-gray-200 dark:border-gray-700">
+                    <span class="font-bold text-sm text-gray-800 dark:text-gray-200">${ev.price || 'FREE'}</span>
+                    ${statusBadge}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// In-Website WhatsApp Interactive Chat Logic
+function toggleWhatsAppChat() {
+    const win = document.getElementById('whatsapp-chat-window');
+    if (!win) return;
+    if (win.classList.contains('hidden')) {
+        win.classList.remove('hidden');
+        const input = document.getElementById('whatsapp-input');
+        if (input) input.focus();
+    } else {
+        win.classList.add('hidden');
+    }
+}
+
+function setWhatsAppPrompt(text) {
+    const input = document.getElementById('whatsapp-input');
+    if (input) {
+        input.value = text;
+        sendWhatsAppMessage();
+    }
+}
+
+function sendWhatsAppMessage() {
+    const input = document.getElementById('whatsapp-input');
+    const msg = input ? input.value.trim() : '';
+    if (!msg) return;
+    
+    // Official Community WhatsApp helpline number (Can be configured anytime)
+    const phone = window.ENV_WHATSAPP_NUMBER || "919999999999";
+    const encoded = encodeURIComponent(msg);
+    const url = `https://api.whatsapp.com/send?phone=${phone}&text=${encoded}`;
+    
+    // Open seamlessly in a centered chat popup or tab
+    window.open(url, '_blank');
+    if (input) input.value = '';
+    toggleWhatsAppChat();
 }
 
 // Load events when page loads
@@ -1062,6 +1273,7 @@ async function rsvpForEvent(eventId, buttonElement) {
         buttonElement.disabled = false;
     }
 }
+
 
 
 
