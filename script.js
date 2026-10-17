@@ -45,13 +45,31 @@ window.addEventListener('resize', () => {
 
 
 function updateScroll() {
-    // Progress Bar
+    // Progress Bar & Celestial Parallax (Consolidated in single 60fps frame)
     const scrollTop = window.scrollY;
     const docHeight = cachedDocHeight || 1;
     let scrollPercent = scrollTop / docHeight;
     if (isNaN(scrollPercent)) scrollPercent = 0;
     scrollPercent = Math.max(0, Math.min(1, scrollPercent));
-    
+
+    // Parallax Sun & Moon Arc (Integrated directly to prevent layout thrashing)
+    const arcProgress = Math.sin(scrollPercent * Math.PI);
+    const screenWidth = window.innerWidth;
+    const runnerCenterX = (scrollPercent * (screenWidth - 48)) + 24;
+    const sunX = runnerCenterX - (screenWidth / 2);
+    const xPosCalc = 'calc(-50% + ' + sunX + 'px)';
+    const baseY = 45;
+    const yPosPx = baseY - (arcProgress * (window.innerHeight * 0.65));
+
+    document.documentElement.style.setProperty('--arc-progress', arcProgress);
+    document.documentElement.style.setProperty('--arc-x', runnerCenterX + 'px');
+    document.documentElement.style.setProperty('--moon-y', yPosPx + 'px');
+
+    const sun = document.getElementById('the-sun');
+    const moon = document.getElementById('the-moon');
+    const transformStr = 'translate(' + xPosCalc + ', ' + yPosPx + 'px)';
+    if (sun) sun.style.transform = transformStr;
+    if (moon) moon.style.transform = transformStr;
     if(scrollTrack && scrollRunner) {
         scrollTrack.style.transform = 'scaleX(' + scrollPercent + ')';
         scrollTrack.style.transformOrigin = 'left';
@@ -898,50 +916,7 @@ document.addEventListener('click', (e) => {
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
     updateThemeButtons(isDark);
 });
-// Parallax Sun, Moon & Brightness Arc
-let parallaxDocHeight = cachedDocHeight; // Reuse the perfectly calculated height
-
-
-let tickingParallax = false;
-window.addEventListener('scroll', () => {
-    if (!tickingParallax) {
-        window.requestAnimationFrame(() => {
-            updateScroll();
-            tickingParallax = false;
-        });
-        tickingParallax = true;
-    }
-    const scrollY = window.scrollY;
-    const docHeight = cachedDocHeight || 1;
-    let progress = scrollY / docHeight;
-    progress = Math.max(0, Math.min(1, progress));
-    
-        // Arc (0 at top, 1 in middle, 0 at bottom)
-    const arcProgress = Math.sin(progress * Math.PI);
-    
-    // Mathematically lock the Sun's X position to the Runner's exact X center
-    const screenWidth = window.innerWidth;
-    const runnerCenterX = (progress * (screenWidth - 48)) + 24;
-    const sunX = runnerCenterX - (screenWidth / 2);
-    const xPosCalc = 'calc(-50% + ' + sunX + 'px)';
-    
-    // Y-Axis: Sun rests exactly behind the runner at start and finish.
-    const baseY = 45;
-    const yPosPx = baseY - (arcProgress * (window.innerHeight * 0.65));
-    
-    // Pass arc progress to CSS for dynamic sky brightness and tracking
-    document.documentElement.style.setProperty('--arc-progress', arcProgress);
-    document.documentElement.style.setProperty('--arc-x', runnerCenterX + 'px');
-    document.documentElement.style.setProperty('--moon-y', yPosPx + 'px');
-    
-    const sun = document.getElementById('the-sun');
-    const moon = document.getElementById('the-moon');
-    const transformStr = 'translate(' + xPosCalc + ', ' + yPosPx + 'px)';
-    
-    if (sun) sun.style.transform = transformStr;
-    if (moon) moon.style.transform = transformStr;
-});
-
+// Parallax logic consolidated directly into single 60fps updateScroll() frame
 
 
 
