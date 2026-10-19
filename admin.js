@@ -291,7 +291,7 @@ async function loadGallery() {
                 ${albums[albumName].map(photo => `
                     <div class="relative group aspect-square">
                         <img src="${photo.image_url}" class="w-full h-full object-cover rounded shadow-sm border border-gray-200">
-                        <button onclick="deleteRecord('gallery', '${photo.id}')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 text-xs shadow-md transition-opacity">×</button>
+                        <button onclick="deleteRecord('gallery', '${photo.id}')" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 text-xs shadow-md transition-opacity">ï¿½</button>
                     </div>
                 `).join('')}
             </div>

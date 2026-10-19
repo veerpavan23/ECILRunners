@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Confirmed! - ECIL Runners</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'], syncopate: ['Syncopate', 'sans-serif'] }
+                }
+            }
+        };
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-[#0B0F19] text-gray-800 dark:text-gray-200 font-sans antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Top Navigation -->
+    <nav class="w-full bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 transition-colors">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-20 flex justify-between items-center">
+            <a href="index.html" class="flex items-center gap-3">
+                <img src="assets/logo.png" alt="ECIL Runners" class="h-10 w-auto object-contain">
+                <span class="font-syncopate font-bold text-sm tracking-wider text-gray-900 dark:text-white hidden sm:inline">ECIL RUNNERS</span>
+            </a>
+            <a href="index.html" class="text-xs font-bold uppercase tracking-widest text-[#F97316] hover:text-gray-900 dark:hover:text-white transition-colors flex items-center gap-2">
+                <i class="fas fa-home"></i> Back to Home
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Celebration Card -->
+    <main class="flex-grow flex items-center justify-center p-4 sm:p-6 my-8">
+        <div class="bg-white dark:bg-gray-900 max-w-xl w-full rounded-3xl p-8 sm:p-12 shadow-2xl border border-gray-100 dark:border-gray-800 text-center relative overflow-hidden">
+            
+            <!-- Confetti Accent Burst -->
+            <div class="w-20 h-20 rounded-full bg-green-100 dark:bg-green-950/60 text-green-500 mx-auto flex items-center justify-center text-3xl mb-6 shadow-inner">
+                <i class="fas fa-check-circle"></i>
+            </div>
+
+            <span class="text-xs font-bold uppercase tracking-widest text-[#F97316] block mb-2">Registration Confirmed via IQ301</span>
+            <h1 class="text-3xl sm:text-4xl font-syncopate font-bold text-gray-900 dark:text-white mb-4">You're On The Grid!</h1>
+            
+            <p class="text-sm text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+                Welcome to the official roster, <strong id="runner-name" class="text-gray-900 dark:text-white">Runner</strong>! Your entry has been recorded and verified. See you at the starting line!
+            </p>
+
+            <!-- Virtual Race Bib Badge -->
+            <div class="bg-gradient-to-br from-gray-50 to-orange-50/40 dark:from-gray-800 dark:to-gray-800/60 border border-orange-200 dark:border-orange-900/50 rounded-2xl p-6 mb-8 text-left relative overflow-hidden">
+                <div class="absolute top-0 right-0 bg-[#F97316] text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
+                    Official Entry
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 text-xs">
+                    <div>
+                        <span class="text-gray-400 uppercase tracking-widest font-bold text-[10px] block">Event</span>
+                        <span id="event-name" class="font-bold text-sm text-gray-900 dark:text-white">ECIL Community Run</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-400 uppercase tracking-widest font-bold text-[10px] block">Race Category</span>
+                        <span id="category-name" class="font-bold text-sm text-[#F97316]">Timed Run</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-400 uppercase tracking-widest font-bold text-[10px] block">Bib Number</span>
+                        <span id="bib-number" class="font-bold text-lg font-mono text-gray-900 dark:text-white">Allocated Soon</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-400 uppercase tracking-widest font-bold text-[10px] block">Order / Reg ID</span>
+                        <span id="order-id" class="font-bold font-mono text-xs text-gray-700 dark:text-gray-300">#IQ301</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="space-y-3">
+                <a href="index.html#events" class="block w-full bg-[#F97316] text-white py-3.5 rounded-xl font-bold uppercase tracking-wider text-xs hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/20">
+                    <i class="fas fa-calendar-alt mr-2"></i> View Event Schedule
+                </a>
+                <a href="https://chat.whatsapp.com/" target="_blank" id="whatsapp-group-btn" class="block w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 py-3 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    <i class="fab fa-whatsapp text-green-500 text-base mr-2"></i> Join WhatsApp Event Group
+                </a>
+            </div>
+
+            <p class="text-[11px] text-gray-400 mt-6">
+                A confirmation email with your timing details and bib collection location will be dispatched prior to race day.
+            </p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-6 text-center text-xs text-gray-400">
+        <p>&copy; 2026 ECIL Runners Society &bull; Partnered with IQ301</p>
+    </footer>
+
+    <script>
+        // Trigger celebratory confetti on page arrival
+        window.addEventListener('load', () => {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#F97316', '#22C55E', '#3B82F6', '#EAB308']
+                });
+            }
+
+            // Parse URL parameters sent back by IQ301
+            const params = new URLSearchParams(window.location.search);
+            const name = params.get('name') || params.get('runner_name') || 'Runner';
+            const bib = params.get('bib') || params.get('bib_number') || 'Confirmed at Expo';
+            const category = params.get('category') || params.get('distance') || 'Open Category';
+            const event = params.get('event') || params.get('event_name') || 'ECIL Annual Run';
+            const orderId = params.get('order_id') || params.get('reg_id') || params.get('id') || 'IQ301-SUCCESS';
+
+            if (document.getElementById('runner-name')) document.getElementById('runner-name').textContent = name;
+            if (document.getElementById('bib-number')) document.getElementById('bib-number').textContent = bib;
+            if (document.getElementById('category-name')) document.getElementById('category-name').textContent = category;
+            if (document.getElementById('event-name')) document.getElementById('event-name').textContent = event;
+            if (document.getElementById('order-id')) document.getElementById('order-id').textContent = orderId;
+        });
+    </script>
+</body>
+</html>
