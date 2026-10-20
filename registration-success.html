@@ -206,8 +206,8 @@
         // Supabase Client Config
         const SUPABASE_URL = 'https://cvehhriirejuffbrowkr.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2ZWhocmlpcmVqdWZmYnJvd2tyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjIzMDEsImV4cCI6MjEwNjIzODMwMX0.FKnvc0Xj66_VWRbeWOWChG7SSmjjPyxNyHNJmX0E8qA';
-        const supabase = (typeof supabase !== 'undefined' && supabase.createClient) 
-            ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) 
+        const supabaseClient = (window.supabase && typeof window.supabase.createClient === 'function') 
+            ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) 
             : null;
 
         // Parse IQ301 Registration Data
@@ -320,12 +320,12 @@
 
         // Save entry into Supabase event_registrations table asynchronously from success page
         async function syncRegistrationToSupabase(data) {
-            if (!supabase || !data) return;
+            if (!supabaseClient || !data) return;
             try {
-                // Check if user is currently signed in or retrieved from cached profile
+                // Check if user is currently signed in
                 let currentUserId = null;
                 try {
-                    const { data: { user } } = await supabase.auth.getUser();
+                    const { data: { user } } = await supabaseClient.auth.getUser();
                     if (user) currentUserId = user.id;
                 } catch(e) {}
 
@@ -335,13 +335,10 @@
 
                 const fullName = `${data.FirstName || ''} ${data.LastName || ''}`.trim() || data.BibName || 'IQ301 Runner';
                 const regEmail = data.eMail || '';
-                const regPhone = data.Phone || '';
-                const raceCategory = data.Race || data.Category || 'Run Jaathara 2026';
-                const orderRef = data.RegnRef || data.RegistrationNumber || '';
 
-                // Check for duplicate to avoid multiple records on page refresh
+                // Deduplicate check
                 if (currentUserId) {
-                    const { data: existing } = await supabase
+                    const { data: existing } = await supabaseClient
                         .from('event_registrations')
                         .select('id')
                         .eq('user_id', currentUserId)
@@ -351,7 +348,7 @@
                         return;
                     }
                 } else if (regEmail) {
-                    const { data: existing } = await supabase
+                    const { data: existing } = await supabaseClient
                         .from('event_registrations')
                         .select('id')
                         .eq('user_email', regEmail)
@@ -363,13 +360,14 @@
                 }
 
                 const payload = {
+                    event_id: 'run-jaathara-2026',
                     user_name: fullName,
                     user_email: regEmail,
                     status: 'registered'
                 };
                 if (currentUserId) payload.user_id = currentUserId;
 
-                const { data: inserted, error } = await supabase.from('event_registrations').insert([payload]).select();
+                const { data: inserted, error } = await supabaseClient.from('event_registrations').insert([payload]).select();
                 if (error) {
                     console.warn("Supabase registration sync warning:", error.message);
                 } else {
