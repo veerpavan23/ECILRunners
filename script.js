@@ -405,14 +405,15 @@ async function loadLiveEvents() {
         }
         
         // Dedicated flagship Run Jaathara event configuration
+        // Dedicated flagship Run Jaathara event configuration
         const runJaatharaEvent = {
             id: 'run-jaathara-2026',
             title: 'Run Jaathara 2026',
             date: 'December 6th, 2026 5:30 AM',
-            location: 'ECIL, Hyderabad',
-            price: '5K • 10K • 21K',
-            description: 'Run Jaathara 2026 Retro Edition by ECIL Runners! 5K Fun Run, 10K Challenge, and 21K Half Marathon. Celebrate fitness, health, and togetherness.',
-            image_url: 'assets/events_marathon.jpg',
+            location: 'Sreenidhi Inst of Science & Tech, Ghatkesar',
+            price: '₹499 (5K) • ₹699 (10K) • ₹799 (21K)',
+            description: 'Run Jaathara Retro Edition! Run Together, Celebrate Community, Revisit Good Old Days. Includes T-Shirt, Finisher Medal, Breakfast, Goodie Bag & More.',
+            image_url: 'assets/run_jaathara_2026_poster.jpg',
             registration_url: 'https://ecilrunners.iq301.in/',
             is_flagship: true
         };
@@ -443,27 +444,39 @@ async function loadLiveEvents() {
                     buttonHtml = `<button onclick="rsvpForEvent('${ev.id}', this)" class="bg-[#F97316] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-[#ea580c] transition-colors cursor-pointer">RSVP</button>`;
                 }
 
+                // If it is the flagship Run Jaathara poster, display full image without cropping
+                const isPoster = ev.image_url && ev.image_url.includes('run_jaathara');
+                const imageContainerClass = isPoster 
+                    ? "relative h-72 sm:h-80 bg-stone-900 flex items-center justify-center overflow-hidden p-1" 
+                    : "relative h-52 overflow-hidden bg-gray-100 dark:bg-gray-900";
+                const imgClass = isPoster 
+                    ? "w-full h-full object-contain rounded-xl group-hover:scale-[1.02] transition-transform duration-500" 
+                    : "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500";
+
                 return `
-                <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-gray-700 hover:-translate-y-2 transition-all duration-300 group">
-                    <div class="relative h-48 overflow-hidden">
-                        <img src="${ev.image_url || 'assets/events_marathon.jpg'}" alt="Event" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        <div class="absolute top-4 right-4 bg-[#F97316] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-md">
-                            ${ev.date}
+                <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-gray-700 hover:-translate-y-2 transition-all duration-300 group flex flex-col justify-between">
+                    <div>
+                        <div class="${imageContainerClass}">
+                            <img src="${ev.image_url || 'assets/events_marathon.jpg'}" alt="${ev.title}" class="${imgClass}">
+                            <div class="absolute top-4 right-4 bg-[#F97316] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-md">
+                                ${ev.date}
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex items-center gap-2 text-sm text-[#F97316] font-bold mb-3">
+                                <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                <span class="uppercase tracking-wider text-xs line-clamp-1">${ev.location}</span>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">${ev.title}</h3>
+                            <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">${ev.description || 'Join us for this amazing ECIL Runners event. See you at the starting line!'}</p>
                         </div>
                     </div>
-                    <div class="p-6">
-                        <div class="flex items-center gap-2 text-sm text-[#F97316] font-bold mb-3">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            <span class="uppercase tracking-wider text-xs">${ev.location}</span>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">${ev.title}</h3>
-                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-6 line-clamp-2">${ev.description || 'Join us for this amazing ECIL Runners event. See you at the starting line!'}</p>
+                    <div class="px-6 pb-6">
                         <div class="flex justify-between items-center pt-4 border-t border-gray-100 dark:border-gray-700">
-                            <span class="font-bold text-gray-900 dark:text-white">${ev.price || 'FREE'}</span>
+                            <span class="font-bold text-gray-900 dark:text-white text-xs sm:text-sm">${ev.price || 'FREE'}</span>
                             ${buttonHtml}
                         </div>
                     </div>
-                </div>
                 `;
             }).join('');
         } else {
@@ -575,10 +588,13 @@ async function renderCalendarEvents(filterType = 'all') {
             statusBadge = `<button onclick="rsvpForEvent('${ev.id}', this)" class="bg-[#F97316] text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-orange-600 transition-colors cursor-pointer">RSVP Now</button>`;
         }
 
+        const isPoster = ev.image_url && ev.image_url.includes('run_jaathara');
+        const thumbClass = isPoster ? "w-16 h-20 rounded-xl object-contain bg-stone-900 p-0.5 shrink-0 border border-gray-700" : "w-16 h-16 rounded-xl object-cover shrink-0";
+
         return `
             <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-800 hover:border-gray-300 transition-colors">
                 <div class="flex items-center gap-4">
-                    <img src="${ev.image_url || 'assets/events_marathon.jpg'}" class="w-16 h-16 rounded-xl object-cover shrink-0">
+                    <img src="${ev.image_url || 'assets/events_marathon.jpg'}" class="${thumbClass}">
                     <div>
                         <div class="flex items-center gap-2 mb-1">
                             <span class="text-xs font-bold text-[#F97316] uppercase tracking-wider">${ev.date}</span>
