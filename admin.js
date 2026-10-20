@@ -708,27 +708,30 @@ async function loadEventRegistrations(eventId) {
                 group = meta.group || group;
                 phone = meta.phone || phone;
             } catch(e) {}
-        } else {
-            // Check localStorage cache
-            try {
-                const cachedKey = `ecil_runner_meta_${reg.user_email || reg.user_id}`;
-                const cachedStr = localStorage.getItem(cachedKey);
-                if (cachedStr) {
-                    const meta = JSON.parse(cachedStr);
-                    runnerName = meta.name || runnerName;
-                    gender = meta.gender || gender;
-                    category = meta.category || category;
-                    bib = meta.bib || bib;
-                    tshirt = meta.tshirt || tshirt;
-                    blood = meta.blood || blood;
-                    health = meta.health || health;
-                    emergencyPerson = meta.emergencyPerson || emergencyPerson;
-                    emergencyPhone = meta.emergencyPhone || emergencyPhone;
-                    dob = meta.dob || dob;
-                    group = meta.group || group;
-                    phone = meta.phone || phone;
-                }
-            } catch(e) {}
+        // 2. Also handle legacy bracketed format: "Veer • [Cat: 21.1K TIMED RUN | Bib: Veer ...]"
+        if (reg.user_name && reg.user_name.includes('• [')) {
+            const parts = reg.user_name.split('• [');
+            runnerName = parts[0].trim();
+            const tagStr = parts[1] || '';
+            const catMatch = tagStr.match(/Cat:\s*([^|\]]+)/);
+            const bibMatch = tagStr.match(/Bib:\s*([^|\]]+)/);
+            const tshirtMatch = tagStr.match(/T-Shirt:\s*([^|\]]+)/);
+            const bloodMatch = tagStr.match(/Blood:\s*([^|\]]+)/);
+            const phoneMatch = tagStr.match(/Ph:\s*([^|\]]+)/);
+
+            if (catMatch) category = catMatch[1].trim();
+            if (bibMatch) bib = bibMatch[1].trim();
+            if (tshirtMatch) tshirt = tshirtMatch[1].trim();
+            if (bloodMatch) blood = bloodMatch[1].trim();
+            if (phoneMatch) phone = phoneMatch[1].trim();
+        }
+
+        // Final sanitation: clean any trailing bracket or metadata artifacts
+        if (runnerName.includes('__META__:')) {
+            runnerName = runnerName.split('__META__:')[0].trim();
+        }
+        if (runnerName.includes('• [')) {
+            runnerName = runnerName.split('• [')[0].trim();
         }
 
         const isAttended = reg.status === 'attended';
