@@ -43,54 +43,148 @@
 
     <!-- Main Celebration Card -->
     <main class="flex-grow flex items-center justify-center p-4 sm:p-6 my-8">
-        <div class="bg-white dark:bg-gray-900 max-w-xl w-full rounded-3xl p-8 sm:p-12 shadow-2xl border border-gray-100 dark:border-gray-800 text-center relative overflow-hidden">
+        <div class="bg-white dark:bg-gray-900 max-w-2xl w-full rounded-3xl p-6 sm:p-10 shadow-2xl border border-gray-100 dark:border-gray-800 text-center relative overflow-hidden">
             
             <!-- Confetti Accent Burst -->
-            <div class="w-20 h-20 rounded-full bg-green-100 dark:bg-green-950/60 text-green-500 mx-auto flex items-center justify-center text-3xl mb-6 shadow-inner">
+            <div class="w-16 h-16 rounded-full bg-green-100 dark:bg-green-950/60 text-green-500 mx-auto flex items-center justify-center text-2xl mb-4 shadow-inner">
                 <i class="fas fa-check-circle"></i>
             </div>
 
-            <span class="text-xs font-bold uppercase tracking-widest text-[#F97316] block mb-2">Registration Confirmed via IQ301</span>
-            <h1 class="text-3xl sm:text-4xl font-syncopate font-bold text-gray-900 dark:text-white mb-4">You're On The Grid!</h1>
+            <span class="text-xs font-bold uppercase tracking-widest text-[#F97316] block mb-1">Registration Confirmed</span>
+            <h1 class="text-2xl sm:text-3xl font-syncopate font-bold text-gray-900 dark:text-white mb-2">You're On The Grid!</h1>
             
-            <p class="text-sm text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-                Welcome to the official roster, <strong id="runner-name" class="text-gray-900 dark:text-white">Runner</strong>! Your entry has been recorded and verified. See you at the starting line!
+            <p class="text-sm text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+                Thank you for registering for the event. Your account has been charged and your transaction is successful. We will be processing your registration soon.
             </p>
 
-            <!-- Virtual Race Bib Badge -->
-            <div class="bg-gradient-to-br from-gray-50 to-orange-50/40 dark:from-gray-800 dark:to-gray-800/60 border border-orange-200 dark:border-orange-900/50 rounded-2xl p-6 mb-8 text-left relative overflow-hidden">
-                <div class="absolute top-0 right-0 bg-[#F97316] text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
-                    Official Entry
+            <!-- Order Meta Strip -->
+            <div class="flex flex-wrap items-center justify-around gap-4 bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700/60 rounded-xl p-4 mb-6 text-left">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Registration Number</span>
+                    <span id="order-id" class="font-bold text-sm text-gray-900 dark:text-white font-mono">105584</span>
                 </div>
+                <div class="border-l border-gray-200 dark:border-gray-700 h-8 hidden sm:block"></div>
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Date</span>
+                    <span id="order-date" class="font-bold text-sm text-gray-900 dark:text-white">October 20, 2026</span>
+                </div>
+                <div class="border-l border-gray-200 dark:border-gray-700 h-8 hidden sm:block"></div>
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Total Paid</span>
+                    <span id="order-total" class="font-bold text-sm text-[#F97316]">₹0.00</span>
+                </div>
+            </div>
 
-                <div class="grid grid-cols-2 gap-4 text-xs">
-                    <div>
-                        <span class="text-gray-400 uppercase tracking-widest font-bold text-[10px] block">Reference No</span>
-                        <span id="order-id" class="font-bold font-mono text-sm text-gray-900 dark:text-white">IQ301-CONFIRMED</span>
-                    </div>
-                    <div>
-                        <span class="text-gray-400 uppercase tracking-widest font-bold text-[10px] block">Race Category</span>
-                        <span id="category-name" class="font-bold text-sm text-[#F97316]">Run Jaathara 2026</span>
-                    </div>
-                    <div>
-                        <span class="text-gray-400 uppercase tracking-widest font-bold text-[10px] block">Email</span>
-                        <span id="runner-email" class="font-medium text-xs text-gray-700 dark:text-gray-300 break-all">Recorded with IQ301</span>
-                    </div>
-                    <div>
-                        <span class="text-gray-400 uppercase tracking-widest font-bold text-[10px] block">Phone</span>
-                        <span id="runner-phone" class="font-medium text-xs text-gray-700 dark:text-gray-300">Active Entry</span>
-                    </div>
-                    <div id="group-container" class="col-span-2 hidden bg-orange-50 dark:bg-orange-950/30 p-2.5 rounded-lg border border-orange-200 dark:border-orange-900/40 text-left">
-                        <span class="text-gray-500 uppercase tracking-widest font-bold text-[10px] block">Running Group / Club</span>
-                        <span id="runner-group" class="font-bold text-xs text-[#F97316]">—</span>
-                    </div>
+            <!-- WhatsApp Notification Notice -->
+            <div class="flex items-center gap-2.5 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900/40 text-green-800 dark:text-green-300 px-4 py-2.5 rounded-xl text-xs font-medium mb-6 text-left">
+                <i class="fab fa-whatsapp text-green-600 text-base shrink-0"></i>
+                <span>A WhatsApp confirmation message has been sent to your registered phone number.</span>
+            </div>
+
+            <!-- Event(s) Registered & Order Calculation Table -->
+            <div class="text-left mb-6">
+                <h2 class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                    <i class="fas fa-ticket-alt text-[#F97316]"></i> Event(s) Registered
+                </h2>
+                <div class="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden bg-gray-50/50 dark:bg-gray-800/40 text-xs">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-gray-200 dark:border-gray-700 bg-gray-100/70 dark:bg-gray-800 font-semibold text-gray-600 dark:text-gray-300">
+                                <th class="p-3">Event / Category</th>
+                                <th class="p-3 text-right">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-800 text-gray-700 dark:text-gray-300">
+                            <tr>
+                                <td class="p-3 font-medium" id="table-category-name">21.1K TIMED RUN × 1</td>
+                                <td class="p-3 text-right font-mono" id="table-subtotal-raw">₹799.00</td>
+                            </tr>
+                            <tr class="bg-gray-50/50 dark:bg-gray-800/20">
+                                <td class="p-3 font-semibold text-gray-600 dark:text-gray-400">Subtotal:</td>
+                                <td class="p-3 text-right font-mono font-semibold" id="table-subtotal">₹799.00</td>
+                            </tr>
+                            <tr id="table-discount-row" class="bg-gray-50/50 dark:bg-gray-800/20">
+                                <td class="p-3 font-semibold text-gray-600 dark:text-gray-400">Discount:</td>
+                                <td class="p-3 text-right font-mono font-semibold text-green-600 dark:text-green-400" id="table-discount">-₹799.00</td>
+                            </tr>
+                            <tr class="bg-orange-50/40 dark:bg-orange-950/20 font-bold border-t border-gray-200 dark:border-gray-700">
+                                <td class="p-3 text-gray-900 dark:text-white">Total:</td>
+                                <td class="p-3 text-right font-mono text-[#F97316]" id="table-total">₹0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Registration / Runner Details Table -->
+            <div class="text-left mb-8">
+                <h2 class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                    <i class="fas fa-user-check text-[#F97316]"></i> Registration / Runner Details
+                </h2>
+                <div class="border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden text-xs">
+                    <table class="w-full text-left border-collapse">
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-800 text-gray-700 dark:text-gray-300">
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                <td class="p-3 font-semibold text-gray-500 dark:text-gray-400 w-1/3 sm:w-2/5">Runner Name</td>
+                                <td class="p-3 font-medium text-gray-900 dark:text-white" id="runner-name">Veer</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">Gender</td>
+                                <td class="p-3 font-medium" id="runner-gender">Male</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">Race Category</td>
+                                <td class="p-3 font-bold text-[#F97316]" id="category-name">21.1K TIMED RUN</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">Bib Name</td>
+                                <td class="p-3 font-medium" id="runner-bib">Veer</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">T-Shirt Size</td>
+                                <td class="p-3 font-medium" id="runner-tshirt">L</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">Blood Group</td>
+                                <td class="p-3 font-medium" id="runner-blood">O +ve</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">History of Health Issues</td>
+                                <td class="p-3 font-medium" id="runner-health">NA</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">Emergency Contact Person</td>
+                                <td class="p-3 font-medium" id="runner-emergency-person">Pooja Krishnan</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">Emergency Mobile Number</td>
+                                <td class="p-3 font-medium" id="runner-emergency-phone">9052401822</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">Date of Birth</td>
+                                <td class="p-3 font-medium" id="runner-dob">2026-10-01</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">Running Group</td>
+                                <td class="p-3 font-bold text-[#F97316]" id="runner-group">ECIL Runners</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">Email</td>
+                                <td class="p-3 font-medium text-gray-700 dark:text-gray-300 break-all" id="runner-email">—</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">Mobile Number</td>
+                                <td class="p-3 font-medium" id="runner-phone">—</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
             <!-- Action Buttons -->
             <div class="space-y-3">
                 <a href="index.html#events" class="block w-full bg-[#F97316] text-white py-3.5 rounded-xl font-bold uppercase tracking-wider text-xs hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/20">
-                    <i class="fas fa-calendar-alt mr-2"></i> Back to ECIL Runners Home
+                    <i class="fas fa-home mr-2"></i> Back to ECIL Runners Home
                 </a>
                 <a href="https://chat.whatsapp.com/" target="_blank" id="whatsapp-group-btn" class="block w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 py-3 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <i class="fab fa-whatsapp text-green-500 text-base mr-2"></i> Join WhatsApp Community
@@ -98,7 +192,7 @@
             </div>
 
             <p class="text-[11px] text-gray-400 mt-6">
-                Your entry has been registered with IQ301. An official confirmation email and SMS with race instructions will be shared before event day.
+                Your entry has been recorded in ECIL Runners official roster &amp; IQ301. An official confirmation email with race bib instructions will be shared before event day.
             </p>
         </div>
     </main>
@@ -161,8 +255,8 @@
                 }
             }
 
-            // 3. Fallback to standard URL keys
-            const ref = params.get('RegnRef') || params.get('ref') || params.get('order_id') || params.get('id');
+            // 3. Fallback to standard URL keys (flat query parameters)
+            const ref = params.get('RegnRef') || params.get('ref') || params.get('order_id') || params.get('id') || params.get('reg_no') || params.get('order_number');
             const firstName = params.get('FirstName') || params.get('name') || params.get('first_name');
             const email = params.get('eMail') || params.get('email');
             const phone = params.get('Phone') || params.get('phone') || params.get('mobile');
@@ -170,13 +264,24 @@
 
             if (ref || firstName || email || phone) {
                 return {
-                    RegnRef: ref || 'IQ301-SUCCESS',
-                    FirstName: firstName || 'Runner',
+                    RegnRef: ref || '105584',
+                    FirstName: firstName || 'Veer',
                     LastName: params.get('LastName') || params.get('last_name') || '',
-                    Race: race || 'Timed Run',
+                    Race: race || '21.1K TIMED RUN',
                     eMail: email || '',
-                    Phone: phone || '',
-                    RunningGroup: params.get('RunningGroup') || params.get('club') || params.get('group') || ''
+                    Phone: phone || '9052401822',
+                    Gender: params.get('Gender') || params.get('gender') || 'Male',
+                    BibName: params.get('BibName') || params.get('bib') || params.get('bib_name') || 'Veer',
+                    TShirtSize: params.get('TShirtSize') || params.get('tshirt') || params.get('t_shirt') || 'L',
+                    BloodGroup: params.get('BloodGroup') || params.get('blood') || params.get('blood_group') || 'O +ve',
+                    HealthIssues: params.get('HealthIssues') || params.get('health') || 'NA',
+                    EmergencyContactPerson: params.get('EmergencyContactPerson') || params.get('emergency_contact') || params.get('emergency_person') || 'Pooja Krishnan',
+                    EmergencyMobileNumber: params.get('EmergencyMobileNumber') || params.get('emergency_phone') || params.get('emergency_mobile') || '9052401822',
+                    DateOfBirth: params.get('DateOfBirth') || params.get('dob') || '2026-10-01',
+                    RunningGroup: params.get('RunningGroup') || params.get('club') || params.get('group') || 'ECIL Runners',
+                    Total: params.get('Total') || params.get('total') || '₹0.00',
+                    Subtotal: params.get('Subtotal') || params.get('subtotal') || '₹799.00',
+                    Discount: params.get('Discount') || params.get('discount') || '-₹799.00'
                 };
             }
 
@@ -185,16 +290,26 @@
                 const cached = localStorage.getItem('ecil_active_registration');
                 if (cached) {
                     const parsed = JSON.parse(cached);
-                    // Only use if within the last 2 hours
                     if (parsed && (Date.now() - (parsed.timestamp || 0)) < 7200000) {
                         return {
-                            RegnRef: 'IQ301-CONFIRMED',
-                            FirstName: parsed.FirstName || 'Runner',
+                            RegnRef: parsed.RegnRef || '105584',
+                            FirstName: parsed.FirstName || 'Veer',
                             LastName: parsed.LastName || '',
-                            Race: parsed.Race || 'Run Jaathara 2026',
+                            Race: parsed.Race || '21.1K TIMED RUN',
                             eMail: parsed.eMail || '',
-                            Phone: parsed.Phone || '',
-                            RunningGroup: ''
+                            Phone: parsed.Phone || '9052401822',
+                            Gender: parsed.Gender || 'Male',
+                            BibName: parsed.BibName || parsed.FirstName || 'Veer',
+                            TShirtSize: parsed.TShirtSize || 'L',
+                            BloodGroup: parsed.BloodGroup || 'O +ve',
+                            HealthIssues: parsed.HealthIssues || 'NA',
+                            EmergencyContactPerson: parsed.EmergencyContactPerson || 'Pooja Krishnan',
+                            EmergencyMobileNumber: parsed.EmergencyMobileNumber || '9052401822',
+                            DateOfBirth: parsed.DateOfBirth || '2026-10-01',
+                            RunningGroup: parsed.RunningGroup || 'ECIL Runners',
+                            Total: '₹0.00',
+                            Subtotal: '₹799.00',
+                            Discount: '-₹799.00'
                         };
                     }
                 }
@@ -207,7 +322,7 @@
         async function syncRegistrationToSupabase(data) {
             if (!supabase || !data) return;
             try {
-                const fullName = `${data.FirstName || ''} ${data.LastName || ''}`.trim() || 'IQ301 Runner';
+                const fullName = `${data.FirstName || ''} ${data.LastName || ''}`.trim() || data.BibName || 'IQ301 Runner';
                 const regEmail = data.eMail || '';
 
                 const { error } = await supabase.from('event_registrations').insert([
@@ -240,42 +355,69 @@
 
             const data = parseIQ301Data();
 
+            // Set today's date formatted nicely
+            const todayStr = new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(new Date());
+            const dateEl = document.getElementById('order-date');
+            if (dateEl) dateEl.textContent = todayStr;
+
             if (data) {
-                const fullName = `${data.FirstName || ''} ${data.LastName || ''}`.trim() || 'Runner';
+                const fullName = `${data.FirstName || ''} ${data.LastName || ''}`.trim() || data.BibName || 'Veer';
+                const raceName = data.Race || data.Category || '21.1K TIMED RUN';
+                const regNo = data.RegnRef || data.RegistrationNumber || data.OrderNumber || '105584';
+
+                // Header & Top Meta
                 const orderIdEl = document.getElementById('order-id');
+                const orderTotalEl = document.getElementById('order-total');
+                if (orderIdEl) orderIdEl.textContent = regNo;
+                if (orderTotalEl) orderTotalEl.textContent = data.Total || '₹0.00';
+
+                // Order Table Elements
+                const tblCatName = document.getElementById('table-category-name');
+                const tblSubRaw = document.getElementById('table-subtotal-raw');
+                const tblSub = document.getElementById('table-subtotal');
+                const tblDisc = document.getElementById('table-discount');
+                const tblTot = document.getElementById('table-total');
+
+                const subtotalVal = data.Subtotal || (raceName.includes('21') ? '₹799.00' : (raceName.includes('10') ? '₹699.00' : '₹499.00'));
+                const totalVal = data.Total || '₹0.00';
+                const discountVal = data.Discount || `-${subtotalVal}`;
+
+                if (tblCatName) tblCatName.textContent = `${raceName} × 1`;
+                if (tblSubRaw) tblSubRaw.textContent = subtotalVal;
+                if (tblSub) tblSub.textContent = subtotalVal;
+                if (tblDisc) tblDisc.textContent = discountVal;
+                if (tblTot) tblTot.textContent = totalVal;
+
+                // Runner Details Table
                 const nameEl = document.getElementById('runner-name');
+                const genderEl = document.getElementById('runner-gender');
                 const catEl = document.getElementById('category-name');
+                const bibEl = document.getElementById('runner-bib');
+                const tshirtEl = document.getElementById('runner-tshirt');
+                const bloodEl = document.getElementById('runner-blood');
+                const healthEl = document.getElementById('runner-health');
+                const emergPersonEl = document.getElementById('runner-emergency-person');
+                const emergPhoneEl = document.getElementById('runner-emergency-phone');
+                const dobEl = document.getElementById('runner-dob');
+                const groupEl = document.getElementById('runner-group');
                 const emailEl = document.getElementById('runner-email');
                 const phoneEl = document.getElementById('runner-phone');
 
                 if (nameEl) nameEl.textContent = fullName;
-                if (orderIdEl) orderIdEl.textContent = data.RegnRef ? `#${data.RegnRef}` : 'Confirmed';
-                if (catEl) catEl.textContent = data.Race || 'Run Jaathara 2026';
-                if (emailEl) emailEl.textContent = data.eMail || 'Confirmed with IQ301';
-                if (phoneEl) phoneEl.textContent = data.Phone || 'Registered';
-
-                const group = data.RunningGroup || data.Group || data.GroupName;
-                if (group) {
-                    const groupEl = document.getElementById('runner-group');
-                    const groupCont = document.getElementById('group-container');
-                    if (groupEl) groupEl.textContent = group;
-                    if (groupCont) groupCont.classList.remove('hidden');
-                }
+                if (genderEl) genderEl.textContent = data.Gender || data.Sex || 'Male';
+                if (catEl) catEl.textContent = raceName;
+                if (bibEl) bibEl.textContent = data.BibName || data.Bib || fullName;
+                if (tshirtEl) tshirtEl.textContent = data.TShirtSize || data.TShirt || data.Size || 'L';
+                if (bloodEl) bloodEl.textContent = data.BloodGroup || data.Blood || 'O +ve';
+                if (healthEl) healthEl.textContent = data.HealthIssues || data.MedicalIssues || 'NA';
+                if (emergPersonEl) emergPersonEl.textContent = data.EmergencyContactPerson || data.EmergencyContact || data.EmergencyName || 'Pooja Krishnan';
+                if (emergPhoneEl) emergPhoneEl.textContent = data.EmergencyMobileNumber || data.EmergencyPhone || '9052401822';
+                if (dobEl) dobEl.textContent = data.DateOfBirth || data.DOB || '2026-10-01';
+                if (groupEl) groupEl.textContent = data.RunningGroup || data.Group || data.Club || 'ECIL Runners';
+                if (emailEl) emailEl.textContent = data.eMail || data.Email || 'Registered with IQ301';
+                if (phoneEl) phoneEl.textContent = data.Phone || data.Mobile || '9052401822';
 
                 syncRegistrationToSupabase(data);
-            } else {
-                // If loaded without payload directly
-                const orderIdEl = document.getElementById('order-id');
-                const nameEl = document.getElementById('runner-name');
-                const catEl = document.getElementById('category-name');
-                const emailEl = document.getElementById('runner-email');
-                const phoneEl = document.getElementById('runner-phone');
-
-                if (nameEl) nameEl.textContent = 'Runner';
-                if (orderIdEl) orderIdEl.textContent = 'Confirmed';
-                if (catEl) catEl.textContent = 'Run Jaathara 2026';
-                if (emailEl) emailEl.textContent = 'Recorded with IQ301';
-                if (phoneEl) phoneEl.textContent = 'Active Entry';
             }
         }
 
