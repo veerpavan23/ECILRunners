@@ -336,15 +336,16 @@
                 const fullName = `${data.FirstName || ''} ${data.LastName || ''}`.trim() || data.BibName || 'IQ301 Runner';
                 const regEmail = data.eMail || '';
 
-                // Deduplicate check
+                // Deduplicate check specifically for this event
                 if (currentUserId) {
                     const { data: existing } = await supabaseClient
                         .from('event_registrations')
                         .select('id')
                         .eq('user_id', currentUserId)
+                        .eq('event_id', 'run-jaathara-2026')
                         .limit(1);
                     if (existing && existing.length > 0) {
-                        console.log("Runner already registered in database:", existing[0].id);
+                        console.log("Runner already registered for Run Jaathara in database:", existing[0].id);
                         return;
                     }
                 } else if (regEmail) {
@@ -352,9 +353,10 @@
                         .from('event_registrations')
                         .select('id')
                         .eq('user_email', regEmail)
+                        .eq('event_id', 'run-jaathara-2026')
                         .limit(1);
                     if (existing && existing.length > 0) {
-                        console.log("Runner already registered with email in database:", existing[0].id);
+                        console.log("Runner email already registered for Run Jaathara in database:", existing[0].id);
                         return;
                     }
                 }
