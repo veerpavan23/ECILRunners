@@ -824,12 +824,17 @@ async function loadLiveMerch() {
                             ${items.map(mc => {
                                 const images = mc.images && mc.images.length > 0 ? mc.images : [mc.image_url || 'assets/merch_tshirt.jpg'];
                                 return `
-                                <div class="bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-shadow duration-300">
-                                    <div class="swiper product-swiper w-full h-72 bg-white relative">
+                                <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl transition-shadow duration-300 relative group">
+                                    <div class="absolute top-3 left-3 z-10">
+                                        <span class="bg-red-600 text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full shadow-md flex items-center gap-1">
+                                            <i class="fas fa-ban text-[9px]"></i> Sold Out
+                                        </span>
+                                    </div>
+                                    <div class="swiper product-swiper w-full h-72 bg-white dark:bg-gray-800 relative">
                                         <div class="swiper-wrapper">
                                             ${images.map(img => `
                                                 <div class="swiper-slide flex items-center justify-center p-6">
-                                                    <img src="${img}" class="max-h-full max-w-full object-contain hover:scale-105 transition-transform duration-500">
+                                                    <img src="${img}" class="max-h-full max-w-full object-contain hover:scale-105 transition-transform duration-500 opacity-90">
                                                 </div>
                                             `).join('')}
                                         </div>
@@ -837,12 +842,15 @@ async function loadLiveMerch() {
                                     </div>
                                     <div class="p-6">
                                         <div class="flex justify-between items-start mb-2 gap-2">
-                                            <h3 class="text-lg font-bold text-gray-900 leading-tight">${mc.title}</h3>
-                                            <span class="text-[#F97316] font-bold text-lg whitespace-nowrap">${mc.price}</span>
+                                            <h3 class="text-lg font-bold text-gray-900 dark:text-white leading-tight">${mc.title}</h3>
+                                            <span class="text-gray-400 font-bold text-lg whitespace-nowrap line-through">${mc.price}</span>
                                         </div>
-                                        <p class="text-sm text-gray-500 mb-6">Sizes: ${mc.sizes}</p>
-                                        <button onclick="triggerRazorpay(this)" data-title="${mc.title}" data-price="${mc.price}" class="w-full bg-gray-900 text-white py-3 rounded-xl font-bold tracking-wide hover:bg-[#F97316] transition-colors flex items-center justify-center gap-2">
-                                            Buy Now (Razorpay)
+                                        <div class="flex items-center justify-between mb-6">
+                                            <p class="text-sm text-gray-500 dark:text-gray-400">Sizes: ${mc.sizes}</p>
+                                            <span class="text-[10px] font-bold uppercase tracking-wider text-red-600 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 px-2 py-0.5 rounded-full">Sold Out</span>
+                                        </div>
+                                        <button disabled class="w-full bg-gray-200 dark:bg-gray-800 text-gray-400 dark:text-gray-500 py-3 rounded-xl font-bold tracking-wide cursor-not-allowed flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-700 shadow-none select-none transition-colors" title="Merchandise is currently sold out">
+                                            <i class="fas fa-lock text-xs"></i> Sold Out
                                         </button>
                                     </div>
                                 </div>
@@ -1186,11 +1194,8 @@ fetchRunnerOfTheMonth();
 
 // Razorpay Integration
 async function triggerRazorpay(btn) {
-    if (!currentUser) {
-        alert("Please sign in first to purchase merchandise.");
-        openAuthModal();
-        return;
-    }
+    alert("Official ECIL Runners merchandise is currently SOLD OUT. Please stay tuned for our next batch drop!");
+    return;
 
     const title = btn.getAttribute('data-title');
     const priceStr = btn.getAttribute('data-price');

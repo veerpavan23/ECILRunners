@@ -674,7 +674,12 @@
                         <h2 class="text-sm font-bold text-[#F97316] uppercase tracking-widest mb-4 flex items-center gap-2">
                             <span class="w-8 h-px bg-[#F97316]"></span> Official Gear
                         </h2>
-                        <h3 class="text-4xl md:text-5xl font-syncopate font-bold text-gray-900">Merchandise</h3>
+                        <div class="flex flex-wrap items-center gap-4">
+                            <h3 class="text-4xl md:text-5xl font-syncopate font-bold text-gray-900 dark:text-white">Merchandise</h3>
+                            <span class="inline-flex items-center gap-1.5 bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-300 text-xs font-bold uppercase tracking-wider px-3.5 py-1.5 rounded-full border border-red-200 dark:border-red-800 shadow-sm">
+                                <i class="fas fa-ban text-[11px]"></i> All Items Currently Sold Out
+                            </span>
+                        </div>
                     </div>
                 </div>
                 
@@ -750,7 +755,7 @@
         html:not(.dark) #night-sky { display: none !important; opacity: 0 !important; }
         html.dark body { background-color: #0B0F19 !important; }
     </style>
-    <script src="script.js?v=20261020_v5" defer>    </script>
+    <script src="script.js?v=20261020_v6" defer>    </script>
     <style>
         /* Anti-FOUC for Tailwind CDN */
         html.dark #day-sky { display: none !important; opacity: 0 !important; }

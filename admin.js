@@ -347,8 +347,11 @@ async function loadMerch() {
         <div class="flex items-center gap-4 p-3 border rounded">
             ${mc.images && mc.images.length > 0 ? `<img src="${mc.images[0]}" class="w-16 h-16 object-cover rounded border">` : (mc.image_url ? `<img src="${mc.image_url}" class="w-16 h-16 object-cover rounded border">` : `<div class="w-16 h-16 bg-gray-200 rounded"></div>`)}
             <div>
-                <div class="text-xs font-bold text-gray-400 uppercase tracking-wider">${mc.category || 'Mens Collection'}</div>
-                <div class="font-bold">${mc.title} <span class="text-[#F97316]">${mc.price}</span></div>
+                <div class="font-bold flex items-center gap-2">
+                    <span>${mc.title}</span> 
+                    <span class="text-[#F97316]">${mc.price}</span>
+                    <span class="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Sold Out</span>
+                </div>
                 <div class="text-sm text-gray-500">Sizes: ${mc.sizes} | ${mc.images ? mc.images.length : 1} photos</div>
             </div>
             <button onclick="openEditMerch('${mc.id}')" class="text-blue-500 text-sm hover:underline mr-3">Edit</button><button onclick="deleteRecord('merch', '${mc.id}')" class="ml-auto text-red-500 text-sm hover:underline">Delete</button>
