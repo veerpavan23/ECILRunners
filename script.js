@@ -444,20 +444,15 @@ async function loadLiveEvents() {
                     buttonHtml = `<button onclick="rsvpForEvent('${ev.id}', this)" class="bg-[#F97316] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-[#ea580c] transition-colors cursor-pointer">RSVP</button>`;
                 }
 
-                // If it is the flagship Run Jaathara poster, display full image without cropping
-                const isPoster = ev.image_url && ev.image_url.includes('run_jaathara');
-                const imageContainerClass = isPoster 
-                    ? "relative h-72 sm:h-80 bg-stone-900 flex items-center justify-center overflow-hidden p-1" 
-                    : "relative h-52 overflow-hidden bg-gray-100 dark:bg-gray-900";
-                const imgClass = isPoster 
-                    ? "w-full h-full object-contain rounded-xl group-hover:scale-[1.02] transition-transform duration-500" 
-                    : "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500";
+                const imageSrc = (ev.image_url && ev.image_url.includes('run_jaathara')) 
+                    ? 'assets/run_jaathara_2026_card.jpg' 
+                    : (ev.image_url || 'assets/events_marathon.jpg');
 
                 return `
                 <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-gray-700 hover:-translate-y-2 transition-all duration-300 group flex flex-col justify-between">
                     <div>
-                        <div class="${imageContainerClass}">
-                            <img src="${ev.image_url || 'assets/events_marathon.jpg'}" alt="${ev.title}" class="${imgClass}">
+                        <div class="relative h-56 overflow-hidden bg-gray-100 dark:bg-gray-900">
+                            <img src="${imageSrc}" alt="${ev.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                             <div class="absolute top-4 right-4 bg-[#F97316] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-md">
                                 ${ev.date}
                             </div>
