@@ -944,6 +944,37 @@
             </div>
         </div>
     </div>
+
+    <!-- IQ301 Embedded Seamless Registration Modal -->
+    <div id="iq301-modal" class="fixed inset-0 bg-black/75 z-[120] hidden flex flex-col items-center justify-center p-2 sm:p-4 backdrop-blur-md opacity-0 transition-opacity duration-300">
+        <div class="bg-white dark:bg-gray-900 w-full max-w-4xl h-[92vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-gray-200 dark:border-gray-800 transform scale-95 transition-transform duration-300" id="iq301-modal-content">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/80 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center shrink-0">
+                <div class="flex items-center gap-3">
+                    <img src="assets/logo.png" alt="ECIL Runners" class="h-8 w-auto">
+                    <div>
+                        <h3 class="font-syncopate font-bold text-sm text-gray-900 dark:text-white uppercase tracking-wider">Run Jaathara 2026 Registration</h3>
+                        <span class="text-[10px] text-gray-500 uppercase tracking-widest font-semibold flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Official Portal &bull; ECIL Runners Society
+                        </span>
+                    </div>
+                </div>
+                <button onclick="closeIQ301Modal()" class="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-[#F97316] hover:text-white text-gray-600 dark:text-gray-200 transition-colors flex items-center justify-center cursor-pointer">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Iframe Container with Loading Indicator -->
+            <div class="relative flex-1 w-full bg-gray-100 dark:bg-gray-950 overflow-hidden">
+                <div id="iq301-loader" class="absolute inset-0 flex flex-col items-center justify-center bg-white dark:bg-gray-900 z-10 transition-opacity duration-300">
+                    <div class="w-12 h-12 border-4 border-[#F97316] border-t-transparent rounded-full animate-spin mb-4"></div>
+                    <p class="font-bold text-sm text-gray-800 dark:text-gray-200 font-syncopate">Loading Registration Portal...</p>
+                    <p class="text-xs text-gray-400 mt-1">Directly secure with IQ301</p>
+                </div>
+                <iframe id="iq301-frame" src="" class="w-full h-full border-0" allow="payment; clipboard-read; clipboard-write"></iframe>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
 

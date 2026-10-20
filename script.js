@@ -404,22 +404,43 @@ async function loadLiveEvents() {
             }
         }
         
+        // Dedicated flagship Run Jaathara event configuration
+        const runJaatharaEvent = {
+            id: 'run-jaathara-2026',
+            title: 'Run Jaathara 2026',
+            date: 'December 6th, 2026 5:30 AM',
+            location: 'ECIL, Hyderabad',
+            price: '5K • 10K • 21K',
+            description: 'Run Jaathara 2026 Retro Edition by ECIL Runners! 5K Fun Run, 10K Challenge, and 21K Half Marathon. Celebrate fitness, health, and togetherness.',
+            image_url: 'assets/events_marathon.jpg',
+            registration_url: 'https://ecilrunners.iq301.in/',
+            is_flagship: true
+        };
+
+        // Combine DB events and ensure Run Jaathara 2026 is present at the front
+        let allList = (events || []).filter(e => !e.title?.toLowerCase().includes('run jaathara'));
+        allList.unshift(runJaatharaEvent);
+        allEventsCache = allList;
+
         // Filter strictly UPCOMING events for the home section
-        const upcomingEvents = (events || []).filter(ev => !isEventCompleted(ev.date));
+        const upcomingEvents = allList.filter(ev => !isEventCompleted(ev.date));
         
         if (upcomingEvents.length > 0) {
             container.innerHTML = upcomingEvents.slice(0, 3).map(ev => {
                 const regStatus = userRegistrations[ev.id];
                 const isRegistered = !!regStatus;
                 const completed = isEventCompleted(ev.date);
+                const regUrl = ev.registration_url || (ev.title?.toLowerCase().includes('run jaathara') ? 'https://ecilrunners.iq301.in/' : null);
                 
                 let buttonHtml = '';
                 if (completed) {
                     buttonHtml = `<button disabled class="bg-gray-200 dark:bg-gray-800 text-gray-500 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-1.5"><i class="fas fa-flag-checkered text-[#F97316]"></i> Completed</button>`;
+                } else if (regUrl) {
+                    buttonHtml = `<button onclick="openRegistrationPortal('${regUrl}')" class="bg-[#F97316] hover:bg-orange-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center gap-2 cursor-pointer"><i class="fas fa-ticket-alt"></i> Register Now</button>`;
                 } else if (isRegistered) {
                     buttonHtml = `<button disabled class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-1.5"><i class="fas fa-check"></i> Registered</button>`;
                 } else {
-                    buttonHtml = `<button onclick="rsvpForEvent('${ev.id}', this)" class="bg-[#F97316] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-[#ea580c] transition-colors">RSVP</button>`;
+                    buttonHtml = `<button onclick="rsvpForEvent('${ev.id}', this)" class="bg-[#F97316] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-[#ea580c] transition-colors cursor-pointer">RSVP</button>`;
                 }
 
                 return `
@@ -540,14 +561,18 @@ async function renderCalendarEvents(filterType = 'all') {
         const regStatus = userRegistrations[ev.id];
         
         let statusBadge = '';
+        const regUrl = ev.registration_url || (ev.title?.toLowerCase().includes('run jaathara') ? 'https://ecilrunners.iq301.in/' : null);
+
         if (completed) {
             statusBadge = `<span class="bg-gray-100 dark:bg-gray-800 text-gray-500 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1"><i class="fas fa-check-circle text-gray-400"></i> Event Completed</span>`;
+        } else if (regUrl) {
+            statusBadge = `<button onclick="openRegistrationPortal('${regUrl}')" class="bg-[#F97316] hover:bg-orange-600 text-white px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors shadow-sm flex items-center gap-1.5 cursor-pointer"><i class="fas fa-ticket-alt"></i> Register</button>`;
         } else if (regStatus === 'attended') {
             statusBadge = `<span class="bg-green-100 text-green-700 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1"><i class="fas fa-award"></i> Attended</span>`;
         } else if (regStatus === 'registered') {
             statusBadge = `<span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider flex items-center gap-1"><i class="fas fa-ticket-alt"></i> Registered</span>`;
         } else {
-            statusBadge = `<button onclick="rsvpForEvent('${ev.id}', this)" class="bg-[#F97316] text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-orange-600 transition-colors">RSVP Now</button>`;
+            statusBadge = `<button onclick="rsvpForEvent('${ev.id}', this)" class="bg-[#F97316] text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-orange-600 transition-colors cursor-pointer">RSVP Now</button>`;
         }
 
         return `
@@ -1019,10 +1044,20 @@ if(authForm) {
                 }
                 alert("Account created successfully!");
                 closeAuthModal();
+                if (typeof pendingActionAfterAuth === 'function') {
+                    const action = pendingActionAfterAuth;
+                    pendingActionAfterAuth = null;
+                    setTimeout(action, 400);
+                }
             } else {
                 const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
                 if (error) throw error;
                 closeAuthModal();
+                if (typeof pendingActionAfterAuth === 'function') {
+                    const action = pendingActionAfterAuth;
+                    pendingActionAfterAuth = null;
+                    setTimeout(action, 400);
+                }
             }
         } catch (error) {
             authError.innerText = error.message;
@@ -1205,11 +1240,87 @@ async function triggerRazorpay(btn) {
 
 
 
+// --- IQ301 SEAMLESS REGISTRATION MODAL LOGIC ---
+let pendingActionAfterAuth = null;
+
+async function openRegistrationPortal(url = 'https://ecilrunners.iq301.in/') {
+    // 1. Mandatory Login Check
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) {
+        pendingActionAfterAuth = () => openRegistrationPortal(url);
+        if (typeof openAuthModal === 'function') {
+            const authSub = document.getElementById('auth-subtitle');
+            if (authSub) authSub.textContent = 'Please sign in or create an account to register for Run Jaathara 2026.';
+            openAuthModal();
+        } else {
+            alert('Please sign in first to register for this event.');
+        }
+        return;
+    }
+
+    // 2. Open Embedded Modal
+    const modal = document.getElementById('iq301-modal');
+    const content = document.getElementById('iq301-modal-content');
+    const frame = document.getElementById('iq301-frame');
+    const loader = document.getElementById('iq301-loader');
+
+    if (!modal || !frame) {
+        window.open(url, '_blank');
+        return;
+    }
+
+    // Prefill user details in registration URL if possible
+    let finalUrl = url;
+    try {
+        const u = new URL(url);
+        if (user.email) u.searchParams.set('email', user.email);
+        const name = user.user_metadata?.full_name || '';
+        if (name) u.searchParams.set('name', name);
+        finalUrl = u.toString();
+    } catch (e) {
+        finalUrl = url;
+    }
+
+    if (loader) loader.classList.remove('hidden', 'opacity-0');
+    frame.src = finalUrl;
+
+    frame.onload = () => {
+        if (loader) {
+            loader.classList.add('opacity-0');
+            setTimeout(() => loader.classList.add('hidden'), 300);
+        }
+    };
+
+    modal.classList.remove('hidden');
+    setTimeout(() => {
+        modal.classList.remove('opacity-0');
+        if (content) content.classList.remove('scale-95');
+    }, 10);
+}
+
+function closeIQ301Modal() {
+    const modal = document.getElementById('iq301-modal');
+    const content = document.getElementById('iq301-modal-content');
+    const frame = document.getElementById('iq301-frame');
+
+    if (!modal) return;
+    modal.classList.add('opacity-0');
+    if (content) content.classList.add('scale-95');
+
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        if (frame) frame.src = '';
+    }, 300);
+}
+
 // --- EVENT RSVP LOGIC ---
 async function rsvpForEvent(eventId, buttonElement) {
     const { data: { user } } = await supabaseClient.auth.getUser();
     if (!user) {
-        alert("Please log in to RSVP for events!");
+        pendingActionAfterAuth = () => rsvpForEvent(eventId, buttonElement);
+        const authSub = document.getElementById('auth-subtitle');
+        if (authSub) authSub.textContent = 'Please sign in to RSVP for events.';
+        openAuthModal();
         return;
     }
 
@@ -1218,7 +1329,7 @@ async function rsvpForEvent(eventId, buttonElement) {
     buttonElement.disabled = true;
 
     try {
-                const { error } = await supabaseClient.from('event_registrations').insert([
+        const { error } = await supabaseClient.from('event_registrations').insert([
             { 
                 event_id: eventId, 
                 user_id: user.id, 
