@@ -65,20 +65,24 @@
 
                 <div class="grid grid-cols-2 gap-4 text-xs">
                     <div>
-                        <span class="text-gray-400 uppercase tracking-widest font-bold text-[10px] block">Event</span>
-                        <span id="event-name" class="font-bold text-sm text-gray-900 dark:text-white">ECIL Community Run</span>
+                        <span class="text-gray-400 uppercase tracking-widest font-bold text-[10px] block">Reference No</span>
+                        <span id="order-id" class="font-bold font-mono text-sm text-gray-900 dark:text-white">Loading...</span>
                     </div>
                     <div>
                         <span class="text-gray-400 uppercase tracking-widest font-bold text-[10px] block">Race Category</span>
-                        <span id="category-name" class="font-bold text-sm text-[#F97316]">Timed Run</span>
+                        <span id="category-name" class="font-bold text-sm text-[#F97316]">—</span>
                     </div>
                     <div>
-                        <span class="text-gray-400 uppercase tracking-widest font-bold text-[10px] block">Bib Number</span>
-                        <span id="bib-number" class="font-bold text-lg font-mono text-gray-900 dark:text-white">Allocated Soon</span>
+                        <span class="text-gray-400 uppercase tracking-widest font-bold text-[10px] block">Email</span>
+                        <span id="runner-email" class="font-medium text-xs text-gray-700 dark:text-gray-300 break-all">—</span>
                     </div>
                     <div>
-                        <span class="text-gray-400 uppercase tracking-widest font-bold text-[10px] block">Order / Reg ID</span>
-                        <span id="order-id" class="font-bold font-mono text-xs text-gray-700 dark:text-gray-300">#IQ301</span>
+                        <span class="text-gray-400 uppercase tracking-widest font-bold text-[10px] block">Phone</span>
+                        <span id="runner-phone" class="font-medium text-xs text-gray-700 dark:text-gray-300">—</span>
+                    </div>
+                    <div id="group-container" class="col-span-2 hidden bg-orange-50 dark:bg-orange-950/30 p-2.5 rounded-lg border border-orange-200 dark:border-orange-900/40 text-left">
+                        <span class="text-gray-500 uppercase tracking-widest font-bold text-[10px] block">Running Group / Club</span>
+                        <span id="runner-group" class="font-bold text-xs text-[#F97316]">—</span>
                     </div>
                 </div>
             </div>
@@ -86,49 +90,133 @@
             <!-- Action Buttons -->
             <div class="space-y-3">
                 <a href="index.html#events" class="block w-full bg-[#F97316] text-white py-3.5 rounded-xl font-bold uppercase tracking-wider text-xs hover:bg-orange-600 transition-colors shadow-lg shadow-orange-500/20">
-                    <i class="fas fa-calendar-alt mr-2"></i> View Event Schedule
+                    <i class="fas fa-calendar-alt mr-2"></i> Back to ECIL Runners Home
                 </a>
                 <a href="https://chat.whatsapp.com/" target="_blank" id="whatsapp-group-btn" class="block w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 py-3 rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                    <i class="fab fa-whatsapp text-green-500 text-base mr-2"></i> Join WhatsApp Event Group
+                    <i class="fab fa-whatsapp text-green-500 text-base mr-2"></i> Join WhatsApp Community
                 </a>
             </div>
 
             <p class="text-[11px] text-gray-400 mt-6">
-                A confirmation email with your timing details and bib collection location will be dispatched prior to race day.
+                Your entry has been registered with IQ301. An official confirmation email and SMS with race instructions will be shared before event day.
             </p>
         </div>
     </main>
 
     <!-- Footer -->
     <footer class="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-6 text-center text-xs text-gray-400">
-        <p>&copy; 2026 ECIL Runners Society &bull; Partnered with IQ301</p>
+        <p>&copy; 2026 ECIL Runners Society &bull; Official Partner of IQ301</p>
     </footer>
 
     <script>
-        // Trigger celebratory confetti on page arrival
+        // Supabase Client Config
+        const SUPABASE_URL = 'https://cvehhriirejuffbrowkr.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2ZWhocmlpcmVqdWZmYnJvd2tyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjIzMDEsImV4cCI6MjEwNjIzODMwMX0.FKnvc0Xj66_VWRbeWOWChG7SSmjjPyxNyHNJmX0E8qA';
+        const supabase = (typeof supabase !== 'undefined' && supabase.createClient) 
+            ? supabase.createClient(SUPABASE_URL, SUPABASE_KEY) 
+            : null;
+
+        // Parse IQ301 Registration Data
+        function parseIQ301Data() {
+            const fragment = window.location.hash;
+            const prefix = "#regn_json=";
+
+            // 1. Try URL fragment (IQ301 standard format)
+            if (fragment.startsWith(prefix)) {
+                try {
+                    let encoded = fragment.substring(prefix.length);
+                    encoded = encoded.replace(/-/g, "+").replace(/_/g, "/");
+                    encoded = encoded.padEnd(Math.ceil(encoded.length / 4) * 4, "=");
+
+                    const binary = atob(encoded);
+                    const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+                    const json = new TextDecoder().decode(bytes);
+                    const parsed = JSON.parse(json);
+                    window.registrationData = parsed;
+                    return parsed;
+                } catch (e) {
+                    console.error("Error decoding IQ301 #regn_json:", e);
+                }
+            }
+
+            // 2. Fallback to standard URL Query Parameters (?name=...&email=...)
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('FirstName') || params.get('name') || params.get('RegnRef')) {
+                return {
+                    RegnRef: params.get('RegnRef') || params.get('ref') || params.get('order_id') || 'IQ301-SUCCESS',
+                    FirstName: params.get('FirstName') || params.get('name') || 'Runner',
+                    LastName: params.get('LastName') || '',
+                    Race: params.get('Race') || params.get('category') || 'Timed Run',
+                    eMail: params.get('eMail') || params.get('email') || '',
+                    Phone: params.get('Phone') || params.get('phone') || '',
+                    RunningGroup: params.get('RunningGroup') || params.get('club') || ''
+                };
+            }
+
+            return null;
+        }
+
+        // Save entry into Supabase event_registrations table asynchronously
+        async function syncRegistrationToSupabase(data) {
+            if (!supabase || !data) return;
+            try {
+                const fullName = `${data.FirstName || ''} ${data.LastName || ''}`.trim() || 'IQ301 Runner';
+                const regEmail = data.eMail || '';
+                const regRef = data.RegnRef || '';
+
+                // Insert or log
+                const { error } = await supabase.from('event_registrations').insert([
+                    {
+                        user_name: fullName,
+                        user_email: regEmail,
+                        status: 'registered'
+                    }
+                ]);
+                if (error) {
+                    console.warn("Supabase registration sync warning:", error.message);
+                } else {
+                    console.log("Successfully recorded IQ301 registration into ECIL Runners database!");
+                }
+            } catch (err) {
+                console.warn("DB sync bypassed:", err);
+            }
+        }
+
         window.addEventListener('load', () => {
+            // Trigger celebration confetti
             if (typeof confetti === 'function') {
                 confetti({
-                    particleCount: 100,
-                    spread: 70,
+                    particleCount: 110,
+                    spread: 75,
                     origin: { y: 0.6 },
                     colors: ['#F97316', '#22C55E', '#3B82F6', '#EAB308']
                 });
             }
 
-            // Parse URL parameters sent back by IQ301
-            const params = new URLSearchParams(window.location.search);
-            const name = params.get('name') || params.get('runner_name') || 'Runner';
-            const bib = params.get('bib') || params.get('bib_number') || 'Confirmed at Expo';
-            const category = params.get('category') || params.get('distance') || 'Open Category';
-            const event = params.get('event') || params.get('event_name') || 'ECIL Annual Run';
-            const orderId = params.get('order_id') || params.get('reg_id') || params.get('id') || 'IQ301-SUCCESS';
+            const data = parseIQ301Data();
 
-            if (document.getElementById('runner-name')) document.getElementById('runner-name').textContent = name;
-            if (document.getElementById('bib-number')) document.getElementById('bib-number').textContent = bib;
-            if (document.getElementById('category-name')) document.getElementById('category-name').textContent = category;
-            if (document.getElementById('event-name')) document.getElementById('event-name').textContent = event;
-            if (document.getElementById('order-id')) document.getElementById('order-id').textContent = orderId;
+            if (data) {
+                const fullName = `${data.FirstName || ''} ${data.LastName || ''}`.trim() || 'Runner';
+                document.getElementById('runner-name').textContent = fullName;
+                document.getElementById('order-id').textContent = data.RegnRef ? `#${data.RegnRef}` : 'Confirmed';
+                document.getElementById('category-name').textContent = data.Race || 'Open Category';
+                document.getElementById('runner-email').textContent = data.eMail || '—';
+                document.getElementById('runner-phone').textContent = data.Phone || '—';
+
+                const group = data.RunningGroup || data.Group || data.GroupName;
+                if (group) {
+                    document.getElementById('runner-group').textContent = group;
+                    document.getElementById('group-container').classList.remove('hidden');
+                }
+
+                // Call Supabase insertion in background
+                syncRegistrationToSupabase(data);
+            } else {
+                // Friendly fallback display if opened directly without URL fragment
+                document.getElementById('runner-name').textContent = 'Runner';
+                document.getElementById('order-id').textContent = 'Confirmed';
+                document.getElementById('category-name').textContent = 'Run Jaathara 2026';
+            }
         });
     </script>
 </body>
