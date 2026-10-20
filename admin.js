@@ -592,10 +592,15 @@ async function loadAttendanceEvents() {
     const select = document.getElementById('attendance-event-select');
     if (!select) return;
     const { data, error } = await supabaseClient.from('events').select('id, title, date').order('created_at', { ascending: false });
+    
+    let optionsHtml = '<option value="">Select an Event...</option>';
+    optionsHtml += '<option value="all">★ All Registered Runners</option>';
+    optionsHtml += '<option value="run-jaathara-2026">★ Run Jaathara 2026 (December 6th, 2026)</option>';
+    
     if (data) {
-        select.innerHTML = '<option value="">Select an Event...</option>' + 
-            data.map(ev => `<option value="${ev.id}">${ev.title} (${ev.date})</option>`).join('');
+        optionsHtml += data.map(ev => `<option value="${ev.id}">${ev.title} (${ev.date})</option>`).join('');
     }
+    select.innerHTML = optionsHtml;
 }
 
 async function loadEventRegistrations(eventId) {
@@ -606,10 +611,17 @@ async function loadEventRegistrations(eventId) {
     }
     list.innerHTML = 'Loading runners...';
     
-    const { data, error } = await supabaseClient
-        .from('event_registrations')
-        .select('*')
-        .eq('event_id', eventId);
+    let query = supabaseClient.from('event_registrations').select('*').order('created_at', { ascending: false });
+    if (eventId !== 'all') {
+        if (eventId === 'run-jaathara-2026') {
+            // Include both explicitly tagged or general flagship registrations
+            query = query.or('event_id.eq.run-jaathara-2026,event_id.is.null');
+        } else {
+            query = query.eq('event_id', eventId);
+        }
+    }
+    
+    const { data, error } = await query;
         
     if (error) {
         list.innerHTML = 'Error loading registrations.';
