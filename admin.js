@@ -844,30 +844,37 @@ async function loadEventRegistrations(eventId) {
                 phone = meta.phone || phone;
             } catch(e) {}
         }
-        // 2. Also handle legacy bracketed format: "Veer • [Cat: 21.1K TIMED RUN | Bib: Veer ...]"
-        if (reg.user_name && reg.user_name.includes('• [')) {
-            const parts = reg.user_name.split('• [');
-            runnerName = parts[0].trim();
-            const tagStr = parts[1] || '';
-            const catMatch = tagStr.match(/Cat:\s*([^|\]]+)/);
-            const bibMatch = tagStr.match(/Bib:\s*([^|\]]+)/);
-            const tshirtMatch = tagStr.match(/T-Shirt:\s*([^|\]]+)/);
-            const bloodMatch = tagStr.match(/Blood:\s*([^|\]]+)/);
-            const phoneMatch = tagStr.match(/Ph:\s*([^|\]]+)/);
+        // 2. Also handle legacy bracketed format: "Veer • [Cat: 21.1K TIMED RUN | Bib: Veer ...]" or "Veer [Cat: ...]"
+        if (reg.user_name && (reg.user_name.includes('[') || reg.user_name.includes('•'))) {
+            const parts = reg.user_name.split(/[\u2022\u2023\u25E6\u2043\u2219•\[]/);
+            if (parts.length > 0 && parts[0].trim()) {
+                runnerName = parts[0].trim();
+            }
+            const tagStr = reg.user_name;
+            const catMatch = tagStr.match(/Cat:\s*([^|\]]+)/i);
+            const bibMatch = tagStr.match(/Bib:\s*([^|\]]+)/i);
+            const tshirtMatch = tagStr.match(/T-Shirt:\s*([^|\]]+)/i);
+            const bloodMatch = tagStr.match(/Blood:\s*([^|\]]+)/i);
+            const phoneMatch = tagStr.match(/Ph(?:one)?:\s*([^|\]]+)/i);
+            const emergPersonMatch = tagStr.match(/Emerg(?:ency)?(?:\s*Person)?:\s*([^|\]]+)/i);
+            const emergPhoneMatch = tagStr.match(/Emerg(?:ency)?\s*Ph(?:one)?:\s*([^|\]]+)/i);
 
-            if (catMatch) category = catMatch[1].trim();
-            if (bibMatch) bib = bibMatch[1].trim();
-            if (tshirtMatch) tshirt = tshirtMatch[1].trim();
-            if (bloodMatch) blood = bloodMatch[1].trim();
-            if (phoneMatch) phone = phoneMatch[1].trim();
+            if (catMatch && catMatch[1].trim()) category = catMatch[1].trim();
+            if (bibMatch && bibMatch[1].trim()) bib = bibMatch[1].trim();
+            if (tshirtMatch && tshirtMatch[1].trim()) tshirt = tshirtMatch[1].trim();
+            if (bloodMatch && bloodMatch[1].trim()) blood = bloodMatch[1].trim();
+            if (phoneMatch && phoneMatch[1].trim()) phone = phoneMatch[1].trim();
+            if (emergPersonMatch && emergPersonMatch[1].trim()) emergencyPerson = emergPersonMatch[1].trim();
+            if (emergPhoneMatch && emergPhoneMatch[1].trim()) emergencyPhone = emergPhoneMatch[1].trim();
         }
 
-        // Final sanitation: clean any trailing bracket or metadata artifacts
+        // Final sanitation: clean any trailing bracket or metadata artifacts from runnerName
         if (runnerName.includes('__META__:')) {
             runnerName = runnerName.split('__META__:')[0].trim();
         }
-        if (runnerName.includes('• [')) {
-            runnerName = runnerName.split('• [')[0].trim();
+        runnerName = runnerName.replace(/[\u2022\u2023\u25E6\u2043\u2219•\[].*$/, '').trim();
+        if (!runnerName || runnerName === 'Participant') {
+            runnerName = bib !== '-' ? bib : (reg.user_email ? reg.user_email.split('@')[0] : 'Participant');
         }
 
         const isAttended = reg.status === 'attended';
