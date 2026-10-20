@@ -838,6 +838,7 @@ async function loadEventRegistrations(eventId) {
                 group = meta.group || group;
                 phone = meta.phone || phone;
             } catch(e) {}
+        }
         // 2. Also handle legacy bracketed format: "Veer • [Cat: 21.1K TIMED RUN | Bib: Veer ...]"
         if (reg.user_name && reg.user_name.includes('• [')) {
             const parts = reg.user_name.split('• [');
