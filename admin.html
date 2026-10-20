@@ -56,7 +56,9 @@
                 <button class="w-full text-left px-4 py-2 rounded-lg bg-orange-50 text-[#F97316] font-bold" data-tab="events">Events</button>
                 <button class="w-full text-left px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="merch">Merchandise</button>
                 <button class="w-full text-left px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="gallery">Gallery</button>
-                <button class="w-full text-left px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="attendance">Manage Attendance</button>
+                <button class="w-full text-left px-4 py-2.5 rounded-lg text-gray-700 hover:bg-gray-50 font-semibold flex items-center justify-between" data-tab="attendance">
+                    <span class="flex items-center gap-2"><i class="fas fa-clipboard-list text-[#F97316]"></i> Event Registrations</span>
+                </button>
                 <button class="w-full text-left px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="orders">Orders (Razorpay)</button>
                 <button class="w-full text-left px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-50 font-medium" data-tab="users">Manage Users</button>
             </aside>
@@ -127,12 +129,17 @@
                         <div id="list-gallery" class="space-y-6">Loading...</div>
                     </div>
                 </div>
-                                <!-- Manage Attendance Tab -->
+                <!-- Event Registrations Tab -->
                 <div id="tab-attendance" class="tab-content hidden max-w-4xl mx-auto space-y-6">
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-                        <h2 class="text-xl font-bold mb-4">Mark Event Attendance</h2>
+                        <div class="flex justify-between items-center mb-4">
+                            <div>
+                                <h2 class="text-xl font-bold text-gray-900">Event Registrations & Attendance</h2>
+                                <p class="text-xs text-gray-500">View registered runners, registration details, and mark attendance.</p>
+                            </div>
+                        </div>
                         <div class="mb-6">
-                            <label class="block text-sm text-gray-600 mb-2">Select Event to Manage</label>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Select Event or View All</label>
                             <select id="attendance-event-select" class="w-full border rounded p-2" onchange="loadEventRegistrations(this.value)">
                                 <option value="">Select an Event...</option>
                             </select>
