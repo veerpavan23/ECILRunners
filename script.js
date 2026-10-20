@@ -1274,35 +1274,25 @@ async function openRegistrationPortal(url = 'https://ecilrunners.iq301.in/') {
         return;
     }
 
-    // 2. Open Embedded Modal
-    const modal = document.getElementById('iq301-modal');
-    const content = document.getElementById('iq301-modal-content');
-    const frame = document.getElementById('iq301-frame');
-    const loader = document.getElementById('iq301-loader');
+    // IQ301's checkout step sends 'X-Frame-Options: SAMEORIGIN', which causes browsers to refuse iframe connection on payment/next step.
+    // We open IQ301 in a focused registration window directly after mandatory sign-in verification.
+    const width = 860;
+    const height = 900;
+    const left = Math.max(0, (window.screen.width - width) / 2);
+    const top = Math.max(0, (window.screen.height - height) / 2);
+    
+    const popup = window.open(
+        finalUrl,
+        'IQ301Registration',
+        `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes,status=yes`
+    );
 
-    if (!modal || !frame) {
-        window.open(url, '_blank');
-        return;
+    if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+        // Fallback if popup blocker intercepted
+        window.location.href = finalUrl;
+    } else {
+        popup.focus();
     }
-
-    // Load the exact clean registration URL (WordPress interprets ?name= as an author query and returns 404)
-    const finalUrl = url;
-
-    if (loader) loader.classList.remove('hidden', 'opacity-0');
-    frame.src = finalUrl;
-
-    frame.onload = () => {
-        if (loader) {
-            loader.classList.add('opacity-0');
-            setTimeout(() => loader.classList.add('hidden'), 300);
-        }
-    };
-
-    modal.classList.remove('hidden');
-    setTimeout(() => {
-        modal.classList.remove('opacity-0');
-        if (content) content.classList.remove('scale-95');
-    }, 10);
 }
 
 function closeIQ301Modal() {
