@@ -588,17 +588,25 @@ window.openEditGallery = async (albumName) => {
 
 
 // --- ATTENDANCE MANAGEMENT ---
+let adminEventsCache = [];
+
 async function loadAttendanceEvents() {
     const select = document.getElementById('attendance-event-select');
     if (!select) return;
     const { data, error } = await supabaseClient.from('events').select('id, title, date').order('created_at', { ascending: false });
+    adminEventsCache = data || [];
     
     let optionsHtml = '<option value="">Select an Event...</option>';
     optionsHtml += '<option value="all">★ All Registered Runners</option>';
-    optionsHtml += '<option value="run-jaathara-2026">★ Run Jaathara 2026 (December 6th, 2026)</option>';
+    
+    // Find Run Jaathara 2026 event row if present
+    const jaatharaEv = adminEventsCache.find(ev => ev.title && ev.title.toLowerCase().includes('run jaathara'));
+    if (jaatharaEv) {
+        optionsHtml += `<option value="${jaatharaEv.id}">★ ${jaatharaEv.title} (${jaatharaEv.date})</option>`;
+    }
     
     if (data) {
-        optionsHtml += data.map(ev => `<option value="${ev.id}">${ev.title} (${ev.date})</option>`).join('');
+        optionsHtml += data.filter(ev => !jaatharaEv || ev.id !== jaatharaEv.id).map(ev => `<option value="${ev.id}">${ev.title} (${ev.date})</option>`).join('');
     }
     select.innerHTML = optionsHtml;
 }
@@ -611,7 +619,7 @@ async function loadEventRegistrations(eventId) {
     }
     list.innerHTML = 'Loading runners...';
     
-    let { data, error } = await supabaseClient.from('event_registrations').select('*');
+    let { data, error } = await supabaseClient.from('event_registrations').select('*').order('created_at', { ascending: false });
     
     if (error) {
         console.error("Error fetching registrations:", error);
@@ -621,13 +629,9 @@ async function loadEventRegistrations(eventId) {
         return;
     }
 
-    // Filter in JS safely
+    // Filter by selected event
     if (data && eventId !== 'all') {
-        if (eventId === 'run-jaathara-2026') {
-            data = data.filter(r => !r.event_id || r.event_id === 'run-jaathara-2026' || (r.user_name && r.user_name.toLowerCase().includes('jaathara')));
-        } else {
-            data = data.filter(r => r.event_id === eventId);
-        }
+        data = data.filter(r => r.event_id === eventId);
     }
     
     if (data.length === 0) {
