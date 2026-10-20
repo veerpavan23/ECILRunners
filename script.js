@@ -1278,6 +1278,7 @@ async function openRegistrationPortal(url = 'https://ecilrunners.iq301.in/') {
     // Cache user profile details so registration-success page has guaranteed immediate access
     try {
         const runnerProfile = {
+            userId: user.id,
             FirstName: user.user_metadata?.full_name?.split(' ')[0] || user.user_metadata?.first_name || '',
             LastName: user.user_metadata?.full_name?.split(' ').slice(1).join(' ') || user.user_metadata?.last_name || '',
             eMail: user.email || '',
