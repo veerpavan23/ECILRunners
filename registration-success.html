@@ -126,47 +126,47 @@
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-800 text-gray-700 dark:text-gray-300">
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
                                 <td class="p-3 font-semibold text-gray-500 dark:text-gray-400 w-1/3 sm:w-2/5">Runner Name</td>
-                                <td class="p-3 font-medium text-gray-900 dark:text-white" id="runner-name">Veer</td>
+                                <td class="p-3 font-medium text-gray-900 dark:text-white" id="runner-name">—</td>
                             </tr>
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
                                 <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">Gender</td>
-                                <td class="p-3 font-medium" id="runner-gender">Male</td>
+                                <td class="p-3 font-medium" id="runner-gender">—</td>
                             </tr>
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
                                 <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">Race Category</td>
-                                <td class="p-3 font-bold text-[#F97316]" id="category-name">21.1K TIMED RUN</td>
+                                <td class="p-3 font-bold text-[#F97316]" id="category-name">—</td>
                             </tr>
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
                                 <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">Bib Name</td>
-                                <td class="p-3 font-medium" id="runner-bib">Veer</td>
+                                <td class="p-3 font-medium" id="runner-bib">—</td>
                             </tr>
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
                                 <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">T-Shirt Size</td>
-                                <td class="p-3 font-medium" id="runner-tshirt">L</td>
+                                <td class="p-3 font-medium" id="runner-tshirt">—</td>
                             </tr>
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
                                 <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">Blood Group</td>
-                                <td class="p-3 font-medium" id="runner-blood">O +ve</td>
+                                <td class="p-3 font-medium" id="runner-blood">—</td>
                             </tr>
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
                                 <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">History of Health Issues</td>
-                                <td class="p-3 font-medium" id="runner-health">NA</td>
+                                <td class="p-3 font-medium" id="runner-health">—</td>
                             </tr>
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
                                 <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">Emergency Contact Person</td>
-                                <td class="p-3 font-medium" id="runner-emergency-person">Pooja Krishnan</td>
+                                <td class="p-3 font-medium" id="runner-emergency-person">—</td>
                             </tr>
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
                                 <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">Emergency Mobile Number</td>
-                                <td class="p-3 font-medium" id="runner-emergency-phone">9052401822</td>
+                                <td class="p-3 font-medium" id="runner-emergency-phone">—</td>
                             </tr>
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
                                 <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">Date of Birth</td>
-                                <td class="p-3 font-medium" id="runner-dob">2026-10-01</td>
+                                <td class="p-3 font-medium" id="runner-dob">—</td>
                             </tr>
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
                                 <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">Running Group</td>
-                                <td class="p-3 font-bold text-[#F97316]" id="runner-group">ECIL Runners</td>
+                                <td class="p-3 font-bold text-[#F97316]" id="runner-group">—</td>
                             </tr>
                             <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
                                 <td class="p-3 font-semibold text-gray-500 dark:text-gray-400">Email</td>
@@ -210,7 +210,6 @@
             ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) 
             : null;
 
-        // Parse IQ301 Registration Data
         // Parse IQ301 Registration Data with complete flexibility
         function parseIQ301Data() {
             const rawHash = window.location.hash || '';
@@ -264,24 +263,24 @@
 
             if (ref || firstName || email || phone) {
                 return {
-                    RegnRef: ref || '105584',
-                    FirstName: firstName || 'Veer',
+                    RegnRef: ref || '',
+                    FirstName: firstName || '',
                     LastName: params.get('LastName') || params.get('last_name') || '',
-                    Race: race || '21.1K TIMED RUN',
+                    Race: race || 'Run Jaathara 2026',
                     eMail: email || '',
-                    Phone: phone || '9052401822',
-                    Gender: params.get('Gender') || params.get('gender') || 'Male',
-                    BibName: params.get('BibName') || params.get('bib') || params.get('bib_name') || 'Veer',
-                    TShirtSize: params.get('TShirtSize') || params.get('tshirt') || params.get('t_shirt') || 'L',
-                    BloodGroup: params.get('BloodGroup') || params.get('blood') || params.get('blood_group') || 'O +ve',
-                    HealthIssues: params.get('HealthIssues') || params.get('health') || 'NA',
-                    EmergencyContactPerson: params.get('EmergencyContactPerson') || params.get('emergency_contact') || params.get('emergency_person') || 'Pooja Krishnan',
-                    EmergencyMobileNumber: params.get('EmergencyMobileNumber') || params.get('emergency_phone') || params.get('emergency_mobile') || '9052401822',
-                    DateOfBirth: params.get('DateOfBirth') || params.get('dob') || '2026-10-01',
+                    Phone: phone || '',
+                    Gender: params.get('Gender') || params.get('gender') || '',
+                    BibName: params.get('BibName') || params.get('bib') || params.get('bib_name') || firstName || '',
+                    TShirtSize: params.get('TShirtSize') || params.get('tshirt') || params.get('t_shirt') || '',
+                    BloodGroup: params.get('BloodGroup') || params.get('blood') || params.get('blood_group') || '',
+                    HealthIssues: params.get('HealthIssues') || params.get('health') || '',
+                    EmergencyContactPerson: params.get('EmergencyContactPerson') || params.get('emergency_contact') || params.get('emergency_person') || '',
+                    EmergencyMobileNumber: params.get('EmergencyMobileNumber') || params.get('emergency_phone') || params.get('emergency_mobile') || '',
+                    DateOfBirth: params.get('DateOfBirth') || params.get('dob') || '',
                     RunningGroup: params.get('RunningGroup') || params.get('club') || params.get('group') || 'ECIL Runners',
                     Total: params.get('Total') || params.get('total') || '₹0.00',
-                    Subtotal: params.get('Subtotal') || params.get('subtotal') || '₹799.00',
-                    Discount: params.get('Discount') || params.get('discount') || '-₹799.00'
+                    Subtotal: params.get('Subtotal') || params.get('subtotal') || '₹0.00',
+                    Discount: params.get('Discount') || params.get('discount') || '₹0.00'
                 };
             }
 
@@ -292,49 +291,49 @@
                     const parsed = JSON.parse(cached);
                     if (parsed && (Date.now() - (parsed.timestamp || 0)) < 7200000) {
                         return {
-                            RegnRef: parsed.RegnRef || '105584',
-                            FirstName: parsed.FirstName || 'Veer',
+                            RegnRef: parsed.RegnRef || '',
+                            FirstName: parsed.FirstName || '',
                             LastName: parsed.LastName || '',
-                            Race: parsed.Race || '21.1K TIMED RUN',
+                            Race: parsed.Race || 'Run Jaathara 2026',
                             eMail: parsed.eMail || '',
-                            Phone: parsed.Phone || '9052401822',
-                            Gender: parsed.Gender || 'Male',
-                            BibName: parsed.BibName || parsed.FirstName || 'Veer',
-                            TShirtSize: parsed.TShirtSize || 'L',
-                            BloodGroup: parsed.BloodGroup || 'O +ve',
-                            HealthIssues: parsed.HealthIssues || 'NA',
-                            EmergencyContactPerson: parsed.EmergencyContactPerson || 'Pooja Krishnan',
-                            EmergencyMobileNumber: parsed.EmergencyMobileNumber || '9052401822',
-                            DateOfBirth: parsed.DateOfBirth || '2026-10-01',
+                            Phone: parsed.Phone || '',
+                            Gender: parsed.Gender || '',
+                            BibName: parsed.BibName || parsed.FirstName || '',
+                            TShirtSize: parsed.TShirtSize || '',
+                            BloodGroup: parsed.BloodGroup || '',
+                            HealthIssues: parsed.HealthIssues || '',
+                            EmergencyContactPerson: parsed.EmergencyContactPerson || '',
+                            EmergencyMobileNumber: parsed.EmergencyMobileNumber || '',
+                            DateOfBirth: parsed.DateOfBirth || '',
                             RunningGroup: parsed.RunningGroup || 'ECIL Runners',
-                            Total: '₹0.00',
-                            Subtotal: '₹799.00',
-                            Discount: '-₹799.00'
+                            Total: parsed.Total || '₹0.00',
+                            Subtotal: parsed.Subtotal || '₹0.00',
+                            Discount: parsed.Discount || '₹0.00'
                         };
                     }
                 }
             } catch(e) {}
 
-            // Default registration object (ensures sync and UI always execute)
+            // Default registration object (clean defaults when no query params present)
             return {
-                RegnRef: '105584',
-                FirstName: 'Veer',
+                RegnRef: '',
+                FirstName: '',
                 LastName: '',
-                Race: '21.1K TIMED RUN',
-                eMail: 'veer.pavan@gmail.com',
-                Phone: '9052401822',
-                Gender: 'Male',
-                BibName: 'Veer',
-                TShirtSize: 'L',
-                BloodGroup: 'O +ve',
-                HealthIssues: 'NA',
-                EmergencyContactPerson: 'Pooja Krishnan',
-                EmergencyMobileNumber: '9052401822',
-                DateOfBirth: '2026-10-01',
+                Race: 'Run Jaathara 2026',
+                eMail: '',
+                Phone: '',
+                Gender: '',
+                BibName: '',
+                TShirtSize: '',
+                BloodGroup: '',
+                HealthIssues: '',
+                EmergencyContactPerson: '',
+                EmergencyMobileNumber: '',
+                DateOfBirth: '',
                 RunningGroup: 'ECIL Runners',
                 Total: '₹0.00',
-                Subtotal: '₹799.00',
-                Discount: '-₹799.00'
+                Subtotal: '₹0.00',
+                Discount: '₹0.00'
             };
         }
 
@@ -417,19 +416,19 @@
                 // Build structured metadata string so admin table can render all runner attributes
                 const runnerMetadata = {
                     name: fullName,
-                    gender: data.Gender || data.Sex || 'Male',
-                    category: data.Race || data.Category || '21.1K TIMED RUN',
+                    gender: data.Gender || data.Sex || '',
+                    category: data.Race || data.Category || 'Run Jaathara 2026',
                     bib: data.BibName || data.Bib || fullName,
-                    tshirt: data.TShirtSize || data.TShirt || data.Size || 'L',
-                    blood: data.BloodGroup || data.Blood || 'O +ve',
-                    health: data.HealthIssues || data.MedicalIssues || 'NA',
-                    emergencyPerson: data.EmergencyContactPerson || data.EmergencyContact || 'Pooja Krishnan',
-                    emergencyPhone: data.EmergencyMobileNumber || data.EmergencyPhone || '9052401822',
-                    dob: data.DateOfBirth || data.DOB || '2026-10-01',
-                    group: data.RunningGroup || data.Group || 'ECIL Runners',
-                    regNo: data.RegnRef || data.RegistrationNumber || '105584',
+                    tshirt: data.TShirtSize || data.TShirt || data.Size || '',
+                    blood: data.BloodGroup || data.Blood || '',
+                    health: data.HealthIssues || data.MedicalIssues || '',
+                    emergencyPerson: data.EmergencyContactPerson || data.EmergencyContact || data.EmergencyName || '',
+                    emergencyPhone: data.EmergencyMobileNumber || data.EmergencyPhone || '',
+                    dob: data.DateOfBirth || data.DOB || '',
+                    group: data.RunningGroup || data.Group || data.Club || 'ECIL Runners',
+                    regNo: data.RegnRef || data.RegistrationNumber || data.OrderNumber || '',
                     total: data.Total || '₹0.00',
-                    phone: data.Phone || data.Mobile || '9052401822'
+                    phone: data.Phone || data.Mobile || ''
                 };
 
                 // Store in browser database cache for instant rich view
@@ -542,19 +541,19 @@
                 const emailEl = document.getElementById('runner-email');
                 const phoneEl = document.getElementById('runner-phone');
 
-                if (nameEl) nameEl.textContent = fullName;
-                if (genderEl) genderEl.textContent = data.Gender || data.Sex || 'Male';
-                if (catEl) catEl.textContent = raceName;
-                if (bibEl) bibEl.textContent = data.BibName || data.Bib || fullName;
-                if (tshirtEl) tshirtEl.textContent = data.TShirtSize || data.TShirt || data.Size || 'L';
-                if (bloodEl) bloodEl.textContent = data.BloodGroup || data.Blood || 'O +ve';
-                if (healthEl) healthEl.textContent = data.HealthIssues || data.MedicalIssues || 'NA';
-                if (emergPersonEl) emergPersonEl.textContent = data.EmergencyContactPerson || data.EmergencyContact || data.EmergencyName || 'Pooja Krishnan';
-                if (emergPhoneEl) emergPhoneEl.textContent = data.EmergencyMobileNumber || data.EmergencyPhone || '9052401822';
-                if (dobEl) dobEl.textContent = data.DateOfBirth || data.DOB || '2026-10-01';
+                if (nameEl) nameEl.textContent = fullName || '—';
+                if (genderEl) genderEl.textContent = data.Gender || data.Sex || '—';
+                if (catEl) catEl.textContent = raceName || 'Run Jaathara 2026';
+                if (bibEl) bibEl.textContent = data.BibName || data.Bib || fullName || '—';
+                if (tshirtEl) tshirtEl.textContent = data.TShirtSize || data.TShirt || data.Size || '—';
+                if (bloodEl) bloodEl.textContent = data.BloodGroup || data.Blood || '—';
+                if (healthEl) healthEl.textContent = data.HealthIssues || data.MedicalIssues || '—';
+                if (emergPersonEl) emergPersonEl.textContent = data.EmergencyContactPerson || data.EmergencyContact || data.EmergencyName || '—';
+                if (emergPhoneEl) emergPhoneEl.textContent = data.EmergencyMobileNumber || data.EmergencyPhone || '—';
+                if (dobEl) dobEl.textContent = data.DateOfBirth || data.DOB || '—';
                 if (groupEl) groupEl.textContent = data.RunningGroup || data.Group || data.Club || 'ECIL Runners';
-                if (emailEl) emailEl.textContent = data.eMail || data.Email || 'Registered with IQ301';
-                if (phoneEl) phoneEl.textContent = data.Phone || data.Mobile || '9052401822';
+                if (emailEl) emailEl.textContent = data.eMail || data.Email || '—';
+                if (phoneEl) phoneEl.textContent = data.Phone || data.Mobile || '—';
 
                 syncRegistrationToSupabase(data);
             }
