@@ -6,6 +6,15 @@ const loginScreen = document.getElementById('login-screen');
 const dashboardScreen = document.getElementById('dashboard-screen');
 const loginForm = document.getElementById('login-form');
 const logoutBtn = document.getElementById('logout-btn');
+const debugLogEl = document.getElementById('debug-log');
+
+function setDebug(msg, isError = false) {
+    console.log('[ADMIN_AUTH]', msg);
+    if (debugLogEl) {
+        const time = new Date().toLocaleTimeString();
+        debugLogEl.innerHTML += `<div class="${isError ? 'text-red-600 font-bold' : 'text-gray-800'}">[${time}] ${msg}</div>`;
+    }
+}
 
 const { createClient } = supabase;
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -16,21 +25,31 @@ const ADMIN_IDS = ['6e0b26ef-d6aa-4369-8eda-d89dce0bfd9e', '93400983-27da-49dd-a
 
 // Helper to verify admin permissions
 async function verifyIsAdmin(user) {
-    if (!user) return false;
-    if (ADMIN_IDS.includes(user.id)) {
-        return true;
+    if (!user) {
+        setDebug("verifyIsAdmin: user is null/undefined", true);
+        return false;
     }
     const userEmail = (user.email || user.user_metadata?.email || user.app_metadata?.email || '').toLowerCase().trim();
+    setDebug(`Checking admin: ID=${user.id}, Email=${userEmail || 'none'}`);
+
+    if (ADMIN_IDS.includes(user.id)) {
+        setDebug(`Admin granted: Matched authorized admin UUID (${user.id})`);
+        return true;
+    }
     if (ADMIN_EMAILS.includes(userEmail)) {
+        setDebug(`Admin granted: Matched authorized admin email (${userEmail})`);
         return true;
     }
     try {
         const { data: profile, error } = await supabaseClient.from('profiles').select('is_admin, super_admin').eq('id', user.id).maybeSingle();
         if (profile && (profile.is_admin === true || profile.super_admin === true)) {
+            setDebug(`Admin granted: Database profile has is_admin=${profile.is_admin}`);
             return true;
+        } else {
+            setDebug(`Profile lookup result: ${JSON.stringify(profile)}, error: ${JSON.stringify(error)}`);
         }
     } catch (e) {
-        console.warn('Profile admin check error:', e);
+        setDebug(`Profile admin check exception: ${e.message}`, true);
     }
     return false;
 }
@@ -47,6 +66,7 @@ loginForm.addEventListener('submit', async (e) => {
     const prevText = submitBtn.textContent;
     submitBtn.textContent = 'Verifying...';
     submitBtn.disabled = true;
+    setDebug(`Attempting password sign in for ${email}...`);
     
     try {
         const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
@@ -55,6 +75,7 @@ loginForm.addEventListener('submit', async (e) => {
         });
         
         if (authError) {
+            setDebug(`Sign-in error: ${authError.message}`, true);
             errorEl.textContent = authError.message;
             errorEl.classList.remove('hidden');
             submitBtn.textContent = prevText;
@@ -64,6 +85,7 @@ loginForm.addEventListener('submit', async (e) => {
         
         const isAdmin = await verifyIsAdmin(authData.user);
         if (!isAdmin) {
+            setDebug("Access Denied: Not recognized as admin", true);
             await supabaseClient.auth.signOut();
             errorEl.textContent = "Access Denied: You are not an authorized administrator.";
             errorEl.classList.remove('hidden');
@@ -73,10 +95,9 @@ loginForm.addEventListener('submit', async (e) => {
         }
         
         // Success!
-        loginScreen.classList.add('hidden');
-        dashboardScreen.classList.remove('hidden');
-        loadDashboardData();
+        grantAdminAccess(authData.user);
     } catch (err) {
+        setDebug(`Exception during login: ${err.message}`, true);
         errorEl.textContent = err.message || 'Login failed';
         errorEl.classList.remove('hidden');
     } finally {
@@ -95,6 +116,7 @@ if (googleBtn) {
         googleBtn.classList.add('opacity-75');
 
         const redirectUrl = window.location.origin + window.location.pathname;
+        setDebug(`Triggering signInWithOAuth to: ${redirectUrl}`);
         const { error } = await supabaseClient.auth.signInWithOAuth({
             provider: 'google',
             options: {
@@ -102,6 +124,7 @@ if (googleBtn) {
             }
         });
         if (error) {
+            setDebug(`OAuth trigger error: ${error.message}`, true);
             errorEl.textContent = error.message;
             errorEl.classList.remove('hidden');
             googleBtn.disabled = false;
@@ -121,6 +144,7 @@ if (logoutBtn) {
 // Function to safely display dashboard when authorized
 let isDashboardLoaded = false;
 async function grantAdminAccess(user) {
+    setDebug(`grantAdminAccess invoked for ${user?.email || user?.id}`);
     loginScreen.classList.add('hidden');
     dashboardScreen.classList.remove('hidden');
     if (!isDashboardLoaded) {
@@ -131,34 +155,43 @@ async function grantAdminAccess(user) {
 
 // Check session on load & listen for auth changes (handles Google OAuth redirect)
 async function checkSession() {
+    setDebug("Running checkSession()...");
     try {
         const { data: { session }, error } = await supabaseClient.auth.getSession();
-        if (error) console.warn('getSession error:', error);
+        if (error) setDebug(`getSession error: ${error.message}`, true);
         if (session && session.user) {
+            setDebug(`Found active session for ${session.user.email || session.user.id}`);
             const isAdmin = await verifyIsAdmin(session.user);
             if (isAdmin) {
                 grantAdminAccess(session.user);
             } else {
                 const errorEl = document.getElementById('login-error');
-                errorEl.textContent = `Access Denied: Logged in as ${session.user.email || 'unknown'}, but this account is not an authorized administrator.`;
+                const msg = `Access Denied: Logged in as ${session.user.email || 'unknown'}, but this account is not an authorized administrator.`;
+                setDebug(msg, true);
+                errorEl.textContent = msg;
                 errorEl.classList.remove('hidden');
             }
+        } else {
+            setDebug("No active session found on initial load.");
         }
     } catch (e) {
-        console.error('Session check failure:', e);
+        setDebug(`checkSession exception: ${e.message}`, true);
     }
 }
 checkSession();
 
 // Also listen for OAuth redirect hash changes / auth state transitions
 supabaseClient.auth.onAuthStateChange(async (event, session) => {
+    setDebug(`Auth event received: ${event}`);
     if (session && session.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION')) {
         const isAdmin = await verifyIsAdmin(session.user);
         if (isAdmin) {
             grantAdminAccess(session.user);
         } else {
             const errorEl = document.getElementById('login-error');
-            errorEl.textContent = `Access Denied: Logged in as ${session.user.email || 'unknown'}, but this account is not an authorized administrator.`;
+            const msg = `Access Denied: Logged in as ${session.user.email || 'unknown'}, but this account is not an authorized administrator.`;
+            setDebug(msg, true);
+            errorEl.textContent = msg;
             errorEl.classList.remove('hidden');
         }
     } else if (event === 'SIGNED_OUT') {
