@@ -117,39 +117,66 @@
             : null;
 
         // Parse IQ301 Registration Data
+        // Parse IQ301 Registration Data with complete flexibility
         function parseIQ301Data() {
-            const fragment = window.location.hash;
-            const prefix = "#regn_json=";
+            const rawHash = window.location.hash || '';
+            const searchStr = window.location.search || '';
 
-            // 1. Try URL fragment (IQ301 standard format)
-            if (fragment.startsWith(prefix)) {
+            // 1. Try URL Fragment (#regn_json=...)
+            if (rawHash) {
+                const match = rawHash.match(/(?:#|&)regn_json=([^&]+)/i);
+                if (match && match[1]) {
+                    try {
+                        let encoded = decodeURIComponent(match[1]);
+                        encoded = encoded.replace(/-/g, "+").replace(/_/g, "/");
+                        encoded = encoded.padEnd(Math.ceil(encoded.length / 4) * 4, "=");
+
+                        const binary = atob(encoded);
+                        const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+                        const json = new TextDecoder('utf-8').decode(bytes);
+                        const parsed = JSON.parse(json);
+                        window.registrationData = parsed;
+                        return parsed;
+                    } catch (e) {
+                        console.error("Error decoding Base64 #regn_json:", e);
+                    }
+                }
+            }
+
+            // 2. Try URL Query parameters (supports standard IQ301 parameters & URL encoded formats)
+            const params = new URLSearchParams(searchStr);
+            if (params.has('regn_json')) {
                 try {
-                    let encoded = fragment.substring(prefix.length);
+                    let encoded = params.get('regn_json');
                     encoded = encoded.replace(/-/g, "+").replace(/_/g, "/");
                     encoded = encoded.padEnd(Math.ceil(encoded.length / 4) * 4, "=");
-
                     const binary = atob(encoded);
                     const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
-                    const json = new TextDecoder().decode(bytes);
+                    const json = new TextDecoder('utf-8').decode(bytes);
                     const parsed = JSON.parse(json);
                     window.registrationData = parsed;
                     return parsed;
                 } catch (e) {
-                    console.error("Error decoding IQ301 #regn_json:", e);
+                    console.error("Error decoding query regn_json:", e);
                 }
             }
 
-            // 2. Fallback to standard URL Query Parameters (?name=...&email=...)
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('FirstName') || params.get('name') || params.get('RegnRef')) {
+            // 3. Fallback to standard URL keys
+            const ref = params.get('RegnRef') || params.get('ref') || params.get('order_id') || params.get('id');
+            const firstName = params.get('FirstName') || params.get('name') || params.get('first_name');
+            const email = params.get('eMail') || params.get('email');
+            const phone = params.get('Phone') || params.get('phone') || params.get('mobile');
+            const race = params.get('Race') || params.get('category') || params.get('distance');
+
+            if (ref || firstName || email || phone) {
                 return {
-                    RegnRef: params.get('RegnRef') || params.get('ref') || params.get('order_id') || 'IQ301-SUCCESS',
-                    FirstName: params.get('FirstName') || params.get('name') || 'Runner',
-                    LastName: params.get('LastName') || '',
-                    Race: params.get('Race') || params.get('category') || 'Timed Run',
-                    eMail: params.get('eMail') || params.get('email') || '',
-                    Phone: params.get('Phone') || params.get('phone') || '',
-                    RunningGroup: params.get('RunningGroup') || params.get('club') || ''
+                    RegnRef: ref || 'IQ301-SUCCESS',
+                    FirstName: firstName || 'Runner',
+                    LastName: params.get('LastName') || params.get('last_name') || '',
+                    Race: race || 'Timed Run',
+                    eMail: email || '',
+                    Phone: phone || '',
+                    RunningGroup: params.get('RunningGroup') || params.get('club') || params.get('group') || ''
                 };
             }
 
@@ -162,9 +189,7 @@
             try {
                 const fullName = `${data.FirstName || ''} ${data.LastName || ''}`.trim() || 'IQ301 Runner';
                 const regEmail = data.eMail || '';
-                const regRef = data.RegnRef || '';
 
-                // Insert or log
                 const { error } = await supabase.from('event_registrations').insert([
                     {
                         user_name: fullName,
@@ -182,7 +207,7 @@
             }
         }
 
-        window.addEventListener('load', () => {
+        function populateUI() {
             // Trigger celebration confetti
             if (typeof confetti === 'function') {
                 confetti({
@@ -197,27 +222,48 @@
 
             if (data) {
                 const fullName = `${data.FirstName || ''} ${data.LastName || ''}`.trim() || 'Runner';
-                document.getElementById('runner-name').textContent = fullName;
-                document.getElementById('order-id').textContent = data.RegnRef ? `#${data.RegnRef}` : 'Confirmed';
-                document.getElementById('category-name').textContent = data.Race || 'Open Category';
-                document.getElementById('runner-email').textContent = data.eMail || '—';
-                document.getElementById('runner-phone').textContent = data.Phone || '—';
+                const orderIdEl = document.getElementById('order-id');
+                const nameEl = document.getElementById('runner-name');
+                const catEl = document.getElementById('category-name');
+                const emailEl = document.getElementById('runner-email');
+                const phoneEl = document.getElementById('runner-phone');
+
+                if (nameEl) nameEl.textContent = fullName;
+                if (orderIdEl) orderIdEl.textContent = data.RegnRef ? `#${data.RegnRef}` : 'Confirmed';
+                if (catEl) catEl.textContent = data.Race || 'Run Jaathara 2026';
+                if (emailEl) emailEl.textContent = data.eMail || 'Confirmed with IQ301';
+                if (phoneEl) phoneEl.textContent = data.Phone || 'Registered';
 
                 const group = data.RunningGroup || data.Group || data.GroupName;
                 if (group) {
-                    document.getElementById('runner-group').textContent = group;
-                    document.getElementById('group-container').classList.remove('hidden');
+                    const groupEl = document.getElementById('runner-group');
+                    const groupCont = document.getElementById('group-container');
+                    if (groupEl) groupEl.textContent = group;
+                    if (groupCont) groupCont.classList.remove('hidden');
                 }
 
-                // Call Supabase insertion in background
                 syncRegistrationToSupabase(data);
             } else {
-                // Friendly fallback display if opened directly without URL fragment
-                document.getElementById('runner-name').textContent = 'Runner';
-                document.getElementById('order-id').textContent = 'Confirmed';
-                document.getElementById('category-name').textContent = 'Run Jaathara 2026';
+                // If loaded without payload directly
+                const orderIdEl = document.getElementById('order-id');
+                const nameEl = document.getElementById('runner-name');
+                const catEl = document.getElementById('category-name');
+                const emailEl = document.getElementById('runner-email');
+                const phoneEl = document.getElementById('runner-phone');
+
+                if (nameEl) nameEl.textContent = 'Runner';
+                if (orderIdEl) orderIdEl.textContent = 'Confirmed';
+                if (catEl) catEl.textContent = 'Run Jaathara 2026';
+                if (emailEl) emailEl.textContent = 'Recorded with IQ301';
+                if (phoneEl) phoneEl.textContent = 'Active Entry';
             }
-        });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', populateUI);
+        } else {
+            populateUI();
+        }
     </script>
 </body>
 </html>

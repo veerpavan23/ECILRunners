@@ -477,6 +477,7 @@ async function loadLiveEvents() {
                             ${buttonHtml}
                         </div>
                     </div>
+                </div>
                 `;
             }).join('');
         } else {
