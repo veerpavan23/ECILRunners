@@ -442,6 +442,7 @@ function loadDashboardData() {
     loadEvents();
     loadMerch();
     loadGallery();
+    loadAttendanceEvents();
 };
 
 
@@ -726,19 +727,23 @@ async function loadAttendanceEvents() {
     const { data, error } = await supabaseClient.from('events').select('id, title, date').order('created_at', { ascending: false });
     adminEventsCache = data || [];
     
-    let optionsHtml = '<option value="">Select an Event...</option>';
-    optionsHtml += '<option value="all">★ All Registered Runners</option>';
+    let optionsHtml = '<option value="all">★ All Registered Runners</option>';
     
     // Find Run Jaathara 2026 event row if present
     const jaatharaEv = adminEventsCache.find(ev => ev.title && ev.title.toLowerCase().includes('run jaathara'));
     if (jaatharaEv) {
-        optionsHtml += `<option value="${jaatharaEv.id}">★ ${jaatharaEv.title} (${jaatharaEv.date})</option>`;
+        optionsHtml += `<option value="${jaatharaEv.id}" selected>★ ${jaatharaEv.title} (${jaatharaEv.date})</option>`;
     }
     
     if (data) {
         optionsHtml += data.filter(ev => !jaatharaEv || ev.id !== jaatharaEv.id).map(ev => `<option value="${ev.id}">${ev.title} (${ev.date})</option>`).join('');
     }
     select.innerHTML = optionsHtml;
+
+    // Auto-load registrations for Run Jaathara or All so the admin doesn't see a blank placeholder
+    const defaultEventId = jaatharaEv ? jaatharaEv.id : 'all';
+    select.value = defaultEventId;
+    loadEventRegistrations(defaultEventId);
 }
 
 async function loadEventRegistrations(eventId) {
@@ -747,7 +752,7 @@ async function loadEventRegistrations(eventId) {
         list.innerHTML = '<p class="text-sm text-gray-500">Select an event above to see registered runners.</p>';
         return;
     }
-    list.innerHTML = 'Loading runners...';
+    list.innerHTML = '<div class="p-4 text-center text-gray-500"><i class="fas fa-spinner fa-spin mr-2"></i> Loading registered runners...</div>';
     
     let { data, error } = await supabaseClient.from('event_registrations').select('*').order('created_at', { ascending: false });
     
@@ -765,7 +770,7 @@ async function loadEventRegistrations(eventId) {
     }
     
     if (data.length === 0) {
-        list.innerHTML = '<p class="text-sm text-gray-500">No one has registered for this event yet.</p>';
+        list.innerHTML = '<p class="text-sm text-gray-500 p-4 bg-gray-50 rounded-lg border border-gray-200">No one has registered for this event yet.</p>';
         return;
     }
     
@@ -806,19 +811,19 @@ async function loadEventRegistrations(eventId) {
     `;
 
     html += data.map(reg => {
-        let runnerName = reg.user_name || 'Pavan Veer';
-        let gender = 'Male';
-        let category = '21.1K TIMED RUN';
-        let bib = 'Pavan Veer';
-        let tshirt = 'L';
-        let blood = 'O +ve';
-        let health = 'NA';
-        let emergencyPerson = 'Pooja Krishnan';
-        let emergencyPhone = '9052401822';
-        let dob = '2026-10-01';
+        let runnerName = reg.user_name || 'Participant';
+        let gender = '-';
+        let category = 'Run Jaathara 2026';
+        let bib = '-';
+        let tshirt = '-';
+        let blood = '-';
+        let health = '-';
+        let emergencyPerson = '-';
+        let emergencyPhone = '-';
+        let dob = '-';
         let group = 'ECIL Runners';
-        let email = reg.user_email || 'veer.pavan@gmail.com';
-        let phone = '7799063096';
+        let email = reg.user_email || '-';
+        let phone = '-';
 
         // 1. Check if full JSON metadata is embedded in user_name
         if (reg.user_name && reg.user_name.includes('__META__:')) {
