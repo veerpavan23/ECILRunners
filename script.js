@@ -445,14 +445,14 @@ async function loadLiveEvents() {
                 }
 
                 const imageSrc = (ev.image_url && ev.image_url.includes('run_jaathara')) 
-                    ? 'assets/run_jaathara_2026_card.jpg' 
+                    ? 'assets/run_jaathara_2026_card.jpg?v=20261020_v2' 
                     : (ev.image_url || 'assets/events_marathon.jpg');
 
                 return `
                 <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-gray-700 hover:-translate-y-2 transition-all duration-300 group flex flex-col justify-between">
                     <div>
-                        <div class="relative h-56 overflow-hidden bg-gray-100 dark:bg-gray-900">
-                            <img src="${imageSrc}" alt="${ev.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="relative aspect-video sm:h-56 overflow-hidden bg-[#FDF5E6] dark:bg-gray-900">
+                            <img src="${imageSrc}" alt="${ev.title}" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
                             <div class="absolute top-4 right-4 bg-[#F97316] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-md">
                                 ${ev.date}
                             </div>
