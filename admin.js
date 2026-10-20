@@ -107,30 +107,48 @@ loginForm.addEventListener('submit', async (e) => {
 });
 
 // Google Auth
-const googleBtn = document.getElementById('google-login-btn');
-if (googleBtn) {
-    googleBtn.addEventListener('click', async () => {
-        const errorEl = document.getElementById('login-error');
-        errorEl.classList.add('hidden');
+window.handleGoogleLogin = async function() {
+    const errorEl = document.getElementById('login-error');
+    const googleBtn = document.getElementById('google-login-btn');
+    if (errorEl) errorEl.classList.add('hidden');
+    if (googleBtn) {
         googleBtn.disabled = true;
         googleBtn.classList.add('opacity-75');
+    }
 
-        const redirectUrl = window.location.origin + window.location.pathname;
-        setDebug(`Triggering signInWithOAuth to: ${redirectUrl}`);
-        const { error } = await supabaseClient.auth.signInWithOAuth({
+    const redirectUrl = window.location.origin + window.location.pathname;
+    setDebug(`[handleGoogleLogin] Redirecting to Google OAuth (target: ${redirectUrl})...`);
+    
+    try {
+        const { data, error } = await supabaseClient.auth.signInWithOAuth({
             provider: 'google',
             options: {
                 redirectTo: redirectUrl
             }
         });
-        if (error) {
-            setDebug(`OAuth trigger error: ${error.message}`, true);
-            errorEl.textContent = error.message;
+        if (error) throw error;
+        if (data?.url) {
+            setDebug(`OAuth URL resolved: ${data.url.substring(0, 50)}... Redirecting!`);
+            window.location.href = data.url;
+        }
+    } catch (err) {
+        setDebug(`OAuth trigger error: ${err.message}`, true);
+        if (errorEl) {
+            errorEl.textContent = err.message;
             errorEl.classList.remove('hidden');
+        } else {
+            alert(err.message);
+        }
+        if (googleBtn) {
             googleBtn.disabled = false;
             googleBtn.classList.remove('opacity-75');
         }
-    });
+    }
+};
+
+const googleBtn = document.getElementById('google-login-btn');
+if (googleBtn) {
+    googleBtn.addEventListener('click', window.handleGoogleLogin);
 }
 
 // Logout handler
