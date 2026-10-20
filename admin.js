@@ -10,13 +10,17 @@ const logoutBtn = document.getElementById('logout-btn');
 const { createClient } = supabase;
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Known Admin Emails as immediate fallback if profile query fails or RLS blocks
+// Known Admin Emails & User UUIDs as immediate fallback
 const ADMIN_EMAILS = ['veer.pavan@gmail.com', 'sreedivya1901@gmail.com'];
+const ADMIN_IDS = ['6e0b26ef-d6aa-4369-8eda-d89dce0bfd9e', '93400983-27da-49dd-a3ef-82cdb23f4e8e'];
 
 // Helper to verify admin permissions
 async function verifyIsAdmin(user) {
     if (!user) return false;
-    const userEmail = (user.email || user.user_metadata?.email || '').toLowerCase().trim();
+    if (ADMIN_IDS.includes(user.id)) {
+        return true;
+    }
+    const userEmail = (user.email || user.user_metadata?.email || user.app_metadata?.email || '').toLowerCase().trim();
     if (ADMIN_EMAILS.includes(userEmail)) {
         return true;
     }
