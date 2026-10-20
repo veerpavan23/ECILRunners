@@ -1285,17 +1285,8 @@ async function openRegistrationPortal(url = 'https://ecilrunners.iq301.in/') {
         return;
     }
 
-    // Prefill user details in registration URL if possible
-    let finalUrl = url;
-    try {
-        const u = new URL(url);
-        if (user.email) u.searchParams.set('email', user.email);
-        const name = user.user_metadata?.full_name || '';
-        if (name) u.searchParams.set('name', name);
-        finalUrl = u.toString();
-    } catch (e) {
-        finalUrl = url;
-    }
+    // Load the exact clean registration URL (WordPress interprets ?name= as an author query and returns 404)
+    const finalUrl = url;
 
     if (loader) loader.classList.remove('hidden', 'opacity-0');
     frame.src = finalUrl;
