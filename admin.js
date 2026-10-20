@@ -769,6 +769,29 @@ async function loadEventRegistrations(eventId) {
         data = data.filter(r => r.event_id === eventId);
     }
     
+    // Deduplicate registrations by email and event, preferring records with rich metadata
+    const seenMap = new Map();
+    const dedupedData = [];
+    for (const reg of data) {
+        const key = `${reg.event_id || 'no_event'}_${(reg.user_email || reg.user_id || reg.id).toLowerCase()}`;
+        if (!seenMap.has(key)) {
+            seenMap.set(key, reg);
+            dedupedData.push(reg);
+        } else {
+            const existing = seenMap.get(key);
+            const existingHasMeta = existing.user_name && (existing.user_name.includes('__META__:') || existing.user_name.includes('['));
+            const currentHasMeta = reg.user_name && (reg.user_name.includes('__META__:') || reg.user_name.includes('['));
+            if (!existingHasMeta && currentHasMeta) {
+                const idx = dedupedData.indexOf(existing);
+                if (idx !== -1) {
+                    dedupedData[idx] = reg;
+                    seenMap.set(key, reg);
+                }
+            }
+        }
+    }
+    data = dedupedData;
+    
     if (data.length === 0) {
         list.innerHTML = '<p class="text-sm text-gray-500 p-4 bg-gray-50 rounded-lg border border-gray-200">No one has registered for this event yet.</p>';
         return;
@@ -776,6 +799,10 @@ async function loadEventRegistrations(eventId) {
     
     const totalRegistered = data.length;
     const totalAttended = data.filter(r => r.status === 'attended').length;
+
+    // Cache registrations so the edit modal can instantly populate
+    window.allRegistrationsCache = window.allRegistrationsCache || new Map();
+    window.allRegistrationsCache.clear();
     
     let html = `
         <div class="flex flex-wrap gap-4 mb-6">
@@ -804,7 +831,7 @@ async function loadEventRegistrations(eventId) {
                         <th class="p-3">Running Group</th>
                         <th class="p-3">Email &amp; Mobile</th>
                         <th class="p-3">Status</th>
-                        <th class="p-3 text-center">Attendance Action</th>
+                        <th class="p-3 text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 text-gray-700">
@@ -824,6 +851,7 @@ async function loadEventRegistrations(eventId) {
         let group = 'ECIL Runners';
         let email = reg.user_email || '-';
         let phone = '-';
+        let regNo = '-';
 
         // 1. Check if full JSON metadata is embedded in user_name
         if (reg.user_name && reg.user_name.includes('__META__:')) {
@@ -842,6 +870,7 @@ async function loadEventRegistrations(eventId) {
                 dob = meta.dob || dob;
                 group = meta.group || group;
                 phone = meta.phone || phone;
+                regNo = meta.regNo || regNo;
             } catch(e) {}
         }
         // 2. Also handle legacy bracketed format: "Veer • [Cat: 21.1K TIMED RUN | Bib: Veer ...]" or "Veer [Cat: ...]"
@@ -877,27 +906,61 @@ async function loadEventRegistrations(eventId) {
             runnerName = bib !== '-' ? bib : (reg.user_email ? reg.user_email.split('@')[0] : 'Participant');
         }
 
+        // Save into global cache for rapid editing
+        window.allRegistrationsCache.set(reg.id, {
+            id: reg.id,
+            eventId: reg.event_id || eventId,
+            runnerName,
+            gender,
+            category,
+            bib,
+            tshirt,
+            blood,
+            health,
+            emergencyPerson,
+            emergencyPhone,
+            dob,
+            group,
+            email,
+            phone,
+            regNo
+        });
+
         const isAttended = reg.status === 'attended';
         const statusBadge = isAttended 
             ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700 uppercase"><i class="fas fa-check-circle mr-1"></i> Attended</span>'
             : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-[#F97316] uppercase"><i class="fas fa-clock mr-1"></i> Registered</span>';
 
+        const displayBlood = (blood && blood !== '-') 
+            ? `<span class="bg-red-50 text-red-600 px-2 py-0.5 rounded-full font-bold text-[10px]">${blood}</span>`
+            : `<span class="text-gray-400 font-normal">—</span>`;
+
+        const displayTshirt = (tshirt && tshirt !== '-') 
+            ? `<span class="bg-gray-100 text-gray-800 px-2 py-0.5 rounded font-bold text-[11px]">${tshirt}</span>`
+            : `<span class="text-gray-400 font-normal">—</span>`;
+
+        const displayHealth = (health && health !== '-') 
+            ? `<span class="text-gray-700">${health}</span>`
+            : `<span class="text-gray-400 font-normal">—</span>`;
+
+        const displayEmergency = (emergencyPerson && emergencyPerson !== '-')
+            ? `<div class="font-medium text-gray-800">${emergencyPerson}</div><div class="text-gray-500 font-mono text-[11px]">${emergencyPhone !== '-' ? emergencyPhone : ''}</div>`
+            : `<span class="text-gray-400 font-normal">—</span>`;
+
+        const displayGenderDob = (gender !== '-' || dob !== '-')
+            ? `<span class="font-medium text-gray-800">${gender !== '-' ? gender : ''}</span><span class="text-gray-400 block text-[11px]">${dob !== '-' ? dob : ''}</span>`
+            : `<span class="text-gray-400 font-normal">—</span>`;
+
         return `
             <tr class="hover:bg-gray-50/70 transition-colors">
                 <td class="p-3 font-bold text-gray-900 whitespace-nowrap">${runnerName}</td>
-                <td class="p-3 whitespace-nowrap">
-                    <span class="font-medium text-gray-800">${gender}</span>
-                    <span class="text-gray-400 block text-[11px]">${dob}</span>
-                </td>
+                <td class="p-3 whitespace-nowrap">${displayGenderDob}</td>
                 <td class="p-3 font-bold text-[#F97316] whitespace-nowrap">${category}</td>
                 <td class="p-3 font-semibold text-gray-800 whitespace-nowrap font-mono">${bib}</td>
-                <td class="p-3 font-bold text-gray-700 whitespace-nowrap">${tshirt}</td>
-                <td class="p-3 whitespace-nowrap"><span class="bg-red-50 text-red-600 px-2 py-0.5 rounded-full font-bold text-[10px]">${blood}</span></td>
-                <td class="p-3 text-gray-600 whitespace-nowrap">${health}</td>
-                <td class="p-3 whitespace-nowrap">
-                    <div class="font-medium text-gray-800">${emergencyPerson}</div>
-                    <div class="text-gray-500 font-mono text-[11px]">${emergencyPhone}</div>
-                </td>
+                <td class="p-3 whitespace-nowrap">${displayTshirt}</td>
+                <td class="p-3 whitespace-nowrap">${displayBlood}</td>
+                <td class="p-3 whitespace-nowrap">${displayHealth}</td>
+                <td class="p-3 whitespace-nowrap">${displayEmergency}</td>
                 <td class="p-3 font-semibold text-gray-700 whitespace-nowrap">${group}</td>
                 <td class="p-3 whitespace-nowrap">
                     <div class="font-medium text-gray-800">${email}</div>
@@ -905,10 +968,16 @@ async function loadEventRegistrations(eventId) {
                 </td>
                 <td class="p-3 whitespace-nowrap">${statusBadge}</td>
                 <td class="p-3 text-center whitespace-nowrap">
-                    <button onclick="toggleAttendance('${reg.id}', '${eventId}', '${reg.status}')" class="${isAttended ? 'bg-green-500 hover:bg-red-500 text-white' : 'bg-gray-100 hover:bg-green-500 hover:text-white text-gray-600'} px-3 py-1.5 rounded-lg font-bold text-xs transition-all shadow-sm cursor-pointer flex items-center gap-1.5 mx-auto" title="${isAttended ? 'Click to Unmark (Set to Registered)' : 'Click to Mark Attended'}">
-                        <i class="fas ${isAttended ? 'fa-check' : 'fa-user-check'}"></i>
-                        <span>${isAttended ? 'Attended (Undo)' : 'Mark Present'}</span>
-                    </button>
+                    <div class="flex items-center justify-center gap-2">
+                        <button onclick="openEditRunnerModal('${reg.id}', '${eventId}')" class="bg-white border border-gray-300 hover:border-[#F97316] hover:text-[#F97316] text-gray-700 px-2.5 py-1.5 rounded-lg font-bold text-xs transition-all shadow-sm cursor-pointer flex items-center gap-1.5" title="Edit Participant Details">
+                            <i class="fas fa-edit text-orange-500"></i>
+                            <span>Edit</span>
+                        </button>
+                        <button onclick="toggleAttendance('${reg.id}', '${eventId}', '${reg.status}')" class="${isAttended ? 'bg-green-500 hover:bg-red-500 text-white' : 'bg-gray-100 hover:bg-green-500 hover:text-white text-gray-600'} px-2.5 py-1.5 rounded-lg font-bold text-xs transition-all shadow-sm cursor-pointer flex items-center gap-1.5" title="${isAttended ? 'Click to Unmark (Set to Registered)' : 'Click to Mark Attended'}">
+                            <i class="fas ${isAttended ? 'fa-check' : 'fa-user-check'}"></i>
+                            <span>${isAttended ? 'Attended' : 'Mark Present'}</span>
+                        </button>
+                    </div>
                 </td>
             </tr>
         `;
@@ -933,6 +1002,148 @@ async function toggleAttendance(regId, eventId, currentStatus) {
         alert('Failed to update attendance status: ' + error.message);
     }
 }
+
+// Open Edit Runner Modal to review or fill missing details directly in database
+window.openEditRunnerModal = function(regId, eventId) {
+    const runner = window.allRegistrationsCache ? window.allRegistrationsCache.get(regId) : null;
+    if (!runner) return alert('Unable to locate runner details.');
+
+    document.getElementById('edit-modal-title').textContent = `Edit Runner: ${runner.runnerName}`;
+    document.getElementById('edit-modal-content').innerHTML = `
+        <form id="form-edit-runner" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Runner Name</label>
+                    <input type="text" id="edit-rn-name" value="${runner.runnerName !== '-' ? runner.runnerName : ''}" required class="w-full border rounded-lg p-2 text-sm font-semibold">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Email Address</label>
+                    <input type="email" id="edit-rn-email" value="${runner.email !== '-' ? runner.email : ''}" required class="w-full border rounded-lg p-2 text-sm font-semibold">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Mobile Number</label>
+                    <input type="text" id="edit-rn-phone" value="${runner.phone !== '-' ? runner.phone : ''}" class="w-full border rounded-lg p-2 text-sm font-mono">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Race Category</label>
+                    <input type="text" id="edit-rn-category" value="${runner.category !== '-' ? runner.category : 'Run Jaathara 2026'}" class="w-full border rounded-lg p-2 text-sm font-semibold text-orange-600">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Bib Name / Number</label>
+                    <input type="text" id="edit-rn-bib" value="${runner.bib !== '-' ? runner.bib : ''}" class="w-full border rounded-lg p-2 text-sm font-mono">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">T-Shirt Size</label>
+                    <select id="edit-rn-tshirt" class="w-full border rounded-lg p-2 text-sm font-semibold">
+                        <option value="-" ${runner.tshirt === '-' ? 'selected' : ''}>Not Specified (—)</option>
+                        <option value="XS" ${runner.tshirt === 'XS' ? 'selected' : ''}>XS (Chest 36")</option>
+                        <option value="S" ${runner.tshirt === 'S' ? 'selected' : ''}>S (Chest 38")</option>
+                        <option value="M" ${runner.tshirt === 'M' ? 'selected' : ''}>M (Chest 40")</option>
+                        <option value="L" ${runner.tshirt === 'L' ? 'selected' : ''}>L (Chest 42")</option>
+                        <option value="XL" ${runner.tshirt === 'XL' ? 'selected' : ''}>XL (Chest 44")</option>
+                        <option value="XXL" ${runner.tshirt === 'XXL' ? 'selected' : ''}>XXL (Chest 46")</option>
+                        <option value="3XL" ${runner.tshirt === '3XL' ? 'selected' : ''}>3XL (Chest 48")</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Blood Group</label>
+                    <select id="edit-rn-blood" class="w-full border rounded-lg p-2 text-sm font-semibold">
+                        <option value="-" ${runner.blood === '-' ? 'selected' : ''}>Not Specified (—)</option>
+                        <option value="A +ve" ${runner.blood === 'A +ve' || runner.blood === 'A+' ? 'selected' : ''}>A +ve</option>
+                        <option value="A -ve" ${runner.blood === 'A -ve' || runner.blood === 'A-' ? 'selected' : ''}>A -ve</option>
+                        <option value="B +ve" ${runner.blood === 'B +ve' || runner.blood === 'B+' ? 'selected' : ''}>B +ve</option>
+                        <option value="B -ve" ${runner.blood === 'B -ve' || runner.blood === 'B-' ? 'selected' : ''}>B -ve</option>
+                        <option value="O +ve" ${runner.blood === 'O +ve' || runner.blood === 'O+' ? 'selected' : ''}>O +ve</option>
+                        <option value="O -ve" ${runner.blood === 'O -ve' || runner.blood === 'O-' ? 'selected' : ''}>O -ve</option>
+                        <option value="AB +ve" ${runner.blood === 'AB +ve' || runner.blood === 'AB+' ? 'selected' : ''}>AB +ve</option>
+                        <option value="AB -ve" ${runner.blood === 'AB -ve' || runner.blood === 'AB-' ? 'selected' : ''}>AB -ve</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Gender</label>
+                    <select id="edit-rn-gender" class="w-full border rounded-lg p-2 text-sm font-semibold">
+                        <option value="-" ${runner.gender === '-' ? 'selected' : ''}>Not Specified</option>
+                        <option value="Male" ${runner.gender === 'Male' ? 'selected' : ''}>Male</option>
+                        <option value="Female" ${runner.gender === 'Female' ? 'selected' : ''}>Female</option>
+                        <option value="Other" ${runner.gender === 'Other' ? 'selected' : ''}>Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Date of Birth</label>
+                    <input type="text" id="edit-rn-dob" value="${runner.dob !== '-' ? runner.dob : ''}" placeholder="DD/MM/YYYY" class="w-full border rounded-lg p-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Running Group</label>
+                    <input type="text" id="edit-rn-group" value="${runner.group !== '-' ? runner.group : 'ECIL Runners'}" class="w-full border rounded-lg p-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Emergency Contact Person</label>
+                    <input type="text" id="edit-rn-emerg-person" value="${runner.emergencyPerson !== '-' ? runner.emergencyPerson : ''}" placeholder="Contact Person Name" class="w-full border rounded-lg p-2 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Emergency Mobile Number</label>
+                    <input type="text" id="edit-rn-emerg-phone" value="${runner.emergencyPhone !== '-' ? runner.emergencyPhone : ''}" placeholder="10-digit mobile" class="w-full border rounded-lg p-2 text-sm font-mono">
+                </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-xs font-bold text-gray-700 uppercase mb-1">History of Health Issues</label>
+                    <input type="text" id="edit-rn-health" value="${runner.health !== '-' ? runner.health : ''}" placeholder="None or list any conditions" class="w-full border rounded-lg p-2 text-sm">
+                </div>
+            </div>
+
+            <button type="submit" id="btn-save-runner" class="bg-[#F97316] text-white px-6 py-3 rounded-xl font-bold w-full mt-4 text-sm tracking-wide shadow-md hover:bg-orange-600 transition-colors flex items-center justify-center gap-2">
+                <i class="fas fa-save"></i> Save Runner Details
+            </button>
+            <p id="edit-rn-status" class="text-xs text-gray-500 mt-1 text-center"></p>
+        </form>
+    `;
+
+    document.getElementById('edit-modal').classList.remove('hidden');
+
+    document.getElementById('form-edit-runner').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('btn-save-runner');
+        const statusEl = document.getElementById('edit-rn-status');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        statusEl.className = 'text-xs text-gray-500 mt-1 text-center';
+        statusEl.textContent = 'Saving details to database...';
+
+        const updatedMeta = {
+            name: document.getElementById('edit-rn-name').value.trim(),
+            gender: document.getElementById('edit-rn-gender').value,
+            category: document.getElementById('edit-rn-category').value.trim(),
+            bib: document.getElementById('edit-rn-bib').value.trim(),
+            tshirt: document.getElementById('edit-rn-tshirt').value,
+            blood: document.getElementById('edit-rn-blood').value,
+            health: document.getElementById('edit-rn-health').value.trim() || '-',
+            emergencyPerson: document.getElementById('edit-rn-emerg-person').value.trim() || '-',
+            emergencyPhone: document.getElementById('edit-rn-emerg-phone').value.trim() || '-',
+            dob: document.getElementById('edit-rn-dob').value.trim() || '-',
+            group: document.getElementById('edit-rn-group').value.trim() || 'ECIL Runners',
+            phone: document.getElementById('edit-rn-phone').value.trim() || '-',
+            regNo: runner.regNo || '-'
+        };
+
+        const newEmail = document.getElementById('edit-rn-email').value.trim();
+        const richUserName = `${updatedMeta.name} __META__:${JSON.stringify(updatedMeta)}`;
+
+        const { error } = await supabaseClient.from('event_registrations').update({
+            user_name: richUserName,
+            user_email: newEmail
+        }).eq('id', regId);
+
+        if (error) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-save"></i> Save Runner Details';
+            statusEl.className = 'text-xs text-red-600 mt-1 text-center font-bold';
+            statusEl.textContent = 'Error updating runner: ' + error.message;
+            return;
+        }
+
+        closeEditModal();
+        loadEventRegistrations(eventId);
+    });
+};
 
 // Hook into tab switching to load events
 document.querySelectorAll('[data-tab]').forEach(btn => {

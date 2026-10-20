@@ -116,6 +116,56 @@
                 </div>
             </div>
 
+            <!-- Complete Race Kit Card (Prompt if T-Shirt or Blood group is missing) -->
+            <div id="kit-completion-card" class="hidden bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/40 dark:to-amber-950/40 border border-orange-200 dark:border-orange-800 rounded-2xl p-4 sm:p-5 mb-6 text-left shadow-sm">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-[#F97316] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-md">
+                        <i class="fas fa-tshirt text-base"></i>
+                    </div>
+                    <div class="flex-grow">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-orange-950 dark:text-orange-200">Complete Your Race Kit</h3>
+                        <p class="text-xs text-gray-600 dark:text-gray-300 mt-0.5">Please confirm your official Run Jaathara T-shirt size &amp; Blood group for race day bib kit and medical safety on course.</p>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">T-Shirt Size</label>
+                                <select id="kit-tshirt-select" class="w-full text-xs font-semibold bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-800 rounded-lg p-2 text-gray-900 dark:text-white">
+                                    <option value="">Select Size...</option>
+                                    <option value="XS">XS (Chest 36")</option>
+                                    <option value="S">S (Chest 38")</option>
+                                    <option value="M">M (Chest 40")</option>
+                                    <option value="L">L (Chest 42")</option>
+                                    <option value="XL">XL (Chest 44")</option>
+                                    <option value="XXL">XXL (Chest 46")</option>
+                                    <option value="3XL">3XL (Chest 48")</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">Blood Group</label>
+                                <select id="kit-blood-select" class="w-full text-xs font-semibold bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-800 rounded-lg p-2 text-gray-900 dark:text-white">
+                                    <option value="">Select Blood Group...</option>
+                                    <option value="A +ve">A +ve</option>
+                                    <option value="A -ve">A -ve</option>
+                                    <option value="B +ve">B +ve</option>
+                                    <option value="B -ve">B -ve</option>
+                                    <option value="O +ve">O +ve</option>
+                                    <option value="O -ve">O -ve</option>
+                                    <option value="AB +ve">AB +ve</option>
+                                    <option value="AB -ve">AB -ve</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-3 mt-3">
+                            <button type="button" onclick="submitRaceKitCompletion()" id="btn-save-race-kit" class="bg-[#F97316] hover:bg-orange-600 text-white text-xs font-bold uppercase tracking-wider py-2 px-4 rounded-lg shadow-sm transition-all flex items-center gap-2 cursor-pointer">
+                                <i class="fas fa-check"></i> Save to Race Kit
+                            </button>
+                            <span id="kit-save-status" class="text-xs font-bold text-green-600"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Registration / Runner Details Table -->
             <div class="text-left mb-8">
                 <h2 class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white mb-3 flex items-center gap-2">
@@ -254,33 +304,45 @@
                 }
             }
 
-            // 3. Fallback to standard URL keys (flat query parameters)
-            const ref = params.get('RegnRef') || params.get('ref') || params.get('order_id') || params.get('id') || params.get('reg_no') || params.get('order_number');
-            const firstName = params.get('FirstName') || params.get('name') || params.get('first_name');
-            const email = params.get('eMail') || params.get('email');
-            const phone = params.get('Phone') || params.get('phone') || params.get('mobile');
-            const race = params.get('Race') || params.get('category') || params.get('distance');
+            // 3. Fallback to standard URL keys (flat query parameters with case-insensitive flexibility)
+            const getParam = (...keys) => {
+                for (const key of keys) {
+                    const exact = params.get(key);
+                    if (exact && exact.trim()) return exact.trim();
+                    for (const [k, v] of params.entries()) {
+                        if (k.toLowerCase() === key.toLowerCase() && v && v.trim()) return v.trim();
+                    }
+                }
+                return '';
+            };
+
+            const ref = getParam('RegnRef', 'ref', 'order_id', 'id', 'reg_no', 'order_number', 'booking_id');
+            const firstName = getParam('FirstName', 'name', 'first_name', 'runner_name');
+            const lastName = getParam('LastName', 'last_name', 'surname');
+            const email = getParam('eMail', 'email', 'user_email', 'mail');
+            const phone = getParam('Phone', 'phone', 'mobile', 'contact_no', 'contact');
+            const race = getParam('Race', 'category', 'distance', 'race_category');
 
             if (ref || firstName || email || phone) {
                 return {
                     RegnRef: ref || '',
                     FirstName: firstName || '',
-                    LastName: params.get('LastName') || params.get('last_name') || '',
+                    LastName: lastName || '',
                     Race: race || 'Run Jaathara 2026',
                     eMail: email || '',
                     Phone: phone || '',
-                    Gender: params.get('Gender') || params.get('gender') || '',
-                    BibName: params.get('BibName') || params.get('bib') || params.get('bib_name') || firstName || '',
-                    TShirtSize: params.get('TShirtSize') || params.get('tshirt') || params.get('t_shirt') || '',
-                    BloodGroup: params.get('BloodGroup') || params.get('blood') || params.get('blood_group') || '',
-                    HealthIssues: params.get('HealthIssues') || params.get('health') || '',
-                    EmergencyContactPerson: params.get('EmergencyContactPerson') || params.get('emergency_contact') || params.get('emergency_person') || '',
-                    EmergencyMobileNumber: params.get('EmergencyMobileNumber') || params.get('emergency_phone') || params.get('emergency_mobile') || '',
-                    DateOfBirth: params.get('DateOfBirth') || params.get('dob') || '',
-                    RunningGroup: params.get('RunningGroup') || params.get('club') || params.get('group') || 'ECIL Runners',
-                    Total: params.get('Total') || params.get('total') || '₹0.00',
-                    Subtotal: params.get('Subtotal') || params.get('subtotal') || '₹0.00',
-                    Discount: params.get('Discount') || params.get('discount') || '₹0.00'
+                    Gender: getParam('Gender', 'gender', 'sex'),
+                    BibName: getParam('BibName', 'bib', 'bib_name', 'bib_no') || firstName || '',
+                    TShirtSize: getParam('TShirtSize', 'tshirt', 't_shirt', 'tshirtsize', 'size', 'shirt', 't-shirt'),
+                    BloodGroup: getParam('BloodGroup', 'blood', 'blood_group', 'bloodgroup', 'bg'),
+                    HealthIssues: getParam('HealthIssues', 'health', 'health_issues', 'medical'),
+                    EmergencyContactPerson: getParam('EmergencyContactPerson', 'emergency_contact', 'emergency_person', 'emergency_name', 'contact_person'),
+                    EmergencyMobileNumber: getParam('EmergencyMobileNumber', 'emergency_phone', 'emergency_mobile', 'emergencyphone'),
+                    DateOfBirth: getParam('DateOfBirth', 'dob', 'birth_date', 'date_of_birth'),
+                    RunningGroup: getParam('RunningGroup', 'club', 'group', 'running_group') || 'ECIL Runners',
+                    Total: getParam('Total', 'total', 'amount') || '₹0.00',
+                    Subtotal: getParam('Subtotal', 'subtotal') || '₹0.00',
+                    Discount: getParam('Discount', 'discount') || '₹0.00'
                 };
             }
 
@@ -555,8 +617,99 @@
                 if (emailEl) emailEl.textContent = data.eMail || data.Email || '—';
                 if (phoneEl) phoneEl.textContent = data.Phone || data.Mobile || '—';
 
+                // Check if race kit details are missing
+                const hasTshirt = data.TShirtSize && data.TShirtSize !== '-';
+                const hasBlood = data.BloodGroup && data.BloodGroup !== '-';
+                const kitCard = document.getElementById('kit-completion-card');
+                if (kitCard && (!hasTshirt || !hasBlood)) {
+                    kitCard.classList.remove('hidden');
+                    if (hasTshirt) {
+                        const sel = document.getElementById('kit-tshirt-select');
+                        if (sel) sel.value = data.TShirtSize;
+                    }
+                    if (hasBlood) {
+                        const sel = document.getElementById('kit-blood-select');
+                        if (sel) sel.value = data.BloodGroup;
+                    }
+                }
+
                 syncRegistrationToSupabase(data);
             }
+        }
+
+        // Allow runner to complete their T-Shirt & Blood Group if IQ301 redirect omitted them
+        async function submitRaceKitCompletion() {
+            const tshirtSel = document.getElementById('kit-tshirt-select');
+            const bloodSel = document.getElementById('kit-blood-select');
+            const btn = document.getElementById('btn-save-race-kit');
+            const statusEl = document.getElementById('kit-save-status');
+
+            const chosenTshirt = tshirtSel ? tshirtSel.value : '';
+            const chosenBlood = bloodSel ? bloodSel.value : '';
+
+            if (!chosenTshirt && !chosenBlood) {
+                alert('Please select your T-shirt size or Blood Group.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            statusEl.textContent = '';
+
+            const current = window.registrationData || {};
+            if (chosenTshirt) current.TShirtSize = chosenTshirt;
+            if (chosenBlood) current.BloodGroup = chosenBlood;
+
+            // Update UI elements immediately
+            const tshirtEl = document.getElementById('runner-tshirt');
+            const bloodEl = document.getElementById('runner-blood');
+            if (tshirtEl && chosenTshirt) tshirtEl.textContent = chosenTshirt;
+            if (bloodEl && chosenBlood) bloodEl.textContent = chosenBlood;
+
+            // Push update to Supabase
+            if (supabaseClient) {
+                try {
+                    const fullName = `${current.FirstName || ''} ${current.LastName || ''}`.trim() || current.BibName || 'Runner';
+                    const runnerMetadata = {
+                        name: fullName,
+                        gender: current.Gender || '',
+                        category: current.Race || 'Run Jaathara 2026',
+                        bib: current.BibName || fullName,
+                        tshirt: current.TShirtSize || '-',
+                        blood: current.BloodGroup || '-',
+                        health: current.HealthIssues || '-',
+                        emergencyPerson: current.EmergencyContactPerson || '-',
+                        emergencyPhone: current.EmergencyMobileNumber || '-',
+                        dob: current.DateOfBirth || '-',
+                        group: current.RunningGroup || 'ECIL Runners',
+                        regNo: current.RegnRef || '-',
+                        total: current.Total || '₹0.00',
+                        phone: current.Phone || ''
+                    };
+                    const richUserName = `${fullName} __META__:${JSON.stringify(runnerMetadata)}`;
+
+                    let query = supabaseClient.from('event_registrations').update({ user_name: richUserName });
+                    if (current.eMail) {
+                        query = query.eq('user_email', current.eMail);
+                    } else if (current.userId) {
+                        query = query.eq('user_id', current.userId);
+                    }
+                    await query;
+
+                    statusEl.textContent = 'Saved to your official Race Kit!';
+                    setTimeout(() => {
+                        const card = document.getElementById('kit-completion-card');
+                        if (card) card.classList.add('hidden');
+                    }, 2000);
+                } catch(e) {
+                    console.error("Kit save error:", e);
+                    statusEl.className = 'text-xs font-bold text-red-600';
+                    statusEl.textContent = 'Saved locally.';
+                }
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check"></i> Saved';
         }
 
         if (document.readyState === 'loading') {
