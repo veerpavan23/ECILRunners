@@ -85,16 +85,23 @@ loginForm.addEventListener('submit', async (e) => {
 const googleBtn = document.getElementById('google-login-btn');
 if (googleBtn) {
     googleBtn.addEventListener('click', async () => {
+        const errorEl = document.getElementById('login-error');
+        errorEl.classList.add('hidden');
+        googleBtn.disabled = true;
+        googleBtn.classList.add('opacity-75');
+
+        const redirectUrl = window.location.origin + window.location.pathname;
         const { error } = await supabaseClient.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: window.location.origin + window.location.pathname
+                redirectTo: redirectUrl
             }
         });
         if (error) {
-            const errorEl = document.getElementById('login-error');
             errorEl.textContent = error.message;
             errorEl.classList.remove('hidden');
+            googleBtn.disabled = false;
+            googleBtn.classList.remove('opacity-75');
         }
     });
 }
@@ -107,37 +114,53 @@ if (logoutBtn) {
     });
 }
 
+// Function to safely display dashboard when authorized
+let isDashboardLoaded = false;
+async function grantAdminAccess(user) {
+    loginScreen.classList.add('hidden');
+    dashboardScreen.classList.remove('hidden');
+    if (!isDashboardLoaded) {
+        isDashboardLoaded = true;
+        loadDashboardData();
+    }
+}
+
 // Check session on load & listen for auth changes (handles Google OAuth redirect)
 async function checkSession() {
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (session && session.user) {
-        const isAdmin = await verifyIsAdmin(session.user);
-        if (isAdmin) {
-            loginScreen.classList.add('hidden');
-            dashboardScreen.classList.remove('hidden');
-            loadDashboardData();
-        } else {
-            await supabaseClient.auth.signOut();
-            const errorEl = document.getElementById('login-error');
-            errorEl.textContent = "Access Denied: Your account does not have Admin access.";
-            errorEl.classList.remove('hidden');
+    try {
+        const { data: { session }, error } = await supabaseClient.auth.getSession();
+        if (error) console.warn('getSession error:', error);
+        if (session && session.user) {
+            const isAdmin = await verifyIsAdmin(session.user);
+            if (isAdmin) {
+                grantAdminAccess(session.user);
+            } else {
+                const errorEl = document.getElementById('login-error');
+                errorEl.textContent = `Access Denied: Logged in as ${session.user.email || 'unknown'}, but this account is not an authorized administrator.`;
+                errorEl.classList.remove('hidden');
+            }
         }
+    } catch (e) {
+        console.error('Session check failure:', e);
     }
 }
 checkSession();
 
 // Also listen for OAuth redirect hash changes / auth state transitions
 supabaseClient.auth.onAuthStateChange(async (event, session) => {
-    if (event === 'SIGNED_IN' && session && session.user) {
+    if (session && session.user && (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION')) {
         const isAdmin = await verifyIsAdmin(session.user);
         if (isAdmin) {
-            loginScreen.classList.add('hidden');
-            dashboardScreen.classList.remove('hidden');
-            loadDashboardData();
+            grantAdminAccess(session.user);
+        } else {
+            const errorEl = document.getElementById('login-error');
+            errorEl.textContent = `Access Denied: Logged in as ${session.user.email || 'unknown'}, but this account is not an authorized administrator.`;
+            errorEl.classList.remove('hidden');
         }
     } else if (event === 'SIGNED_OUT') {
         dashboardScreen.classList.add('hidden');
         loginScreen.classList.remove('hidden');
+        isDashboardLoaded = false;
     }
 });
 
