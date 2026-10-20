@@ -611,21 +611,23 @@ async function loadEventRegistrations(eventId) {
     }
     list.innerHTML = 'Loading runners...';
     
-    let query = supabaseClient.from('event_registrations').select('*').order('created_at', { ascending: false });
-    if (eventId !== 'all') {
-        if (eventId === 'run-jaathara-2026') {
-            // Include both explicitly tagged or general flagship registrations
-            query = query.or('event_id.eq.run-jaathara-2026,event_id.is.null');
-        } else {
-            query = query.eq('event_id', eventId);
-        }
-    }
+    let { data, error } = await supabaseClient.from('event_registrations').select('*');
     
-    const { data, error } = await query;
-        
     if (error) {
-        list.innerHTML = 'Error loading registrations.';
+        console.error("Error fetching registrations:", error);
+        list.innerHTML = `<div class="p-4 bg-red-50 text-red-700 text-sm rounded-lg border border-red-200">
+            <strong>Error loading registrations:</strong> ${error.message || JSON.stringify(error)}
+        </div>`;
         return;
+    }
+
+    // Filter in JS safely
+    if (data && eventId !== 'all') {
+        if (eventId === 'run-jaathara-2026') {
+            data = data.filter(r => !r.event_id || r.event_id === 'run-jaathara-2026' || (r.user_name && r.user_name.toLowerCase().includes('jaathara')));
+        } else {
+            data = data.filter(r => r.event_id === eventId);
+        }
     }
     
     if (data.length === 0) {
