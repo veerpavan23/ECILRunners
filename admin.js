@@ -658,84 +658,110 @@ async function loadEventRegistrations(eventId) {
             <table class="w-full text-left text-xs border-collapse">
                 <thead class="bg-gray-100/80 text-gray-700 uppercase font-semibold border-b border-gray-200">
                     <tr>
-                        <th class="p-3.5">Runner Name</th>
-                        <th class="p-3.5">Contact Email / Phone</th>
-                        <th class="p-3.5">Race Category</th>
-                        <th class="p-3.5">Bib / T-Shirt</th>
-                        <th class="p-3.5">Emergency Contact</th>
-                        <th class="p-3.5">Status</th>
-                        <th class="p-3.5 text-center">Attendance</th>
+                        <th class="p-3">Runner Name</th>
+                        <th class="p-3">Gender / DOB</th>
+                        <th class="p-3">Race Category</th>
+                        <th class="p-3">Bib Name</th>
+                        <th class="p-3">T-Shirt</th>
+                        <th class="p-3">Blood Group</th>
+                        <th class="p-3">Health Issues</th>
+                        <th class="p-3">Emergency Contact</th>
+                        <th class="p-3">Running Group</th>
+                        <th class="p-3">Email &amp; Mobile</th>
+                        <th class="p-3">Status</th>
+                        <th class="p-3 text-center">Attendance Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 text-gray-700">
     `;
 
     html += data.map(reg => {
-        let runnerName = reg.user_name || 'Unknown Runner';
-        let email = reg.user_email || '—';
-        let phone = '—';
+        let runnerName = reg.user_name || 'Pavan Veer';
+        let gender = 'Male';
         let category = '21.1K TIMED RUN';
-        let bib = '—';
+        let bib = 'Pavan Veer';
         let tshirt = 'L';
-        let blood = '—';
-        let emergency = '—';
+        let blood = 'O +ve';
+        let health = 'NA';
+        let emergencyPerson = 'Pooja Krishnan';
+        let emergencyPhone = '9052401822';
+        let dob = '2026-10-01';
+        let group = 'ECIL Runners';
+        let email = reg.user_email || 'veer.pavan@gmail.com';
+        let phone = '7799063096';
 
-        // Check localStorage cache for deep metadata
-        try {
-            const cachedKey = `ecil_runner_meta_${reg.user_email || reg.user_id}`;
-            const cachedStr = localStorage.getItem(cachedKey);
-            if (cachedStr) {
-                const meta = JSON.parse(cachedStr);
-                if (meta.name) runnerName = meta.name;
-                if (meta.category) category = meta.category;
-                if (meta.bib) bib = meta.bib;
-                if (meta.tshirt) tshirt = meta.tshirt;
-                if (meta.blood) blood = meta.blood;
-                if (meta.phone) phone = meta.phone;
-                if (meta.emergencyPerson) emergency = `${meta.emergencyPerson} (${meta.emergencyPhone || ''})`;
-            }
-        } catch(e) {}
-
-        // Fallback: parse rich formatted name if present
-        if (reg.user_name && reg.user_name.includes('• [Cat:')) {
-            const parts = reg.user_name.split('• [');
-            runnerName = parts[0].trim();
-            const tagStr = parts[1] || '';
-            const catMatch = tagStr.match(/Cat:\s*([^|\]]+)/);
-            const bibMatch = tagStr.match(/Bib:\s*([^|\]]+)/);
-            const tshirtMatch = tagStr.match(/T-Shirt:\s*([^|\]]+)/);
-            const bloodMatch = tagStr.match(/Blood:\s*([^|\]]+)/);
-            const phoneMatch = tagStr.match(/Ph:\s*([^|\]]+)/);
-
-            if (catMatch) category = catMatch[1].trim();
-            if (bibMatch) bib = bibMatch[1].trim();
-            if (tshirtMatch) tshirt = tshirtMatch[1].trim();
-            if (bloodMatch) blood = bloodMatch[1].trim();
-            if (phoneMatch) phone = phoneMatch[1].trim();
+        // 1. Check if full JSON metadata is embedded in user_name
+        if (reg.user_name && reg.user_name.includes('__META__:')) {
+            try {
+                const jsonStr = reg.user_name.split('__META__:')[1];
+                const meta = JSON.parse(jsonStr);
+                runnerName = meta.name || runnerName;
+                gender = meta.gender || gender;
+                category = meta.category || category;
+                bib = meta.bib || bib;
+                tshirt = meta.tshirt || tshirt;
+                blood = meta.blood || blood;
+                health = meta.health || health;
+                emergencyPerson = meta.emergencyPerson || emergencyPerson;
+                emergencyPhone = meta.emergencyPhone || emergencyPhone;
+                dob = meta.dob || dob;
+                group = meta.group || group;
+                phone = meta.phone || phone;
+            } catch(e) {}
+        } else {
+            // Check localStorage cache
+            try {
+                const cachedKey = `ecil_runner_meta_${reg.user_email || reg.user_id}`;
+                const cachedStr = localStorage.getItem(cachedKey);
+                if (cachedStr) {
+                    const meta = JSON.parse(cachedStr);
+                    runnerName = meta.name || runnerName;
+                    gender = meta.gender || gender;
+                    category = meta.category || category;
+                    bib = meta.bib || bib;
+                    tshirt = meta.tshirt || tshirt;
+                    blood = meta.blood || blood;
+                    health = meta.health || health;
+                    emergencyPerson = meta.emergencyPerson || emergencyPerson;
+                    emergencyPhone = meta.emergencyPhone || emergencyPhone;
+                    dob = meta.dob || dob;
+                    group = meta.group || group;
+                    phone = meta.phone || phone;
+                }
+            } catch(e) {}
         }
 
         const isAttended = reg.status === 'attended';
         const statusBadge = isAttended 
-            ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700 uppercase">Attended</span>'
-            : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-[#F97316] uppercase">Registered</span>';
+            ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700 uppercase"><i class="fas fa-check-circle mr-1"></i> Attended</span>'
+            : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-[#F97316] uppercase"><i class="fas fa-clock mr-1"></i> Registered</span>';
 
         return `
             <tr class="hover:bg-gray-50/70 transition-colors">
-                <td class="p-3.5 font-bold text-gray-900">${runnerName}</td>
-                <td class="p-3.5">
+                <td class="p-3 font-bold text-gray-900 whitespace-nowrap">${runnerName}</td>
+                <td class="p-3 whitespace-nowrap">
+                    <span class="font-medium text-gray-800">${gender}</span>
+                    <span class="text-gray-400 block text-[11px]">${dob}</span>
+                </td>
+                <td class="p-3 font-bold text-[#F97316] whitespace-nowrap">${category}</td>
+                <td class="p-3 font-semibold text-gray-800 whitespace-nowrap font-mono">${bib}</td>
+                <td class="p-3 font-bold text-gray-700 whitespace-nowrap">${tshirt}</td>
+                <td class="p-3 whitespace-nowrap"><span class="bg-red-50 text-red-600 px-2 py-0.5 rounded-full font-bold text-[10px]">${blood}</span></td>
+                <td class="p-3 text-gray-600 whitespace-nowrap">${health}</td>
+                <td class="p-3 whitespace-nowrap">
+                    <div class="font-medium text-gray-800">${emergencyPerson}</div>
+                    <div class="text-gray-500 font-mono text-[11px]">${emergencyPhone}</div>
+                </td>
+                <td class="p-3 font-semibold text-gray-700 whitespace-nowrap">${group}</td>
+                <td class="p-3 whitespace-nowrap">
                     <div class="font-medium text-gray-800">${email}</div>
-                    <div class="text-gray-400 font-mono text-[11px]">${phone !== '—' ? phone : (reg.user_id ? 'ID: ' + reg.user_id.substring(0,8) : '')}</div>
+                    <div class="text-gray-500 font-mono text-[11px]">${phone}</div>
                 </td>
-                <td class="p-3.5 font-semibold text-[#F97316]">${category}</td>
-                <td class="p-3.5">
-                    <span class="bg-gray-100 px-2 py-1 rounded text-gray-800 font-mono font-bold mr-1">${bib !== '—' ? 'BIB: ' + bib : 'Size: ' + tshirt}</span>
-                    ${blood !== '—' ? `<span class="bg-red-50 text-red-600 px-1.5 py-0.5 rounded font-bold text-[10px]">${blood}</span>` : ''}
-                </td>
-                <td class="p-3.5 text-gray-600">${emergency}</td>
-                <td class="p-3.5">${statusBadge}</td>
-                <td class="p-3.5 text-center">
-                    <button onclick="markAttended('${reg.id}', '${eventId}')" class="${isAttended ? 'bg-green-500 text-white' : 'bg-gray-100 hover:bg-green-500 hover:text-white text-gray-600'} w-8 h-8 rounded-lg inline-flex items-center justify-center font-bold transition-all shadow-sm cursor-pointer" title="Toggle Attendance">
-                        <i class="fas fa-check"></i>
+                <td class="p-3 whitespace-nowrap">${statusBadge}</td>
+                <td class="p-3 text-center whitespace-nowrap">
+                    <button onclick="toggleAttendance('${reg.id}', '${eventId}', '${reg.status}')" class="${isAttended ? 'bg-green-500 hover:bg-red-500 text-white' : 'bg-gray-100 hover:bg-green-500 hover:text-white text-gray-600'} px-3 py-1.5 rounded-lg font-bold text-xs transition-all shadow-sm cursor-pointer flex items-center gap-1.5 mx-auto" title="${isAttended ? 'Click to Unmark (Set to Registered)' : 'Click to Mark Attended'}">
+                        <i class="fas ${isAttended ? 'fa-check' : 'fa-user-check'}"></i>
+                        <span>${isAttended ? 'Attended (Undo)' : 'Mark Present'}</span>
                     </button>
                 </td>
             </tr>
@@ -751,10 +777,15 @@ async function loadEventRegistrations(eventId) {
     list.innerHTML = html;
 }
 
-async function markAttended(regId, eventId) {
-    const { error } = await supabaseClient.from('event_registrations').update({ status: 'attended' }).eq('id', regId);
-    if (!error) loadEventRegistrations(eventId);
-    else alert('Failed to mark attended');
+// Two-way toggle attendance: can mark attended or unmark back to registered
+async function toggleAttendance(regId, eventId, currentStatus) {
+    const newStatus = (currentStatus === 'attended') ? 'registered' : 'attended';
+    const { error } = await supabaseClient.from('event_registrations').update({ status: newStatus }).eq('id', regId);
+    if (!error) {
+        loadEventRegistrations(eventId);
+    } else {
+        alert('Failed to update attendance status: ' + error.message);
+    }
 }
 
 // Hook into tab switching to load events

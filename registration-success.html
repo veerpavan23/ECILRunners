@@ -438,8 +438,8 @@
                     localStorage.setItem(cacheKey, JSON.stringify(runnerMetadata));
                 } catch(e) {}
 
-                // Embed into user_name: "Name | Category: 21.1K | Bib: Veer | Size: L | Phone: 9052401822"
-                const richUserName = `${fullName} • [Cat: ${runnerMetadata.category} | Bib: ${runnerMetadata.bib} | T-Shirt: ${runnerMetadata.tshirt} | Blood: ${runnerMetadata.blood} | Ph: ${runnerMetadata.phone}]`;
+                // Embed full JSON into user_name string prefix so every detail is saved directly in Supabase
+                const richUserName = `${fullName} __META__:${JSON.stringify(runnerMetadata)}`;
 
                 const payload = {
                     event_id: targetEventId,
@@ -448,6 +448,16 @@
                     status: 'registered'
                 };
                 if (currentUserId) payload.user_id = currentUserId;
+
+                // Also update any existing row for this runner if they already registered so old entries get updated with full metadata
+                if (currentUserId || regEmail) {
+                    try {
+                        let upQuery = supabaseClient.from('event_registrations').update({ user_name: richUserName });
+                        if (currentUserId) upQuery = upQuery.eq('user_id', currentUserId);
+                        else upQuery = upQuery.eq('user_email', regEmail);
+                        await upQuery;
+                    } catch(e) {}
+                }
 
                 console.log("Attempting Supabase registration insert with payload:", payload);
                 const { data: inserted, error } = await supabaseClient.from('event_registrations').insert([payload]).select();
