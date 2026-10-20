@@ -356,13 +356,46 @@
                 const fullName = `${data.FirstName || ''} ${data.LastName || ''}`.trim() || data.BibName || 'IQ301 Runner';
                 const regEmail = data.eMail || '';
 
-                // Deduplicate check specifically for this user/email
+                // 1. Resolve or create Run Jaathara 2026 event row in events table to get its valid UUID
+                let targetEventId = null;
+                try {
+                    const { data: evList } = await supabaseClient.from('events').select('id, title');
+                    const jaatharaEv = evList ? evList.find(e => e.title && e.title.toLowerCase().includes('run jaathara')) : null;
+                    if (jaatharaEv) {
+                        targetEventId = jaatharaEv.id;
+                    } else {
+                        // Create Run Jaathara 2026 event row in database
+                        const { data: newEv, error: createEvErr } = await supabaseClient.from('events').insert([{
+                            title: 'Run Jaathara 2026',
+                            date: 'December 6th, 2026 5:30 AM',
+                            location: 'Sreenidhi Inst of Science & Tech, Ghatkesar',
+                            price: '₹499 (5K) • ₹699 (10K) • ₹799 (21K)',
+                            description: 'Run Jaathara Retro Edition! Run Together, Celebrate Community, Revisit Good Old Days.'
+                        }]).select().single();
+                        if (newEv) targetEventId = newEv.id;
+                    }
+                } catch(e) {
+                    console.warn("Event resolution warning:", e);
+                }
+
+                // Fallback to existing event if creation restricted
+                if (!targetEventId) {
+                    const { data: anyEv } = await supabaseClient.from('events').select('id').limit(1);
+                    if (anyEv && anyEv.length > 0) targetEventId = anyEv[0].id;
+                }
+
+                if (!targetEventId) {
+                    console.error("No valid event found in events table to link registration.");
+                    return;
+                }
+
+                // 2. Deduplicate check specifically for this user/email and target event
                 if (currentUserId) {
                     const { data: existing } = await supabaseClient
                         .from('event_registrations')
                         .select('id')
                         .eq('user_id', currentUserId)
-                        .is('event_id', null)
+                        .eq('event_id', targetEventId)
                         .limit(1);
                     if (existing && existing.length > 0) {
                         console.log("Runner already registered for Run Jaathara in database:", existing[0].id);
@@ -373,7 +406,7 @@
                         .from('event_registrations')
                         .select('id')
                         .eq('user_email', regEmail)
-                        .is('event_id', null)
+                        .eq('event_id', targetEventId)
                         .limit(1);
                     if (existing && existing.length > 0) {
                         console.log("Runner email already registered for Run Jaathara in database:", existing[0].id);
@@ -381,8 +414,8 @@
                     }
                 }
 
-                // In PostgreSQL, event_id is type UUID. Run Jaathara is the flagship event, stored with NULL event_id
                 const payload = {
+                    event_id: targetEventId,
                     user_name: fullName,
                     user_email: regEmail,
                     status: 'registered'
