@@ -16,7 +16,7 @@ const ADMIN_EMAILS = ['veer.pavan@gmail.com', 'sreedivya1901@gmail.com'];
 // Helper to verify admin permissions
 async function verifyIsAdmin(user) {
     if (!user) return false;
-    const userEmail = (user.email || '').toLowerCase();
+    const userEmail = (user.email || user.user_metadata?.email || '').toLowerCase().trim();
     if (ADMIN_EMAILS.includes(userEmail)) {
         return true;
     }
