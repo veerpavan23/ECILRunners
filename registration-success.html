@@ -66,19 +66,19 @@
                 <div class="grid grid-cols-2 gap-4 text-xs">
                     <div>
                         <span class="text-gray-400 uppercase tracking-widest font-bold text-[10px] block">Reference No</span>
-                        <span id="order-id" class="font-bold font-mono text-sm text-gray-900 dark:text-white">Loading...</span>
+                        <span id="order-id" class="font-bold font-mono text-sm text-gray-900 dark:text-white">IQ301-CONFIRMED</span>
                     </div>
                     <div>
                         <span class="text-gray-400 uppercase tracking-widest font-bold text-[10px] block">Race Category</span>
-                        <span id="category-name" class="font-bold text-sm text-[#F97316]">—</span>
+                        <span id="category-name" class="font-bold text-sm text-[#F97316]">Run Jaathara 2026</span>
                     </div>
                     <div>
                         <span class="text-gray-400 uppercase tracking-widest font-bold text-[10px] block">Email</span>
-                        <span id="runner-email" class="font-medium text-xs text-gray-700 dark:text-gray-300 break-all">—</span>
+                        <span id="runner-email" class="font-medium text-xs text-gray-700 dark:text-gray-300 break-all">Recorded with IQ301</span>
                     </div>
                     <div>
                         <span class="text-gray-400 uppercase tracking-widest font-bold text-[10px] block">Phone</span>
-                        <span id="runner-phone" class="font-medium text-xs text-gray-700 dark:text-gray-300">—</span>
+                        <span id="runner-phone" class="font-medium text-xs text-gray-700 dark:text-gray-300">Active Entry</span>
                     </div>
                     <div id="group-container" class="col-span-2 hidden bg-orange-50 dark:bg-orange-950/30 p-2.5 rounded-lg border border-orange-200 dark:border-orange-900/40 text-left">
                         <span class="text-gray-500 uppercase tracking-widest font-bold text-[10px] block">Running Group / Club</span>
@@ -179,6 +179,26 @@
                     RunningGroup: params.get('RunningGroup') || params.get('club') || params.get('group') || ''
                 };
             }
+
+            // 4. Fallback to localStorage session cached right before IQ301 redirection
+            try {
+                const cached = localStorage.getItem('ecil_active_registration');
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    // Only use if within the last 2 hours
+                    if (parsed && (Date.now() - (parsed.timestamp || 0)) < 7200000) {
+                        return {
+                            RegnRef: 'IQ301-CONFIRMED',
+                            FirstName: parsed.FirstName || 'Runner',
+                            LastName: parsed.LastName || '',
+                            Race: parsed.Race || 'Run Jaathara 2026',
+                            eMail: parsed.eMail || '',
+                            Phone: parsed.Phone || '',
+                            RunningGroup: ''
+                        };
+                    }
+                }
+            } catch(e) {}
 
             return null;
         }

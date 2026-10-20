@@ -423,8 +423,8 @@ async function loadLiveEvents() {
         allList.unshift(runJaatharaEvent);
         allEventsCache = allList;
 
-        // Filter strictly UPCOMING events for the home section
-        const upcomingEvents = allList.filter(ev => !isEventCompleted(ev.date));
+        // Filter UPCOMING events (Flagship Run Jaathara 2026 is permanently marked upcoming)
+        const upcomingEvents = allList.filter(ev => ev.is_flagship || !isEventCompleted(ev.date));
         
         if (upcomingEvents.length > 0) {
             container.innerHTML = upcomingEvents.slice(0, 3).map(ev => {
@@ -1279,6 +1279,20 @@ async function openRegistrationPortal(url = 'https://ecilrunners.iq301.in/') {
     // User stays in their main browser tab, completes IQ301 registration, 
     // and is seamlessly redirected right back to https://ecilrunners.com/registration-success.html
     const finalUrl = url || 'https://ecilrunners.iq301.in/';
+    
+    // Cache user profile details so registration-success page has guaranteed immediate access
+    try {
+        const runnerProfile = {
+            FirstName: user.user_metadata?.full_name?.split(' ')[0] || user.user_metadata?.first_name || '',
+            LastName: user.user_metadata?.full_name?.split(' ').slice(1).join(' ') || user.user_metadata?.last_name || '',
+            eMail: user.email || '',
+            Phone: user.phone || user.user_metadata?.phone || '',
+            Race: 'Run Jaathara 2026',
+            timestamp: Date.now()
+        };
+        localStorage.setItem('ecil_active_registration', JSON.stringify(runnerProfile));
+    } catch(e) {}
+
     window.location.href = finalUrl;
 }
 window.openRegistrationPortal = openRegistrationPortal;
