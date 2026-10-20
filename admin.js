@@ -10,45 +10,75 @@ const logoutBtn = document.getElementById('logout-btn');
 const { createClient } = supabase;
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// Known Admin Emails as immediate fallback if profile query fails or RLS blocks
+const ADMIN_EMAILS = ['veer.pavan@gmail.com', 'sreedivya1901@gmail.com'];
+
+// Helper to verify admin permissions
+async function verifyIsAdmin(user) {
+    if (!user) return false;
+    const userEmail = (user.email || '').toLowerCase();
+    if (ADMIN_EMAILS.includes(userEmail)) {
+        return true;
+    }
+    try {
+        const { data: profile, error } = await supabaseClient.from('profiles').select('is_admin, super_admin').eq('id', user.id).maybeSingle();
+        if (profile && (profile.is_admin === true || profile.super_admin === true)) {
+            return true;
+        }
+    } catch (e) {
+        console.warn('Profile admin check error:', e);
+    }
+    return false;
+}
+
 // Auth logic
 loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const email = document.getElementById('email').value;
+    const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
     const errorEl = document.getElementById('login-error');
+    const submitBtn = loginForm.querySelector('button[type="submit"]') || loginForm.querySelector('button');
     
     errorEl.classList.add('hidden');
-    const prevText = loginForm.querySelector('button').textContent;
-    loginForm.querySelector('button').textContent = 'Verifying...';
+    const prevText = submitBtn.textContent;
+    submitBtn.textContent = 'Verifying...';
+    submitBtn.disabled = true;
     
-    const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
-        email: email,
-        password: password,
-    });
-    
-    if (authError) {
-        errorEl.textContent = authError.message;
+    try {
+        const { data: authData, error: authError } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password,
+        });
+        
+        if (authError) {
+            errorEl.textContent = authError.message;
+            errorEl.classList.remove('hidden');
+            submitBtn.textContent = prevText;
+            submitBtn.disabled = false;
+            return;
+        } 
+        
+        const isAdmin = await verifyIsAdmin(authData.user);
+        if (!isAdmin) {
+            await supabaseClient.auth.signOut();
+            errorEl.textContent = "Access Denied: You are not an authorized administrator.";
+            errorEl.classList.remove('hidden');
+            submitBtn.textContent = prevText;
+            submitBtn.disabled = false;
+            return;
+        }
+        
+        // Success!
+        loginScreen.classList.add('hidden');
+        dashboardScreen.classList.remove('hidden');
+        loadDashboardData();
+    } catch (err) {
+        errorEl.textContent = err.message || 'Login failed';
         errorEl.classList.remove('hidden');
-        loginForm.querySelector('button').textContent = prevText;
-        return;
-    } 
-    
-    // Check if the user is actually an admin
-    const { data: profile } = await supabaseClient.from('profiles').select('is_admin').eq('id', authData.user.id).single();
-    
-    if (!profile || profile.is_admin !== true) {
-        await supabaseClient.auth.signOut();
-        errorEl.textContent = "Access Denied: You are not an authorized administrator.";
-        errorEl.classList.remove('hidden');
-        loginForm.querySelector('button').textContent = prevText;
-        return;
+    } finally {
+        submitBtn.textContent = prevText;
+        submitBtn.disabled = false;
     }
-    
-    // Success!
-    loginScreen.classList.add('hidden');
-    dashboardScreen.classList.remove('hidden');
-    loadDashboardData();
-    loginForm.querySelector('button').textContent = prevText;
 });
 
 // Google Auth
@@ -69,13 +99,20 @@ if (googleBtn) {
     });
 }
 
-// Check session on load
+// Logout handler
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+        await supabaseClient.auth.signOut();
+        window.location.reload();
+    });
+}
+
+// Check session on load & listen for auth changes (handles Google OAuth redirect)
 async function checkSession() {
     const { data: { session } } = await supabaseClient.auth.getSession();
-    if (session) {
-        // Verify admin status on reload too
-        const { data: profile } = await supabaseClient.from('profiles').select('is_admin').eq('id', session.user.id).single();
-        if (profile && profile.is_admin === true) {
+    if (session && session.user) {
+        const isAdmin = await verifyIsAdmin(session.user);
+        if (isAdmin) {
             loginScreen.classList.add('hidden');
             dashboardScreen.classList.remove('hidden');
             loadDashboardData();
@@ -88,6 +125,21 @@ async function checkSession() {
     }
 }
 checkSession();
+
+// Also listen for OAuth redirect hash changes / auth state transitions
+supabaseClient.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session && session.user) {
+        const isAdmin = await verifyIsAdmin(session.user);
+        if (isAdmin) {
+            loginScreen.classList.add('hidden');
+            dashboardScreen.classList.remove('hidden');
+            loadDashboardData();
+        }
+    } else if (event === 'SIGNED_OUT') {
+        dashboardScreen.classList.add('hidden');
+        loginScreen.classList.remove('hidden');
+    }
+});
 
 
 
