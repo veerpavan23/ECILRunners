@@ -389,14 +389,25 @@
                 };
                 if (currentUserId) payload.user_id = currentUserId;
 
+                console.log("Attempting Supabase registration insert with payload:", payload);
                 const { data: inserted, error } = await supabaseClient.from('event_registrations').insert([payload]).select();
                 if (error) {
-                    console.warn("Supabase registration sync warning:", error.message);
+                    console.error("Supabase registration sync error:", error);
+                    const errBanner = document.createElement('div');
+                    errBanner.className = "bg-amber-100 border border-amber-300 text-amber-800 text-xs p-3 rounded-xl mb-4 text-left font-mono";
+                    errBanner.innerHTML = `<strong>Registration Sync Notice:</strong> ${error.message || JSON.stringify(error)}`;
+                    const mainContainer = document.querySelector('main > div');
+                    if (mainContainer) mainContainer.insertBefore(errBanner, mainContainer.firstChild);
                 } else {
                     console.log("Successfully recorded IQ301 registration into ECIL Runners database!", inserted);
+                    const successBanner = document.createElement('div');
+                    successBanner.className = "bg-green-100 border border-green-300 text-green-800 text-xs p-3 rounded-xl mb-4 text-left font-semibold";
+                    successBanner.innerHTML = `<i class="fas fa-check-circle mr-1"></i> Recorded in ECIL Runners official database roster!`;
+                    const mainContainer = document.querySelector('main > div');
+                    if (mainContainer) mainContainer.insertBefore(successBanner, mainContainer.firstChild);
                 }
             } catch (err) {
-                console.warn("DB sync bypassed:", err);
+                console.warn("DB sync error caught:", err);
             }
         }
 
