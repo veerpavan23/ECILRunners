@@ -559,7 +559,7 @@ async function renderCalendarEvents(filterType = 'all') {
     }
 
     let filtered = events.filter(ev => {
-        const completed = isEventCompleted(ev.date);
+        const completed = ev.is_flagship ? false : isEventCompleted(ev.date);
         if (filterType === 'upcoming') return !completed;
         if (filterType === 'past') return completed;
         return true;
