@@ -602,74 +602,80 @@
                 </div>
                 
                 <div id="events-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Event Card 1 -->
-                    <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden group hover:border-[#F97316]/50 hover:shadow-xl transition-all duration-300 shadow-sm" data-aos="fade-up" data-aos-delay="0">
-                        <div class="relative h-56 overflow-hidden">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
-                            <img src="assets/events_marathon.jpg" alt="Marathon" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                            <div class="absolute top-4 right-4 z-20 bg-[#F97316] text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest shadow-md">
-                                Oct 15
+                    <!-- Flagship Event: Run Jaathara 2026 Retro Edition -->
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-gray-700 hover:-translate-y-2 transition-all duration-300 group flex flex-col justify-between" data-aos="fade-up">
+                        <div>
+                            <div class="relative h-72 sm:h-80 bg-stone-900 flex items-center justify-center overflow-hidden p-1">
+                                <img src="assets/run_jaathara_2026_poster.jpg" alt="Run Jaathara 2026 Retro Edition" class="w-full h-full object-contain rounded-xl group-hover:scale-[1.02] transition-transform duration-500">
+                                <div class="absolute top-4 right-4 bg-[#F97316] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-md">
+                                    Dec 06, 2026
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center gap-2 text-sm text-[#F97316] font-bold mb-3">
+                                    <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                    <span class="uppercase tracking-wider text-xs line-clamp-1">Sreenidhi Inst of Science & Tech, Ghatkesar</span>
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Run Jaathara 2026</h3>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">Run Jaathara Retro Edition! Run Together, Celebrate Community, Revisit Good Old Days. Includes T-Shirt, Finisher Medal, Breakfast, Goodie Bag & More.</p>
                             </div>
                         </div>
-                        <div class="p-8 relative z-20 -mt-12 bg-white rounded-t-3xl border-t border-gray-100">
-                            <div class="flex items-center gap-2 text-xs font-bold tracking-widest text-[#F97316] mb-3 uppercase">
-                                <i class="fas fa-map-marker-alt"></i> ECIL Main Gate
-                            </div>
-                            <h4 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#F97316] transition-colors">ECIL Monsoon Half Marathon</h4>
-                            <p class="text-gray-500 text-sm mb-6 line-clamp-2 font-light">Experience the scenic route around ECIL in our flagship monsoon event. Categories: 5K, 10K, 21K.</p>
-                            <div class="flex justify-between items-center pt-4 border-t border-gray-100">
-                                <span class="font-bold text-gray-900 text-lg">â‚¹499+</span>
-                                <button class="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 group-hover:bg-[#F97316] group-hover:text-white group-hover:border-[#F97316] transition-colors">
-                                    <i class="fas fa-arrow-right"></i>
+                        <div class="px-6 pb-6">
+                            <div class="flex justify-between items-center pt-4 border-t border-gray-100 dark:border-gray-700">
+                                <span class="font-bold text-gray-900 dark:text-white text-xs sm:text-sm">₹499 (5K) • ₹699 (10K) • ₹799 (21K)</span>
+                                <button onclick="openRegistrationPortal('https://ecilrunners.iq301.in/')" class="bg-[#F97316] hover:bg-orange-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center gap-2 cursor-pointer">
+                                    <i class="fas fa-ticket-alt"></i> Register Now
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Event Card 2 -->
-                    <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden group hover:border-[#F97316]/50 hover:shadow-xl transition-all duration-300 shadow-sm" data-aos="fade-up" data-aos-delay="100">
-                        <div class="relative h-56 overflow-hidden">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
-                            <img src="assets/events_training.jpg" alt="Training" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                            <div class="absolute top-4 right-4 z-20 bg-[#F97316] text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest shadow-md">
-                                Sundays
+                    <!-- Event Card 2: Sunday Long Run -->
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-gray-700 hover:-translate-y-2 transition-all duration-300 group flex flex-col justify-between" data-aos="fade-up" data-aos-delay="100">
+                        <div>
+                            <div class="relative h-52 overflow-hidden bg-gray-100 dark:bg-gray-900">
+                                <img src="assets/events_training.jpg" alt="Training" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                <div class="absolute top-4 right-4 bg-[#F97316] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-md">
+                                    Sundays
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center gap-2 text-xs font-bold tracking-widest text-[#F97316] mb-3 uppercase">
+                                    <i class="fas fa-map-marker-alt"></i> AS Rao Nagar Park
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Sunday Long Run (SLR)</h3>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">Join our regular Sunday long runs. Paced groups available for all fitness levels. Post-run breakfast!</p>
                             </div>
                         </div>
-                        <div class="p-8 relative z-20 -mt-12 bg-white rounded-t-3xl border-t border-gray-100">
-                            <div class="flex items-center gap-2 text-xs font-bold tracking-widest text-[#F97316] mb-3 uppercase">
-                                <i class="fas fa-map-marker-alt"></i> AS Rao Nagar Park
-                            </div>
-                            <h4 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#F97316] transition-colors">Sunday Long Run (SLR)</h4>
-                            <p class="text-gray-500 text-sm mb-6 line-clamp-2 font-light">Join our regular Sunday long runs. Paced groups available for all fitness levels. Post-run breakfast!</p>
-                            <div class="flex justify-between items-center pt-4 border-t border-gray-100">
-                                <span class="font-bold text-green-600 text-lg">FREE</span>
-                                <button class="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 group-hover:bg-[#F97316] group-hover:text-white group-hover:border-[#F97316] transition-colors">
-                                    <i class="fas fa-arrow-right"></i>
-                                </button>
+                        <div class="px-6 pb-6">
+                            <div class="flex justify-between items-center pt-4 border-t border-gray-100 dark:border-gray-700">
+                                <span class="font-bold text-green-600 text-sm">FREE</span>
+                                <button onclick="rsvpForEvent('slr-weekly', this)" class="bg-[#F97316] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-[#ea580c] transition-colors cursor-pointer">RSVP</button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Event Card 3 -->
-                    <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden group hover:border-[#F97316]/50 hover:shadow-xl transition-all duration-300 shadow-sm" data-aos="fade-up" data-aos-delay="200">
-                        <div class="relative h-56 overflow-hidden">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
-                            <img src="assets/events_trail.jpg" alt="Trail Run" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                            <div class="absolute top-4 right-4 z-20 bg-[#F97316] text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest shadow-md">
-                                Nov 05
+                    <!-- Event Card 3: Keesara Challenge -->
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-gray-700 hover:-translate-y-2 transition-all duration-300 group flex flex-col justify-between" data-aos="fade-up" data-aos-delay="200">
+                        <div>
+                            <div class="relative h-52 overflow-hidden bg-gray-100 dark:bg-gray-900">
+                                <img src="assets/events_trail.jpg" alt="Trail Run" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                <div class="absolute top-4 right-4 bg-[#F97316] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-md">
+                                    Monthly Challenge
+                                </div>
+                            </div>
+                            <div class="p-6">
+                                <div class="flex items-center gap-2 text-xs font-bold tracking-widest text-[#F97316] mb-3 uppercase">
+                                    <i class="fas fa-map-marker-alt"></i> Keesaragutta
+                                </div>
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Keesara Trail Challenge</h3>
+                                <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">Take on the tough trails and elevations of Keesara. A true test of endurance and strength.</p>
                             </div>
                         </div>
-                        <div class="p-8 relative z-20 -mt-12 bg-white rounded-t-3xl border-t border-gray-100">
-                            <div class="flex items-center gap-2 text-xs font-bold tracking-widest text-[#F97316] mb-3 uppercase">
-                                <i class="fas fa-map-marker-alt"></i> Keesaragutta
-                            </div>
-                            <h4 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#F97316] transition-colors">Keesara Trail Challenge</h4>
-                            <p class="text-gray-500 text-sm mb-6 line-clamp-2 font-light">Take on the tough trails and elevations of Keesara. A true test of endurance and strength.</p>
-                            <div class="flex justify-between items-center pt-4 border-t border-gray-100">
-                                <span class="font-bold text-gray-900 text-lg">â‚¹799+</span>
-                                <button class="w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-600 group-hover:bg-[#F97316] group-hover:text-white group-hover:border-[#F97316] transition-colors">
-                                    <i class="fas fa-arrow-right"></i>
-                                </button>
+                        <div class="px-6 pb-6">
+                            <div class="flex justify-between items-center pt-4 border-t border-gray-100 dark:border-gray-700">
+                                <span class="font-bold text-gray-900 dark:text-white text-sm">₹799</span>
+                                <button onclick="openCalendarModal()" class="border border-gray-300 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg text-sm font-bold hover:border-[#F97316] hover:text-[#F97316] transition-colors">Details</button>
                             </div>
                         </div>
                     </div>
