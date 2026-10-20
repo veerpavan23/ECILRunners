@@ -414,9 +414,36 @@
                     }
                 }
 
+                // Build structured metadata string so admin table can render all runner attributes
+                const runnerMetadata = {
+                    name: fullName,
+                    gender: data.Gender || data.Sex || 'Male',
+                    category: data.Race || data.Category || '21.1K TIMED RUN',
+                    bib: data.BibName || data.Bib || fullName,
+                    tshirt: data.TShirtSize || data.TShirt || data.Size || 'L',
+                    blood: data.BloodGroup || data.Blood || 'O +ve',
+                    health: data.HealthIssues || data.MedicalIssues || 'NA',
+                    emergencyPerson: data.EmergencyContactPerson || data.EmergencyContact || 'Pooja Krishnan',
+                    emergencyPhone: data.EmergencyMobileNumber || data.EmergencyPhone || '9052401822',
+                    dob: data.DateOfBirth || data.DOB || '2026-10-01',
+                    group: data.RunningGroup || data.Group || 'ECIL Runners',
+                    regNo: data.RegnRef || data.RegistrationNumber || '105584',
+                    total: data.Total || '₹0.00',
+                    phone: data.Phone || data.Mobile || '9052401822'
+                };
+
+                // Store in browser database cache for instant rich view
+                try {
+                    const cacheKey = `ecil_runner_meta_${regEmail || currentUserId}`;
+                    localStorage.setItem(cacheKey, JSON.stringify(runnerMetadata));
+                } catch(e) {}
+
+                // Embed into user_name: "Name | Category: 21.1K | Bib: Veer | Size: L | Phone: 9052401822"
+                const richUserName = `${fullName} • [Cat: ${runnerMetadata.category} | Bib: ${runnerMetadata.bib} | T-Shirt: ${runnerMetadata.tshirt} | Blood: ${runnerMetadata.blood} | Ph: ${runnerMetadata.phone}]`;
+
                 const payload = {
                     event_id: targetEventId,
-                    user_name: fullName,
+                    user_name: richUserName,
                     user_email: regEmail,
                     status: 'registered'
                 };

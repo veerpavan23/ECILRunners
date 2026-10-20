@@ -643,33 +643,111 @@ async function loadEventRegistrations(eventId) {
     const totalAttended = data.filter(r => r.status === 'attended').length;
     
     let html = `
-        <div class="flex gap-4 mb-4">
-            <div class="bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 w-1/2">
+        <div class="flex flex-wrap gap-4 mb-6">
+            <div class="bg-gray-50 px-4 py-3 rounded-xl border border-gray-200 flex-1 min-w-[140px]">
                 <span class="text-xs text-gray-500 uppercase tracking-widest font-bold block">Total Registered</span>
-                <span class="text-2xl font-bold text-gray-900">${totalRegistered}</span>
+                <span class="text-3xl font-bold text-gray-900">${totalRegistered}</span>
             </div>
-            <div class="bg-orange-50 px-4 py-2 rounded-lg border border-orange-100 w-1/2">
+            <div class="bg-orange-50 px-4 py-3 rounded-xl border border-orange-100 flex-1 min-w-[140px]">
                 <span class="text-xs text-[#F97316] uppercase tracking-widest font-bold block">Total Attended</span>
-                <span class="text-2xl font-bold text-[#F97316]">${totalAttended}</span>
+                <span class="text-3xl font-bold text-[#F97316]">${totalAttended}</span>
             </div>
+        </div>
+
+        <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm bg-white">
+            <table class="w-full text-left text-xs border-collapse">
+                <thead class="bg-gray-100/80 text-gray-700 uppercase font-semibold border-b border-gray-200">
+                    <tr>
+                        <th class="p-3.5">Runner Name</th>
+                        <th class="p-3.5">Contact Email / Phone</th>
+                        <th class="p-3.5">Race Category</th>
+                        <th class="p-3.5">Bib / T-Shirt</th>
+                        <th class="p-3.5">Emergency Contact</th>
+                        <th class="p-3.5">Status</th>
+                        <th class="p-3.5 text-center">Attendance</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 text-gray-700">
+    `;
+
+    html += data.map(reg => {
+        let runnerName = reg.user_name || 'Unknown Runner';
+        let email = reg.user_email || '—';
+        let phone = '—';
+        let category = '21.1K TIMED RUN';
+        let bib = '—';
+        let tshirt = 'L';
+        let blood = '—';
+        let emergency = '—';
+
+        // Check localStorage cache for deep metadata
+        try {
+            const cachedKey = `ecil_runner_meta_${reg.user_email || reg.user_id}`;
+            const cachedStr = localStorage.getItem(cachedKey);
+            if (cachedStr) {
+                const meta = JSON.parse(cachedStr);
+                if (meta.name) runnerName = meta.name;
+                if (meta.category) category = meta.category;
+                if (meta.bib) bib = meta.bib;
+                if (meta.tshirt) tshirt = meta.tshirt;
+                if (meta.blood) blood = meta.blood;
+                if (meta.phone) phone = meta.phone;
+                if (meta.emergencyPerson) emergency = `${meta.emergencyPerson} (${meta.emergencyPhone || ''})`;
+            }
+        } catch(e) {}
+
+        // Fallback: parse rich formatted name if present
+        if (reg.user_name && reg.user_name.includes('• [Cat:')) {
+            const parts = reg.user_name.split('• [');
+            runnerName = parts[0].trim();
+            const tagStr = parts[1] || '';
+            const catMatch = tagStr.match(/Cat:\s*([^|\]]+)/);
+            const bibMatch = tagStr.match(/Bib:\s*([^|\]]+)/);
+            const tshirtMatch = tagStr.match(/T-Shirt:\s*([^|\]]+)/);
+            const bloodMatch = tagStr.match(/Blood:\s*([^|\]]+)/);
+            const phoneMatch = tagStr.match(/Ph:\s*([^|\]]+)/);
+
+            if (catMatch) category = catMatch[1].trim();
+            if (bibMatch) bib = bibMatch[1].trim();
+            if (tshirtMatch) tshirt = tshirtMatch[1].trim();
+            if (bloodMatch) blood = bloodMatch[1].trim();
+            if (phoneMatch) phone = phoneMatch[1].trim();
+        }
+
+        const isAttended = reg.status === 'attended';
+        const statusBadge = isAttended 
+            ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700 uppercase">Attended</span>'
+            : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-[#F97316] uppercase">Registered</span>';
+
+        return `
+            <tr class="hover:bg-gray-50/70 transition-colors">
+                <td class="p-3.5 font-bold text-gray-900">${runnerName}</td>
+                <td class="p-3.5">
+                    <div class="font-medium text-gray-800">${email}</div>
+                    <div class="text-gray-400 font-mono text-[11px]">${phone !== '—' ? phone : (reg.user_id ? 'ID: ' + reg.user_id.substring(0,8) : '')}</div>
+                </td>
+                <td class="p-3.5 font-semibold text-[#F97316]">${category}</td>
+                <td class="p-3.5">
+                    <span class="bg-gray-100 px-2 py-1 rounded text-gray-800 font-mono font-bold mr-1">${bib !== '—' ? 'BIB: ' + bib : 'Size: ' + tshirt}</span>
+                    ${blood !== '—' ? `<span class="bg-red-50 text-red-600 px-1.5 py-0.5 rounded font-bold text-[10px]">${blood}</span>` : ''}
+                </td>
+                <td class="p-3.5 text-gray-600">${emergency}</td>
+                <td class="p-3.5">${statusBadge}</td>
+                <td class="p-3.5 text-center">
+                    <button onclick="markAttended('${reg.id}', '${eventId}')" class="${isAttended ? 'bg-green-500 text-white' : 'bg-gray-100 hover:bg-green-500 hover:text-white text-gray-600'} w-8 h-8 rounded-lg inline-flex items-center justify-center font-bold transition-all shadow-sm cursor-pointer" title="Toggle Attendance">
+                        <i class="fas fa-check"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+
+    html += `
+                </tbody>
+            </table>
         </div>
     `;
-    
-    html += data.map(reg => `
-        <div class="flex justify-between items-center p-3 border rounded-lg bg-gray-50 mb-2">
-            <div>
-                <div class="font-bold text-gray-800 text-sm">${reg.user_name || 'Unknown Runner'}</div>
-                <div class="font-mono text-xs text-gray-400">${reg.user_email || reg.user_id.substring(0,8)}</div>
-            </div>
-            <div class="flex items-center gap-3">
-                <span class="text-xs font-bold ${reg.status === 'attended' ? 'text-green-600' : 'text-orange-500'} uppercase tracking-widest">${reg.status}</span>
-                <button onclick="markAttended('${reg.id}', '${eventId}')" class="bg-gray-200 hover:bg-green-500 hover:text-white px-3 py-1 rounded text-xs font-bold transition-colors">
-                    <i class="fas fa-check"></i>
-                </button>
-            </div>
-        </div>
-    `).join('');
-    
+
     list.innerHTML = html;
 }
 
