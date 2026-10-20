@@ -1276,6 +1276,7 @@ async function openRegistrationPortal(url = 'https://ecilrunners.iq301.in/') {
 
     // IQ301's checkout step sends 'X-Frame-Options: SAMEORIGIN', which causes browsers to refuse iframe connection on payment/next step.
     // We open IQ301 in a focused registration window directly after mandatory sign-in verification.
+    const finalUrl = url || 'https://ecilrunners.iq301.in/';
     const width = 860;
     const height = 900;
     const left = Math.max(0, (window.screen.width - width) / 2);
@@ -1294,6 +1295,7 @@ async function openRegistrationPortal(url = 'https://ecilrunners.iq301.in/') {
         popup.focus();
     }
 }
+window.openRegistrationPortal = openRegistrationPortal;
 
 function closeIQ301Modal() {
     const modal = document.getElementById('iq301-modal');
