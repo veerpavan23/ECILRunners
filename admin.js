@@ -241,12 +241,55 @@ tabs.forEach(tab => {
 
 const loader = document.getElementById('admin-loader');
 
-// Reusable Image Uploader
+// Client-side image compression helper to prevent oversized uploads
+async function compressImageForWeb(file, maxDimension = 1400, quality = 0.75) {
+    if (!file || !file.type.startsWith('image/')) return file;
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                let { width, height } = img;
+                if (width > maxDimension || height > maxDimension) {
+                    if (width > height) {
+                        height = Math.round((height * maxDimension) / width);
+                        width = maxDimension;
+                    } else {
+                        width = Math.round((width * maxDimension) / height);
+                        height = maxDimension;
+                    }
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                canvas.toBlob((blob) => {
+                    if (blob && blob.size < file.size) {
+                        resolve(new File([blob], file.name.replace(/\.[^/.]+$/, ".jpg"), { type: 'image/jpeg' }));
+                    } else {
+                        resolve(file);
+                    }
+                }, 'image/jpeg', quality);
+            };
+            img.onerror = () => resolve(file);
+            img.src = e.target.result;
+        };
+        reader.onerror = () => resolve(file);
+        reader.readAsDataURL(file);
+    });
+}
+
+// Reusable Image Uploader with automatic pre-upload compression
 async function uploadImage(file) {
     if (!file) return null;
-    const fileExt = file.name.split('.').pop();
+    const compressedFile = await compressImageForWeb(file);
+    const fileExt = compressedFile.name.split('.').pop() || 'jpg';
     const fileName = Math.random().toString(36).substring(2) + '.' + fileExt;
-    const { data, error } = await supabaseClient.storage.from('images').upload(fileName, file);
+    const { data, error } = await supabaseClient.storage.from('images').upload(fileName, compressedFile, {
+        cacheControl: '31536000',
+        contentType: compressedFile.type || 'image/jpeg'
+    });
     if (error) throw error;
     const { data: publicUrlData } = supabaseClient.storage.from('images').getPublicUrl(fileName);
     return publicUrlData.publicUrl;

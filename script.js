@@ -651,6 +651,20 @@ function sendWhatsAppMessage() {
 document.addEventListener('DOMContentLoaded', () => { loadLiveEvents(); loadLiveGallery(); loadLiveMerch(); });
 
 
+// Helper to resolve optimized local asset for gallery and merch images
+function resolveOptimizedImageUrl(url, folder = 'gallery') {
+    if (!url) return '';
+    // If it's already a local relative path, return it directly
+    if (url.startsWith('assets/')) return url;
+    // If it's a Supabase storage URL, map to the local optimized asset
+    if (url.includes('supabase.co/storage/v1/object/public/images/')) {
+        const parts = url.split('/');
+        const filename = parts[parts.length - 1].split('?')[0];
+        return `assets/${folder}/${filename}`;
+    }
+    return url;
+}
+
 async function loadLiveGallery() {
     const container = document.getElementById('gallery-container');
     if (!container) return;
@@ -660,11 +674,12 @@ async function loadLiveGallery() {
         if (error) throw error;
         
         if (data && data.length > 0) {
-            // Group by album name
+            // Group by album name and resolve local optimized URLs
             const albums = {};
             data.forEach(photo => {
                 if (!albums[photo.album_name]) albums[photo.album_name] = [];
-                albums[photo.album_name].push(photo.image_url);
+                const localUrl = resolveOptimizedImageUrl(photo.image_url, 'gallery');
+                albums[photo.album_name].push(localUrl);
             });
 
             const albumKeys = Object.keys(albums);
@@ -822,7 +837,8 @@ async function loadLiveMerch() {
                         <h3 class="text-3xl font-syncopate font-bold text-gray-900 mb-8 border-b-2 border-gray-100 pb-4">${catName}</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                             ${items.map(mc => {
-                                const images = mc.images && mc.images.length > 0 ? mc.images : [mc.image_url || 'assets/merch_tshirt.jpg'];
+                                const rawImages = mc.images && mc.images.length > 0 ? mc.images : [mc.image_url || 'assets/merch_tshirt.jpg'];
+                                const images = rawImages.map(img => resolveOptimizedImageUrl(img, 'merch'));
                                 return `
                                 <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl transition-shadow duration-300 relative group">
                                     <div class="absolute top-3 left-3 z-10">
