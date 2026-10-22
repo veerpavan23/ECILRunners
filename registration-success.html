@@ -103,13 +103,17 @@
                                 <td class="p-3 font-semibold text-gray-600 dark:text-gray-400">Subtotal:</td>
                                 <td class="p-3 text-right font-mono font-semibold" id="table-subtotal">₹799.00</td>
                             </tr>
-                            <tr id="table-discount-row" class="bg-gray-50/50 dark:bg-gray-800/20">
+                            <tr id="table-tax-row" class="hidden bg-gray-50/50 dark:bg-gray-800/20">
+                                <td class="p-3 font-semibold text-gray-600 dark:text-gray-400">Taxes &amp; Platform Fee:</td>
+                                <td class="p-3 text-right font-mono font-semibold text-gray-700 dark:text-gray-300" id="table-tax">₹0.00</td>
+                            </tr>
+                            <tr id="table-discount-row" class="hidden bg-gray-50/50 dark:bg-gray-800/20">
                                 <td class="p-3 font-semibold text-gray-600 dark:text-gray-400">Discount:</td>
-                                <td class="p-3 text-right font-mono font-semibold text-green-600 dark:text-green-400" id="table-discount">-₹799.00</td>
+                                <td class="p-3 text-right font-mono font-semibold text-green-600 dark:text-green-400" id="table-discount">-₹0.00</td>
                             </tr>
                             <tr class="bg-orange-50/40 dark:bg-orange-950/20 font-bold border-t border-gray-200 dark:border-gray-700">
-                                <td class="p-3 text-gray-900 dark:text-white">Total:</td>
-                                <td class="p-3 text-right font-mono text-[#F97316]" id="table-total">₹0.00</td>
+                                <td class="p-3 text-gray-900 dark:text-white">Total Paid:</td>
+                                <td class="p-3 text-right font-mono text-[#F97316]" id="table-total">₹799.00</td>
                             </tr>
                         </tbody>
                     </table>
@@ -309,6 +313,11 @@
             // Exact IQ301 Key: 'eContact'
             const emergPhoneVal = raw.eContact || raw.EmergencyMobileNumber || raw.emergency_phone || raw.emergency_mobile || raw.emergencyphone || raw.emergency_contact_number || raw['Emergency Contact Mobile Number'] || '';
 
+            // Capture exact paid amount and taxes from IQ301
+            const rawPaidAmount = raw.Total || raw.total || raw.amount || raw.Amount || raw.paid_amount || raw.paid || raw.payment_amount || raw.final_amount || raw.gross_amount || raw.net_amount || raw.order_total || common.Total || common.total || common.amount || common.Amount || common.paid || '';
+            const rawSubtotal = raw.Subtotal || raw.subtotal || raw.base_amount || raw.price || raw.base_price || common.Subtotal || common.subtotal || rawPaidAmount || '';
+            const rawTax = raw.Tax || raw.tax || raw.gst || raw.service_tax || raw.fee || raw.platform_fee || common.Tax || common.tax || '';
+
             return {
                 RegnRef: ref,
                 FirstName: firstName || fullName,
@@ -326,9 +335,10 @@
                 EmergencyMobileNumber: emergPhoneVal,
                 DateOfBirth: dobVal,
                 RunningGroup: raw.RunningGroup || raw.club || raw.group || raw.running_group || raw.running_group_name || common.RunningGroup || 'ECIL Runners',
-                Total: raw.Total || common.Total || '₹0.00',
-                Subtotal: raw.Subtotal || common.Subtotal || '₹0.00',
-                Discount: raw.Discount || common.Discount || '₹0.00'
+                Total: rawPaidAmount,
+                Subtotal: rawSubtotal,
+                Tax: rawTax,
+                Discount: raw.Discount || raw.discount || common.Discount || ''
             };
         }
 
@@ -680,24 +690,31 @@
                 }
 
                 const runnersCount = (data.allRunners && data.allRunners.length > 0) ? data.allRunners.length : 1;
-                let calculatedTotal = 0;
+                let calculatedBaseTotal = 0;
                 if (data.allRunners && data.allRunners.length > 0) {
-                    calculatedTotal = data.allRunners.reduce((sum, r) => sum + getCategoryPrice(r.Race || raceName), 0);
+                    calculatedBaseTotal = data.allRunners.reduce((sum, r) => sum + getCategoryPrice(r.Race || raceName), 0);
                 } else {
-                    calculatedTotal = getCategoryPrice(raceName);
+                    calculatedBaseTotal = getCategoryPrice(raceName);
                 }
 
-                // If IQ301 provided a non-zero explicit total/amount, use that; otherwise calculate from category
+                // Parse exact values passed from IQ301
                 let rawTotalNum = parseFloat((data.Total || '').replace(/[^0-9.]/g, ''));
-                let finalTotalNum = (!isNaN(rawTotalNum) && rawTotalNum > 0) ? rawTotalNum : calculatedTotal;
+                let rawSubtotalNum = parseFloat((data.Subtotal || '').replace(/[^0-9.]/g, ''));
+                let rawTaxNum = parseFloat((data.Tax || '').replace(/[^0-9.]/g, ''));
+
+                // Determine final total paid
+                let finalTotalNum = (!isNaN(rawTotalNum) && rawTotalNum > 0) ? rawTotalNum : calculatedBaseTotal;
+                let subtotalNum = (!isNaN(rawSubtotalNum) && rawSubtotalNum > 0) ? rawSubtotalNum : calculatedBaseTotal;
+
+                // If IQ301 included taxes or total is higher than base fee (e.g. ₹799 + GST/fees)
+                let taxNum = (!isNaN(rawTaxNum) && rawTaxNum > 0) ? rawTaxNum : (finalTotalNum > subtotalNum ? (finalTotalNum - subtotalNum) : 0);
+                if (subtotalNum > finalTotalNum) {
+                    subtotalNum = finalTotalNum - taxNum;
+                }
+
                 let finalTotalStr = `₹${finalTotalNum.toFixed(2)}`;
-
-                let subtotalNum = parseFloat((data.Subtotal || '').replace(/[^0-9.]/g, ''));
-                if (isNaN(subtotalNum) || subtotalNum <= 0) subtotalNum = finalTotalNum;
                 let subtotalStr = `₹${subtotalNum.toFixed(2)}`;
-
-                let discountNum = subtotalNum - finalTotalNum;
-                if (discountNum < 0) discountNum = 0;
+                let taxStr = `+₹${taxNum.toFixed(2)}`;
 
                 // Header & Top Meta
                 const orderIdEl = document.getElementById('order-id');
@@ -709,6 +726,8 @@
                 const tblCatName = document.getElementById('table-category-name');
                 const tblSubRaw = document.getElementById('table-subtotal-raw');
                 const tblSub = document.getElementById('table-subtotal');
+                const tblTax = document.getElementById('table-tax');
+                const tblTaxRow = document.getElementById('table-tax-row');
                 const tblDisc = document.getElementById('table-discount');
                 const tblDiscRow = document.getElementById('table-discount-row');
                 const tblTot = document.getElementById('table-total');
@@ -718,12 +737,14 @@
                 if (tblSub) tblSub.textContent = subtotalStr;
                 if (tblTot) tblTot.textContent = finalTotalStr;
 
-                if (discountNum > 0) {
-                    if (tblDisc) tblDisc.textContent = `-₹${discountNum.toFixed(2)}`;
-                    if (tblDiscRow) tblDiscRow.classList.remove('hidden');
+                if (taxNum > 0) {
+                    if (tblTax) tblTax.textContent = taxStr;
+                    if (tblTaxRow) tblTaxRow.classList.remove('hidden');
                 } else {
-                    if (tblDiscRow) tblDiscRow.classList.add('hidden');
+                    if (tblTaxRow) tblTaxRow.classList.add('hidden');
                 }
+
+                if (tblDiscRow) tblDiscRow.classList.add('hidden');
 
                 // Runner Details Table
                 const nameEl = document.getElementById('runner-name');
