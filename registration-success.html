@@ -303,11 +303,11 @@
             // Robust Health / Medical Issues detection
             const healthVal = raw.HealthIssues || raw.health || raw.health_issues || raw.medical || raw.medical_issues || raw.history_of_health_issues || raw['History of Health Issues (if any)'] || '';
 
-            // Robust Emergency Contact Person
-            const emergPersonVal = raw.EmergencyContactPerson || raw.emergency_contact || raw.emergency_person || raw.emergency_name || raw.contact_person || raw.emergency_contact_name || raw['Emergency Contact Name'] || '';
+            // Exact IQ301 Key: 'eContactName'
+            const emergPersonVal = raw.eContactName || raw.EmergencyContactPerson || raw.emergency_contact || raw.emergency_person || raw.emergency_name || raw.contact_person || raw.emergency_contact_name || raw['Emergency Contact Name'] || '';
 
-            // Robust Emergency Contact Phone
-            const emergPhoneVal = raw.EmergencyMobileNumber || raw.emergency_phone || raw.emergency_mobile || raw.emergencyphone || raw.emergency_contact_number || raw['Emergency Contact Mobile Number'] || '';
+            // Exact IQ301 Key: 'eContact'
+            const emergPhoneVal = raw.eContact || raw.EmergencyMobileNumber || raw.emergency_phone || raw.emergency_mobile || raw.emergencyphone || raw.emergency_contact_number || raw['Emergency Contact Mobile Number'] || '';
 
             return {
                 RegnRef: ref,
@@ -421,8 +421,8 @@
                         TShirtSize: getParam(`TShirtSize_${i}`, `tshirt_${i}`, `size_${i}`),
                         BloodGroup: getParam(`BloodGroup_${i}`, `blood_${i}`),
                         HealthIssues: getParam(`HealthIssues_${i}`, `health_${i}`),
-                        EmergencyContactPerson: getParam(`EmergencyContactPerson_${i}`, `emergency_contact_${i}`),
-                        EmergencyMobileNumber: getParam(`EmergencyMobileNumber_${i}`, `emergency_phone_${i}`),
+                        EmergencyContactPerson: getParam(`eContactName_${i}`, `EmergencyContactPerson_${i}`, `emergency_contact_${i}`),
+                        EmergencyMobileNumber: getParam(`eContact_${i}`, `EmergencyMobileNumber_${i}`, `emergency_phone_${i}`),
                         DateOfBirth: getParam(`DateOfBirth_${i}`, `dob_${i}`),
                         RunningGroup: getParam(`RunningGroup_${i}`, `group_${i}`),
                         RegnRef: getParam('RegnRef', 'ref', 'order_id')
@@ -451,8 +451,8 @@
                     TShirtSize: getParam('TShirtSize', 'tshirt', 't_shirt', 'tshirtsize', 'size', 'shirt', 't-shirt'),
                     BloodGroup: getParam('BloodGroup', 'blood', 'blood_group', 'bloodgroup', 'bg'),
                     HealthIssues: getParam('HealthIssues', 'health', 'health_issues', 'medical'),
-                    EmergencyContactPerson: getParam('EmergencyContactPerson', 'emergency_contact', 'emergency_person', 'emergency_name', 'contact_person'),
-                    EmergencyMobileNumber: getParam('EmergencyMobileNumber', 'emergency_phone', 'emergency_mobile', 'emergencyphone'),
+                    EmergencyContactPerson: getParam('eContactName', 'EmergencyContactPerson', 'emergency_contact', 'emergency_person', 'emergency_name', 'contact_person'),
+                    EmergencyMobileNumber: getParam('eContact', 'EmergencyMobileNumber', 'emergency_phone', 'emergency_mobile', 'emergencyphone'),
                     DateOfBirth: getParam('DateOfBirth', 'dob', 'birth_date', 'date_of_birth'),
                     RunningGroup: getParam('RunningGroup', 'club', 'group', 'running_group'),
                     Total: getParam('Total', 'total', 'amount'),

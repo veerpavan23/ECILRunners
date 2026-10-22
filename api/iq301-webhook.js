@@ -41,11 +41,11 @@ export default async function handler(req, res) {
                     tshirt: tshirt,
                     blood: blood,
                     health: item.health_issues || item.health || '',
-                    emergencyPerson: item.emergency_contact || item.emergency_person || '',
-                    emergencyPhone: item.emergency_phone || item.emergency_mobile || '',
-                    dob: item.dob || item.birth_date || '',
-                    group: item.running_group || item.group || 'ECIL Runners',
-                    regNo: payload.order_id || payload.registration_id || item.reg_no || '',
+                    emergencyPerson: item.eContactName || item.emergency_contact || item.emergency_person || '',
+                    emergencyPhone: item.eContact || item.emergency_phone || item.emergency_mobile || '',
+                    dob: item.DateOfBirth || item.dob || item.birth_date || '',
+                    group: item.RunningGroup || item.running_group || item.group || 'ECIL Runners',
+                    regNo: payload.order_id || payload.registration_id || item.RegnRef || item.reg_no || '',
                     total: payload.amount || payload.price || '₹0.00',
                     phone: phone
                 };
@@ -61,8 +61,8 @@ export default async function handler(req, res) {
         } else {
             // Check indexed fields (runner_1, runner_2) or single object
             const runnerName = payload.name || payload.runner_name || payload.full_name || payload.FirstName || 'IQ301 Runner';
-            const runnerEmail = payload.email || payload.runner_email || '';
-            const runnerPhone = payload.phone || payload.mobile || payload.contact_no || '';
+            const runnerEmail = payload.email || payload.runner_email || payload.eMail || '';
+            const runnerPhone = payload.phone || payload.mobile || payload.contact_no || payload.Phone || '';
             const category = payload.category || payload.distance || payload.race_category || payload.Race || 'General';
             const bibNumber = payload.bib || payload.bib_number || payload.bib_no || payload.BibName || runnerName;
             const tshirtSize = payload.tshirt_size || payload.size || payload.tshirt || payload.TShirtSize || '';
@@ -75,12 +75,12 @@ export default async function handler(req, res) {
                 bib: bibNumber,
                 tshirt: tshirtSize,
                 blood: bloodGroup,
-                health: payload.health_issues || payload.health || '',
-                emergencyPerson: payload.emergency_contact || payload.emergency_person || '',
-                emergencyPhone: payload.emergency_phone || payload.emergency_mobile || '',
-                dob: payload.dob || payload.birth_date || '',
-                group: payload.running_group || payload.group || 'ECIL Runners',
-                regNo: payload.order_id || payload.registration_id || payload.id || '',
+                health: payload.HealthIssues || payload.health_issues || payload.health || '',
+                emergencyPerson: payload.eContactName || payload.EmergencyContactPerson || payload.emergency_contact || payload.emergency_person || '',
+                emergencyPhone: payload.eContact || payload.EmergencyMobileNumber || payload.emergency_phone || payload.emergency_mobile || '',
+                dob: payload.DateOfBirth || payload.dob || payload.birth_date || '',
+                group: payload.RunningGroup || payload.running_group || payload.group || 'ECIL Runners',
+                regNo: payload.order_id || payload.registration_id || payload.RegnRef || payload.id || '',
                 total: payload.amount || payload.price || '₹0.00',
                 phone: runnerPhone
             };
