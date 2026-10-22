@@ -19,31 +19,87 @@ export default async function handler(req, res) {
         const payload = req.body || {};
         console.log("Received IQ301 Webhook Payload:", JSON.stringify(payload));
 
-        // 2. Extract standard running registration fields with smart fallbacks
-        const runnerName = payload.name || payload.runner_name || payload.full_name || 'IQ301 Runner';
-        const runnerEmail = payload.email || payload.runner_email || '';
-        const runnerPhone = payload.phone || payload.mobile || payload.contact_no || '';
-        const category = payload.category || payload.distance || payload.race_category || 'General';
-        const bibNumber = payload.bib || payload.bib_number || payload.bib_no || null;
-        const tshirtSize = payload.tshirt_size || payload.size || payload.tshirt || null;
-        const iq301OrderId = payload.order_id || payload.registration_id || payload.id || null;
-        const amountPaid = payload.amount || payload.price || 0;
-        const eventId = payload.event_id || payload.event || null;
+        // 2. Extract runner(s) - support single runner or array of runners (payload.runners / payload.participants / payload.data)
+        const candidateList = payload.runners || payload.participants || payload.members || payload.data || (Array.isArray(payload) ? payload : null);
+        const runnersToInsert = [];
+
+        if (Array.isArray(candidateList) && candidateList.length > 0) {
+            candidateList.forEach(item => {
+                const name = item.name || item.runner_name || item.full_name || item.FirstName || 'IQ301 Runner';
+                const email = item.email || item.runner_email || payload.email || '';
+                const phone = item.phone || item.mobile || item.contact_no || payload.phone || '';
+                const bib = item.bib || item.bib_number || item.bib_no || item.BibName || name;
+                const tshirt = item.tshirt_size || item.size || item.tshirt || item.TShirtSize || '';
+                const blood = item.blood_group || item.blood || item.BloodGroup || '';
+                const cat = item.category || item.distance || item.race_category || item.Race || payload.category || 'General';
+
+                const meta = {
+                    name: name,
+                    gender: item.gender || item.sex || item.Gender || '',
+                    category: cat,
+                    bib: bib,
+                    tshirt: tshirt,
+                    blood: blood,
+                    health: item.health_issues || item.health || '',
+                    emergencyPerson: item.emergency_contact || item.emergency_person || '',
+                    emergencyPhone: item.emergency_phone || item.emergency_mobile || '',
+                    dob: item.dob || item.birth_date || '',
+                    group: item.running_group || item.group || 'ECIL Runners',
+                    regNo: payload.order_id || payload.registration_id || item.reg_no || '',
+                    total: payload.amount || payload.price || '₹0.00',
+                    phone: phone
+                };
+
+                runnersToInsert.push({
+                    user_name: `${name} __META__:${JSON.stringify(meta)}`,
+                    user_email: email,
+                    status: 'registered',
+                    created_at: new Date().toISOString(),
+                    ...(payload.event_id || payload.event ? { event_id: payload.event_id || payload.event } : {})
+                });
+            });
+        } else {
+            // Check indexed fields (runner_1, runner_2) or single object
+            const runnerName = payload.name || payload.runner_name || payload.full_name || payload.FirstName || 'IQ301 Runner';
+            const runnerEmail = payload.email || payload.runner_email || '';
+            const runnerPhone = payload.phone || payload.mobile || payload.contact_no || '';
+            const category = payload.category || payload.distance || payload.race_category || payload.Race || 'General';
+            const bibNumber = payload.bib || payload.bib_number || payload.bib_no || payload.BibName || runnerName;
+            const tshirtSize = payload.tshirt_size || payload.size || payload.tshirt || payload.TShirtSize || '';
+            const bloodGroup = payload.blood_group || payload.blood || payload.BloodGroup || '';
+
+            const meta = {
+                name: runnerName,
+                gender: payload.gender || payload.sex || payload.Gender || '',
+                category: category,
+                bib: bibNumber,
+                tshirt: tshirtSize,
+                blood: bloodGroup,
+                health: payload.health_issues || payload.health || '',
+                emergencyPerson: payload.emergency_contact || payload.emergency_person || '',
+                emergencyPhone: payload.emergency_phone || payload.emergency_mobile || '',
+                dob: payload.dob || payload.birth_date || '',
+                group: payload.running_group || payload.group || 'ECIL Runners',
+                regNo: payload.order_id || payload.registration_id || payload.id || '',
+                total: payload.amount || payload.price || '₹0.00',
+                phone: runnerPhone
+            };
+
+            const record = {
+                user_name: `${runnerName} __META__:${JSON.stringify(meta)}`,
+                user_email: runnerEmail,
+                status: 'registered',
+                created_at: new Date().toISOString()
+            };
+            if (payload.event_id || payload.event) record.event_id = payload.event_id || payload.event;
+            runnersToInsert.push(record);
+        }
 
         // 3. Supabase REST API credentials
         const SUPABASE_URL = process.env.SUPABASE_URL || 'https://cvehhriirejuffbrowkr.supabase.co';
         const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN2ZWhocmlpcmVqdWZmYnJvd2tyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NjIzMDEsImV4cCI6MjEwNjIzODMwMX0.FKnvc0Xj66_VWRbeWOWChG7SSmjjPyxNyHNJmX0E8qA';
 
-        // 4. Save registration into event_registrations table
-        const insertPayload = {
-            user_name: runnerName,
-            user_email: runnerEmail,
-            status: 'registered',
-            created_at: new Date().toISOString()
-        };
-
-        if (eventId) insertPayload.event_id = eventId;
-
+        // 4. Save registrations into event_registrations table
         const response = await fetch(`${SUPABASE_URL}/rest/v1/event_registrations`, {
             method: 'POST',
             headers: {
@@ -52,13 +108,12 @@ export default async function handler(req, res) {
                 'Content-Type': 'application/json',
                 'Prefer': 'return=minimal'
             },
-            body: JSON.stringify([insertPayload])
+            body: JSON.stringify(runnersToInsert)
         });
 
         if (!response.ok) {
             const errText = await response.text();
             console.error("Supabase insert error:", errText);
-            // Still return 200 to IQ301 so their webhook doesn't fail/retry endlessly, but log details
             return res.status(200).json({ 
                 received: true, 
                 warning: 'Saved with warnings',
@@ -66,14 +121,14 @@ export default async function handler(req, res) {
             });
         }
 
-        console.log(`Successfully recorded IQ301 registration for ${runnerName} (${runnerEmail})`);
+        console.log(`Successfully recorded ${runnersToInsert.length} IQ301 registration(s) into database`);
 
         // 5. Acknowledge successful receipt back to IQ301
         return res.status(200).json({
             status: 'success',
-            message: 'Registration recorded successfully in ECIL Runners database',
-            runner: runnerName,
-            order_id: iq301OrderId
+            message: `Recorded ${runnersToInsert.length} registration(s) successfully in ECIL Runners database`,
+            count: runnersToInsert.length,
+            order_id: payload.order_id || payload.registration_id || payload.id || null
         });
 
     } catch (error) {

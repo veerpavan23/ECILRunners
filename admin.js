@@ -815,11 +815,24 @@ async function loadEventRegistrations(eventId) {
         data = data.filter(r => r.event_id === eventId);
     }
     
-    // Deduplicate registrations by email and event, preferring records with rich metadata
+    // Deduplicate registrations: allow multiple runners under same email/order,
+    // deduplicating only exact duplicates for the same runner (by event + clean runner name/bib + email)
     const seenMap = new Map();
     const dedupedData = [];
     for (const reg of data) {
-        const key = `${reg.event_id || 'no_event'}_${(reg.user_email || reg.user_id || reg.id).toLowerCase()}`;
+        // Extract plain runner name from user_name (handling __META__ or bracket format)
+        let cleanName = (reg.user_name || '').split('__META__:')[0].split('[')[0].trim().toLowerCase();
+        let bibName = '';
+        if (reg.user_name && reg.user_name.includes('__META__:')) {
+            try {
+                const parsedMeta = JSON.parse(reg.user_name.split('__META__:')[1]);
+                if (parsedMeta.name) cleanName = parsedMeta.name.trim().toLowerCase();
+                if (parsedMeta.bib) bibName = parsedMeta.bib.trim().toLowerCase();
+            } catch(e) {}
+        }
+        
+        // Multi-runner unique key: allows different runners even if they share the same email
+        const key = `${reg.event_id || 'no_event'}_${(reg.user_email || '').toLowerCase()}_${cleanName || reg.id}_${bibName}`;
         if (!seenMap.has(key)) {
             seenMap.set(key, reg);
             dedupedData.push(reg);
