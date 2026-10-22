@@ -120,30 +120,17 @@
                 </div>
             </div>
 
-            <!-- Complete Race Kit Card (Prompt if T-Shirt or Blood group is missing) -->
+            <!-- Complete Race Kit Card (Prompt if Blood group, Emergency Contact, or Medical history is missing) -->
             <div id="kit-completion-card" class="hidden bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/40 dark:to-amber-950/40 border border-orange-200 dark:border-orange-800 rounded-2xl p-4 sm:p-5 mb-6 text-left shadow-sm">
                 <div class="flex items-start gap-3">
                     <div class="w-10 h-10 rounded-xl bg-[#F97316] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-md">
-                        <i class="fas fa-tshirt text-base"></i>
+                        <i class="fas fa-heartbeat text-base"></i>
                     </div>
                     <div class="flex-grow">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-orange-950 dark:text-orange-200">Complete Your Runner Profile &amp; Race Kit</h3>
-                        <p class="text-xs text-gray-600 dark:text-gray-300 mt-0.5">Please confirm your gender, emergency contact &amp; race kit details for your official Run Jaathara bib and course safety.</p>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-orange-950 dark:text-orange-200">Course Safety &amp; Emergency Details</h3>
+                        <p class="text-xs text-gray-600 dark:text-gray-300 mt-0.5">Please confirm your emergency contact &amp; medical safety details for your official Run Jaathara bib.</p>
                         
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
-                            <div id="wrap-tshirt">
-                                <label class="block text-[10px] font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">T-Shirt Size</label>
-                                <select id="kit-tshirt-select" class="w-full text-xs font-semibold bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-800 rounded-lg p-2 text-gray-900 dark:text-white">
-                                    <option value="">Select Size...</option>
-                                    <option value="XS">XS (Chest 36")</option>
-                                    <option value="S">S (Chest 38")</option>
-                                    <option value="M">M (Chest 40")</option>
-                                    <option value="L">L (Chest 42")</option>
-                                    <option value="XL">XL (Chest 44")</option>
-                                    <option value="XXL">XXL (Chest 46")</option>
-                                    <option value="3XL">3XL (Chest 48")</option>
-                                </select>
-                            </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-3">
                             <div id="wrap-blood">
                                 <label class="block text-[10px] font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">Blood Group</label>
                                 <select id="kit-blood-select" class="w-full text-xs font-semibold bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-800 rounded-lg p-2 text-gray-900 dark:text-white">
@@ -158,30 +145,19 @@
                                     <option value="AB -ve">AB -ve</option>
                                 </select>
                             </div>
-                            <div id="wrap-gender">
-                                <label class="block text-[10px] font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">Gender</label>
-                                <select id="kit-gender-select" class="w-full text-xs font-semibold bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-800 rounded-lg p-2 text-gray-900 dark:text-white">
-                                    <option value="">Select Gender...</option>
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </div>
-                            <div id="wrap-emergency-phone">
-                                <label class="block text-[10px] font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">Emergency Mobile</label>
-                                <input type="tel" id="kit-emergency-phone" placeholder="Emergency contact no." class="w-full text-xs font-semibold bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-800 rounded-lg p-2 text-gray-900 dark:text-white">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2.5">
                             <div id="wrap-emergency-person">
                                 <label class="block text-[10px] font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">Emergency Contact Person</label>
                                 <input type="text" id="kit-emergency-person" placeholder="Person name (e.g. Spouse / Parent / Friend)" class="w-full text-xs font-semibold bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-800 rounded-lg p-2 text-gray-900 dark:text-white">
                             </div>
-                            <div id="wrap-health">
-                                <label class="block text-[10px] font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">History of Health Issues (if any)</label>
-                                <input type="text" id="kit-health" placeholder="None / Asthma / Allergies etc." class="w-full text-xs font-semibold bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-800 rounded-lg p-2 text-gray-900 dark:text-white">
+                            <div id="wrap-emergency-phone">
+                                <label class="block text-[10px] font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">Emergency Mobile Number</label>
+                                <input type="tel" id="kit-emergency-phone" placeholder="Emergency mobile no." class="w-full text-xs font-semibold bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-800 rounded-lg p-2 text-gray-900 dark:text-white">
                             </div>
+                        </div>
+
+                        <div class="mt-2.5" id="wrap-health">
+                            <label class="block text-[10px] font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">History of Health Issues (if any)</label>
+                            <input type="text" id="kit-health" placeholder="None / Asthma / Allergies etc." class="w-full text-xs font-semibold bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-800 rounded-lg p-2 text-gray-900 dark:text-white">
                         </div>
 
                         <div class="flex items-center gap-3 mt-3">
@@ -775,29 +751,18 @@
                 if (emailEl) emailEl.textContent = data.eMail || data.Email || '—';
                 if (phoneEl) phoneEl.textContent = data.Phone || data.Mobile || '—';
 
-                // Check if runner profile or kit details are missing
-                const hasTshirt = data.TShirtSize && data.TShirtSize !== '-' && data.TShirtSize !== '';
+                // Check if emergency / course safety details are missing from IQ301
                 const hasBlood = data.BloodGroup && data.BloodGroup !== '-' && data.BloodGroup !== '';
-                const hasGender = data.Gender && data.Gender !== '-' && data.Gender !== '';
                 const hasEmergPhone = data.EmergencyMobileNumber && data.EmergencyMobileNumber !== '-' && data.EmergencyMobileNumber !== '';
                 const hasEmergPerson = data.EmergencyContactPerson && data.EmergencyContactPerson !== '-' && data.EmergencyContactPerson !== '';
 
                 const kitCard = document.getElementById('kit-completion-card');
-                if (kitCard && (!hasTshirt || !hasBlood || !hasGender || !hasEmergPhone || !hasEmergPerson)) {
+                if (kitCard && (!hasBlood || !hasEmergPhone || !hasEmergPerson)) {
                     kitCard.classList.remove('hidden');
                     
-                    // Pre-fill whatever is already known
-                    if (hasTshirt) {
-                        const sel = document.getElementById('kit-tshirt-select');
-                        if (sel) sel.value = data.TShirtSize;
-                    }
                     if (hasBlood) {
                         const sel = document.getElementById('kit-blood-select');
                         if (sel) sel.value = data.BloodGroup;
-                    }
-                    if (hasGender) {
-                        const sel = document.getElementById('kit-gender-select');
-                        if (sel) sel.value = data.Gender;
                     }
                     if (hasEmergPhone) {
                         const el = document.getElementById('kit-emergency-phone');
@@ -817,20 +782,16 @@
             }
         }
 
-        // Allow runner to complete their Gender, Emergency Contact & Race Kit if IQ301 redirect omitted them
+        // Allow runner to complete their Emergency Contact & Course Safety details if IQ301 omitted them
         async function submitRaceKitCompletion() {
-            const tshirtSel = document.getElementById('kit-tshirt-select');
             const bloodSel = document.getElementById('kit-blood-select');
-            const genderSel = document.getElementById('kit-gender-select');
             const emergPhoneIn = document.getElementById('kit-emergency-phone');
             const emergPersonIn = document.getElementById('kit-emergency-person');
             const healthIn = document.getElementById('kit-health');
             const btn = document.getElementById('btn-save-race-kit');
             const statusEl = document.getElementById('kit-save-status');
 
-            const chosenTshirt = tshirtSel ? tshirtSel.value : '';
             const chosenBlood = bloodSel ? bloodSel.value : '';
-            const chosenGender = genderSel ? genderSel.value : '';
             const chosenEmergPhone = emergPhoneIn ? emergPhoneIn.value.trim() : '';
             const chosenEmergPerson = emergPersonIn ? emergPersonIn.value.trim() : '';
             const chosenHealth = healthIn ? healthIn.value.trim() : '';
@@ -840,24 +801,18 @@
             statusEl.textContent = '';
 
             const current = window.registrationData || {};
-            if (chosenTshirt) current.TShirtSize = chosenTshirt;
             if (chosenBlood) current.BloodGroup = chosenBlood;
-            if (chosenGender) current.Gender = chosenGender;
             if (chosenEmergPhone) current.EmergencyMobileNumber = chosenEmergPhone;
             if (chosenEmergPerson) current.EmergencyContactPerson = chosenEmergPerson;
             if (chosenHealth) current.HealthIssues = chosenHealth;
 
             // Update UI elements immediately
-            const tshirtEl = document.getElementById('runner-tshirt');
             const bloodEl = document.getElementById('runner-blood');
-            const genderEl = document.getElementById('runner-gender');
             const emergPersonEl = document.getElementById('runner-emergency-person');
             const emergPhoneEl = document.getElementById('runner-emergency-phone');
             const healthEl = document.getElementById('runner-health');
 
-            if (tshirtEl && chosenTshirt) tshirtEl.textContent = chosenTshirt;
             if (bloodEl && chosenBlood) bloodEl.textContent = chosenBlood;
-            if (genderEl && chosenGender) genderEl.textContent = chosenGender;
             if (emergPersonEl && chosenEmergPerson) emergPersonEl.textContent = chosenEmergPerson;
             if (emergPhoneEl && chosenEmergPhone) emergPhoneEl.textContent = chosenEmergPhone;
             if (healthEl && chosenHealth) healthEl.textContent = chosenHealth;
