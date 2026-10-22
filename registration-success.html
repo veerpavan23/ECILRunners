@@ -123,11 +123,11 @@
                         <i class="fas fa-tshirt text-base"></i>
                     </div>
                     <div class="flex-grow">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-orange-950 dark:text-orange-200">Complete Your Race Kit</h3>
-                        <p class="text-xs text-gray-600 dark:text-gray-300 mt-0.5">Please confirm your official Run Jaathara T-shirt size &amp; Blood group for race day bib kit and medical safety on course.</p>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-orange-950 dark:text-orange-200">Complete Your Runner Profile &amp; Race Kit</h3>
+                        <p class="text-xs text-gray-600 dark:text-gray-300 mt-0.5">Please confirm your gender, emergency contact &amp; race kit details for your official Run Jaathara bib and course safety.</p>
                         
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-                            <div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
+                            <div id="wrap-tshirt">
                                 <label class="block text-[10px] font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">T-Shirt Size</label>
                                 <select id="kit-tshirt-select" class="w-full text-xs font-semibold bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-800 rounded-lg p-2 text-gray-900 dark:text-white">
                                     <option value="">Select Size...</option>
@@ -140,7 +140,7 @@
                                     <option value="3XL">3XL (Chest 48")</option>
                                 </select>
                             </div>
-                            <div>
+                            <div id="wrap-blood">
                                 <label class="block text-[10px] font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">Blood Group</label>
                                 <select id="kit-blood-select" class="w-full text-xs font-semibold bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-800 rounded-lg p-2 text-gray-900 dark:text-white">
                                     <option value="">Select Blood Group...</option>
@@ -154,11 +154,35 @@
                                     <option value="AB -ve">AB -ve</option>
                                 </select>
                             </div>
+                            <div id="wrap-gender">
+                                <label class="block text-[10px] font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">Gender</label>
+                                <select id="kit-gender-select" class="w-full text-xs font-semibold bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-800 rounded-lg p-2 text-gray-900 dark:text-white">
+                                    <option value="">Select Gender...</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div id="wrap-emergency-phone">
+                                <label class="block text-[10px] font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">Emergency Mobile</label>
+                                <input type="tel" id="kit-emergency-phone" placeholder="Emergency contact no." class="w-full text-xs font-semibold bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-800 rounded-lg p-2 text-gray-900 dark:text-white">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2.5">
+                            <div id="wrap-emergency-person">
+                                <label class="block text-[10px] font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">Emergency Contact Person</label>
+                                <input type="text" id="kit-emergency-person" placeholder="Person name (e.g. Spouse / Parent / Friend)" class="w-full text-xs font-semibold bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-800 rounded-lg p-2 text-gray-900 dark:text-white">
+                            </div>
+                            <div id="wrap-health">
+                                <label class="block text-[10px] font-bold uppercase text-gray-500 dark:text-gray-400 mb-1">History of Health Issues (if any)</label>
+                                <input type="text" id="kit-health" placeholder="None / Asthma / Allergies etc." class="w-full text-xs font-semibold bg-white dark:bg-gray-800 border border-orange-200 dark:border-orange-800 rounded-lg p-2 text-gray-900 dark:text-white">
+                            </div>
                         </div>
 
                         <div class="flex items-center gap-3 mt-3">
                             <button type="button" onclick="submitRaceKitCompletion()" id="btn-save-race-kit" class="bg-[#F97316] hover:bg-orange-600 text-white text-xs font-bold uppercase tracking-wider py-2 px-4 rounded-lg shadow-sm transition-all flex items-center gap-2 cursor-pointer">
-                                <i class="fas fa-check"></i> Save to Race Kit
+                                <i class="fas fa-check"></i> Save to Official Roster
                             </button>
                             <span id="kit-save-status" class="text-xs font-bold text-green-600"></span>
                         </div>
@@ -262,13 +286,28 @@
 
         // Helper to normalize a runner object from raw fields
         function normalizeRunnerObject(raw, common = {}) {
-            const firstName = raw.FirstName || raw.name || raw.first_name || raw.runner_name || '';
+            const firstName = raw.FirstName || raw.name || raw.first_name || raw.runner_name || raw.runnerName || '';
             const lastName = raw.LastName || raw.last_name || raw.surname || '';
-            const fullName = `${firstName} ${lastName}`.trim() || raw.BibName || raw.bib || raw.name || '';
+            const fullName = `${firstName} ${lastName}`.trim() || raw.BibName || raw.bib || raw.name || raw.user_name || '';
             const email = raw.eMail || raw.email || raw.user_email || raw.mail || common.eMail || common.email || '';
-            const phone = raw.Phone || raw.phone || raw.mobile || raw.contact_no || raw.contact || common.Phone || common.phone || '';
-            const race = raw.Race || raw.category || raw.distance || raw.race_category || common.Race || common.category || 'Run Jaathara 2026';
+            const phone = raw.Phone || raw.phone || raw.mobile || raw.contact_no || raw.contact || raw.mobile_number || common.Phone || common.phone || '';
+            const race = raw.Race || raw.category || raw.distance || raw.race_category || raw.event_category || common.Race || common.category || 'Run Jaathara 2026';
             const ref = raw.RegnRef || raw.ref || raw.order_id || raw.id || raw.reg_no || raw.order_number || raw.booking_id || common.RegnRef || common.order_id || '';
+
+            // Robust gender detection
+            const genderVal = raw.Gender || raw.gender || raw.sex || raw.Sex || '';
+            
+            // Robust DOB detection
+            const dobVal = raw.DateOfBirth || raw.dob || raw.birth_date || raw.date_of_birth || raw.birthdate || raw.DOB || '';
+
+            // Robust Health / Medical Issues detection
+            const healthVal = raw.HealthIssues || raw.health || raw.health_issues || raw.medical || raw.medical_issues || raw.history_of_health_issues || raw['History of Health Issues (if any)'] || '';
+
+            // Robust Emergency Contact Person
+            const emergPersonVal = raw.EmergencyContactPerson || raw.emergency_contact || raw.emergency_person || raw.emergency_name || raw.contact_person || raw.emergency_contact_name || raw['Emergency Contact Name'] || '';
+
+            // Robust Emergency Contact Phone
+            const emergPhoneVal = raw.EmergencyMobileNumber || raw.emergency_phone || raw.emergency_mobile || raw.emergencyphone || raw.emergency_contact_number || raw['Emergency Contact Mobile Number'] || '';
 
             return {
                 RegnRef: ref,
@@ -278,15 +317,15 @@
                 Race: race,
                 eMail: email,
                 Phone: phone,
-                Gender: raw.Gender || raw.gender || raw.sex || '',
+                Gender: genderVal,
                 BibName: raw.BibName || raw.bib || raw.bib_name || raw.bib_no || firstName || fullName,
                 TShirtSize: raw.TShirtSize || raw.tshirt || raw.t_shirt || raw.tshirtsize || raw.size || raw.shirt || raw['t-shirt'] || '',
                 BloodGroup: raw.BloodGroup || raw.blood || raw.blood_group || raw.bloodgroup || raw.bg || '',
-                HealthIssues: raw.HealthIssues || raw.health || raw.health_issues || raw.medical || '',
-                EmergencyContactPerson: raw.EmergencyContactPerson || raw.emergency_contact || raw.emergency_person || raw.emergency_name || raw.contact_person || '',
-                EmergencyMobileNumber: raw.EmergencyMobileNumber || raw.emergency_phone || raw.emergency_mobile || raw.emergencyphone || '',
-                DateOfBirth: raw.DateOfBirth || raw.dob || raw.birth_date || raw.date_of_birth || '',
-                RunningGroup: raw.RunningGroup || raw.club || raw.group || raw.running_group || common.RunningGroup || 'ECIL Runners',
+                HealthIssues: healthVal,
+                EmergencyContactPerson: emergPersonVal,
+                EmergencyMobileNumber: emergPhoneVal,
+                DateOfBirth: dobVal,
+                RunningGroup: raw.RunningGroup || raw.club || raw.group || raw.running_group || raw.running_group_name || common.RunningGroup || 'ECIL Runners',
                 Total: raw.Total || common.Total || '₹0.00',
                 Subtotal: raw.Subtotal || common.Subtotal || '₹0.00',
                 Discount: raw.Discount || common.Discount || '₹0.00'
@@ -683,12 +722,18 @@
                 if (emailEl) emailEl.textContent = data.eMail || data.Email || '—';
                 if (phoneEl) phoneEl.textContent = data.Phone || data.Mobile || '—';
 
-                // Check if race kit details are missing
-                const hasTshirt = data.TShirtSize && data.TShirtSize !== '-';
-                const hasBlood = data.BloodGroup && data.BloodGroup !== '-';
+                // Check if runner profile or kit details are missing
+                const hasTshirt = data.TShirtSize && data.TShirtSize !== '-' && data.TShirtSize !== '';
+                const hasBlood = data.BloodGroup && data.BloodGroup !== '-' && data.BloodGroup !== '';
+                const hasGender = data.Gender && data.Gender !== '-' && data.Gender !== '';
+                const hasEmergPhone = data.EmergencyMobileNumber && data.EmergencyMobileNumber !== '-' && data.EmergencyMobileNumber !== '';
+                const hasEmergPerson = data.EmergencyContactPerson && data.EmergencyContactPerson !== '-' && data.EmergencyContactPerson !== '';
+
                 const kitCard = document.getElementById('kit-completion-card');
-                if (kitCard && (!hasTshirt || !hasBlood)) {
+                if (kitCard && (!hasTshirt || !hasBlood || !hasGender || !hasEmergPhone || !hasEmergPerson)) {
                     kitCard.classList.remove('hidden');
+                    
+                    // Pre-fill whatever is already known
                     if (hasTshirt) {
                         const sel = document.getElementById('kit-tshirt-select');
                         if (sel) sel.value = data.TShirtSize;
@@ -697,26 +742,45 @@
                         const sel = document.getElementById('kit-blood-select');
                         if (sel) sel.value = data.BloodGroup;
                     }
+                    if (hasGender) {
+                        const sel = document.getElementById('kit-gender-select');
+                        if (sel) sel.value = data.Gender;
+                    }
+                    if (hasEmergPhone) {
+                        const el = document.getElementById('kit-emergency-phone');
+                        if (el) el.value = data.EmergencyMobileNumber;
+                    }
+                    if (hasEmergPerson) {
+                        const el = document.getElementById('kit-emergency-person');
+                        if (el) el.value = data.EmergencyContactPerson;
+                    }
+                    if (data.HealthIssues && data.HealthIssues !== '-') {
+                        const el = document.getElementById('kit-health');
+                        if (el) el.value = data.HealthIssues;
+                    }
                 }
 
                 syncRegistrationToSupabase(data);
             }
         }
 
-        // Allow runner to complete their T-Shirt & Blood Group if IQ301 redirect omitted them
+        // Allow runner to complete their Gender, Emergency Contact & Race Kit if IQ301 redirect omitted them
         async function submitRaceKitCompletion() {
             const tshirtSel = document.getElementById('kit-tshirt-select');
             const bloodSel = document.getElementById('kit-blood-select');
+            const genderSel = document.getElementById('kit-gender-select');
+            const emergPhoneIn = document.getElementById('kit-emergency-phone');
+            const emergPersonIn = document.getElementById('kit-emergency-person');
+            const healthIn = document.getElementById('kit-health');
             const btn = document.getElementById('btn-save-race-kit');
             const statusEl = document.getElementById('kit-save-status');
 
             const chosenTshirt = tshirtSel ? tshirtSel.value : '';
             const chosenBlood = bloodSel ? bloodSel.value : '';
-
-            if (!chosenTshirt && !chosenBlood) {
-                alert('Please select your T-shirt size or Blood Group.');
-                return;
-            }
+            const chosenGender = genderSel ? genderSel.value : '';
+            const chosenEmergPhone = emergPhoneIn ? emergPhoneIn.value.trim() : '';
+            const chosenEmergPerson = emergPersonIn ? emergPersonIn.value.trim() : '';
+            const chosenHealth = healthIn ? healthIn.value.trim() : '';
 
             btn.disabled = true;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
@@ -725,12 +789,25 @@
             const current = window.registrationData || {};
             if (chosenTshirt) current.TShirtSize = chosenTshirt;
             if (chosenBlood) current.BloodGroup = chosenBlood;
+            if (chosenGender) current.Gender = chosenGender;
+            if (chosenEmergPhone) current.EmergencyMobileNumber = chosenEmergPhone;
+            if (chosenEmergPerson) current.EmergencyContactPerson = chosenEmergPerson;
+            if (chosenHealth) current.HealthIssues = chosenHealth;
 
             // Update UI elements immediately
             const tshirtEl = document.getElementById('runner-tshirt');
             const bloodEl = document.getElementById('runner-blood');
+            const genderEl = document.getElementById('runner-gender');
+            const emergPersonEl = document.getElementById('runner-emergency-person');
+            const emergPhoneEl = document.getElementById('runner-emergency-phone');
+            const healthEl = document.getElementById('runner-health');
+
             if (tshirtEl && chosenTshirt) tshirtEl.textContent = chosenTshirt;
             if (bloodEl && chosenBlood) bloodEl.textContent = chosenBlood;
+            if (genderEl && chosenGender) genderEl.textContent = chosenGender;
+            if (emergPersonEl && chosenEmergPerson) emergPersonEl.textContent = chosenEmergPerson;
+            if (emergPhoneEl && chosenEmergPhone) emergPhoneEl.textContent = chosenEmergPhone;
+            if (healthEl && chosenHealth) healthEl.textContent = chosenHealth;
 
             // Push update to Supabase
             if (supabaseClient) {
@@ -738,14 +815,14 @@
                     const fullName = `${current.FirstName || ''} ${current.LastName || ''}`.trim() || current.BibName || 'Runner';
                     const runnerMetadata = {
                         name: fullName,
-                        gender: current.Gender || '',
+                        gender: current.Gender || chosenGender || '',
                         category: current.Race || 'Run Jaathara 2026',
                         bib: current.BibName || fullName,
-                        tshirt: current.TShirtSize || '-',
-                        blood: current.BloodGroup || '-',
-                        health: current.HealthIssues || '-',
-                        emergencyPerson: current.EmergencyContactPerson || '-',
-                        emergencyPhone: current.EmergencyMobileNumber || '-',
+                        tshirt: current.TShirtSize || chosenTshirt || '-',
+                        blood: current.BloodGroup || chosenBlood || '-',
+                        health: current.HealthIssues || chosenHealth || '-',
+                        emergencyPerson: current.EmergencyContactPerson || chosenEmergPerson || '-',
+                        emergencyPhone: current.EmergencyMobileNumber || chosenEmergPhone || '-',
                         dob: current.DateOfBirth || '-',
                         group: current.RunningGroup || 'ECIL Runners',
                         regNo: current.RegnRef || '-',
@@ -754,15 +831,21 @@
                     };
                     const richUserName = `${fullName} __META__:${JSON.stringify(runnerMetadata)}`;
 
-                    let query = supabaseClient.from('event_registrations').update({ user_name: richUserName });
-                    if (current.eMail) {
-                        query = query.eq('user_email', current.eMail);
+                    // Update existing row
+                    let targetEmail = current.eMail || current.email || '';
+                    if (targetEmail) {
+                        await supabaseClient
+                            .from('event_registrations')
+                            .update({ user_name: richUserName })
+                            .eq('user_email', targetEmail);
                     } else if (current.userId) {
-                        query = query.eq('user_id', current.userId);
+                        await supabaseClient
+                            .from('event_registrations')
+                            .update({ user_name: richUserName })
+                            .eq('user_id', current.userId);
                     }
-                    await query;
 
-                    statusEl.textContent = 'Saved to your official Race Kit!';
+                    statusEl.textContent = 'Saved to your official Race Roster!';
                     setTimeout(() => {
                         const card = document.getElementById('kit-completion-card');
                         if (card) card.classList.add('hidden');
