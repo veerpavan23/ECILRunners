@@ -670,28 +670,60 @@
                 const raceName = data.Race || data.Category || '21.1K TIMED RUN';
                 const regNo = data.RegnRef || data.RegistrationNumber || data.OrderNumber || '105584';
 
+                // Calculate standard official pricing by category
+                function getCategoryPrice(catStr) {
+                    const c = (catStr || '').toLowerCase();
+                    if (c.includes('21') || c.includes('half')) return 799;
+                    if (c.includes('10')) return 699;
+                    if (c.includes('5')) return 499;
+                    return 799;
+                }
+
+                const runnersCount = (data.allRunners && data.allRunners.length > 0) ? data.allRunners.length : 1;
+                let calculatedTotal = 0;
+                if (data.allRunners && data.allRunners.length > 0) {
+                    calculatedTotal = data.allRunners.reduce((sum, r) => sum + getCategoryPrice(r.Race || raceName), 0);
+                } else {
+                    calculatedTotal = getCategoryPrice(raceName);
+                }
+
+                // If IQ301 provided a non-zero explicit total/amount, use that; otherwise calculate from category
+                let rawTotalNum = parseFloat((data.Total || '').replace(/[^0-9.]/g, ''));
+                let finalTotalNum = (!isNaN(rawTotalNum) && rawTotalNum > 0) ? rawTotalNum : calculatedTotal;
+                let finalTotalStr = `₹${finalTotalNum.toFixed(2)}`;
+
+                let subtotalNum = parseFloat((data.Subtotal || '').replace(/[^0-9.]/g, ''));
+                if (isNaN(subtotalNum) || subtotalNum <= 0) subtotalNum = finalTotalNum;
+                let subtotalStr = `₹${subtotalNum.toFixed(2)}`;
+
+                let discountNum = subtotalNum - finalTotalNum;
+                if (discountNum < 0) discountNum = 0;
+
                 // Header & Top Meta
                 const orderIdEl = document.getElementById('order-id');
                 const orderTotalEl = document.getElementById('order-total');
                 if (orderIdEl) orderIdEl.textContent = regNo;
-                if (orderTotalEl) orderTotalEl.textContent = data.Total || '₹0.00';
+                if (orderTotalEl) orderTotalEl.textContent = finalTotalStr;
 
                 // Order Table Elements
                 const tblCatName = document.getElementById('table-category-name');
                 const tblSubRaw = document.getElementById('table-subtotal-raw');
                 const tblSub = document.getElementById('table-subtotal');
                 const tblDisc = document.getElementById('table-discount');
+                const tblDiscRow = document.getElementById('table-discount-row');
                 const tblTot = document.getElementById('table-total');
 
-                const subtotalVal = data.Subtotal || (raceName.includes('21') ? '₹799.00' : (raceName.includes('10') ? '₹699.00' : '₹499.00'));
-                const totalVal = data.Total || '₹0.00';
-                const discountVal = data.Discount || `-${subtotalVal}`;
+                if (tblCatName) tblCatName.textContent = `${raceName} × ${runnersCount}`;
+                if (tblSubRaw) tblSubRaw.textContent = subtotalStr;
+                if (tblSub) tblSub.textContent = subtotalStr;
+                if (tblTot) tblTot.textContent = finalTotalStr;
 
-                if (tblCatName) tblCatName.textContent = `${raceName} × 1`;
-                if (tblSubRaw) tblSubRaw.textContent = subtotalVal;
-                if (tblSub) tblSub.textContent = subtotalVal;
-                if (tblDisc) tblDisc.textContent = discountVal;
-                if (tblTot) tblTot.textContent = totalVal;
+                if (discountNum > 0) {
+                    if (tblDisc) tblDisc.textContent = `-₹${discountNum.toFixed(2)}`;
+                    if (tblDiscRow) tblDiscRow.classList.remove('hidden');
+                } else {
+                    if (tblDiscRow) tblDiscRow.classList.add('hidden');
+                }
 
                 // Runner Details Table
                 const nameEl = document.getElementById('runner-name');
