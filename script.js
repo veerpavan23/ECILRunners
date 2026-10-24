@@ -491,7 +491,35 @@ async function loadLiveEvents() {
             `;
         }
     } catch (err) {
-        console.error("Failed to fetch live events:", err);
+        console.error("Failed to fetch live events from DB, using resilient local flagship event:", err);
+        // Fallback: Ensure flagship event is permanently rendered even if database returns 402
+        if (container) {
+            container.innerHTML = `
+            <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-gray-700 hover:-translate-y-2 transition-all duration-300 group flex flex-col justify-between">
+                <div>
+                    <div class="relative aspect-video overflow-hidden bg-[#FDF5E6] dark:bg-gray-900">
+                        <img src="assets/run_jaathara_2026_card.jpg?v=20261020_v3" alt="Run Jaathara 2026" class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute top-4 right-4 bg-[#F97316] text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow-md">
+                            December 6th, 2026 5:30 AM
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center gap-2 text-sm text-[#F97316] font-bold mb-3">
+                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            <span class="uppercase tracking-wider text-xs line-clamp-1">Sreenidhi Inst of Science &amp; Tech, Ghatkesar</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2">Run Jaathara 2026</h3>
+                        <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">Run Jaathara Retro Edition! Run Together, Celebrate Community, Revisit Good Old Days. Includes T-Shirt, Finisher Medal, Breakfast, Goodie Bag &amp; More.</p>
+                    </div>
+                </div>
+                <div class="px-6 pb-6">
+                    <div class="flex justify-between items-center pt-4 border-t border-gray-100 dark:border-gray-700">
+                        <span class="font-bold text-gray-900 dark:text-white text-xs sm:text-sm">₹499 (5K) • ₹699 (10K) • ₹799 (21K)</span>
+                        <button onclick="openRegistrationPortal('https://ecilrunners.iq301.in/')" class="bg-[#F97316] hover:bg-orange-600 text-white px-5 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-md flex items-center gap-2 cursor-pointer"><i class="fas fa-ticket-alt"></i> Register Now</button>
+                    </div>
+                </div>
+            </div>`;
+        }
     }
 }
 
@@ -1367,37 +1395,28 @@ async function triggerRazorpay(btn) {
 let pendingActionAfterAuth = null;
 
 async function openRegistrationPortal(url = 'https://ecilrunners.iq301.in/') {
-    // 1. Mandatory Login Check
-    const { data: { user } } = await supabaseClient.auth.getUser();
-    if (!user) {
-        pendingActionAfterAuth = () => openRegistrationPortal(url);
-        if (typeof openAuthModal === 'function') {
-            const authSub = document.getElementById('auth-subtitle');
-            if (authSub) authSub.textContent = 'Please sign in or create an account to register for Run Jaathara 2026.';
-            openAuthModal();
-        } else {
-            alert('Please sign in first to register for this event.');
-        }
-        return;
-    }
-
-    // Seamless same-tab registration navigation:
-    // User stays in their main browser tab, completes IQ301 registration, 
-    // and is seamlessly redirected right back to https://ecilrunners.com/registration-success.html
+    // Seamless registration navigation:
+    // Navigates directly to IQ301 so registrations are never blocked or interrupted by Supabase auth restrictions.
+    // If the user happens to be signed in, optionally attach their profile info to localStorage for the success screen.
     const finalUrl = url || 'https://ecilrunners.iq301.in/';
     
-    // Cache user profile details so registration-success page has guaranteed immediate access
     try {
-        const runnerProfile = {
-            userId: user.id,
-            FirstName: user.user_metadata?.full_name?.split(' ')[0] || user.user_metadata?.first_name || '',
-            LastName: user.user_metadata?.full_name?.split(' ').slice(1).join(' ') || user.user_metadata?.last_name || '',
-            eMail: user.email || '',
-            Phone: user.phone || user.user_metadata?.phone || '',
-            Race: 'Run Jaathara 2026',
-            timestamp: Date.now()
-        };
-        localStorage.setItem('ecil_active_registration', JSON.stringify(runnerProfile));
+        if (typeof supabaseClient !== 'undefined' && supabaseClient.auth) {
+            const { data } = await supabaseClient.auth.getUser().catch(() => ({ data: { user: null } }));
+            const user = data?.user;
+            if (user) {
+                const runnerProfile = {
+                    userId: user.id,
+                    FirstName: user.user_metadata?.full_name?.split(' ')[0] || user.user_metadata?.first_name || '',
+                    LastName: user.user_metadata?.full_name?.split(' ').slice(1).join(' ') || user.user_metadata?.last_name || '',
+                    eMail: user.email || '',
+                    Phone: user.phone || user.user_metadata?.phone || '',
+                    Race: 'Run Jaathara 2026',
+                    timestamp: Date.now()
+                };
+                localStorage.setItem('ecil_active_registration', JSON.stringify(runnerProfile));
+            }
+        }
     } catch(e) {}
 
     window.location.href = finalUrl;
