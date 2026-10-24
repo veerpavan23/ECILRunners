@@ -616,34 +616,104 @@
 
                 if (tblDiscRow) tblDiscRow.classList.add('hidden');
 
-                // Runner Details Table
-                const nameEl = document.getElementById('runner-name');
-                const genderEl = document.getElementById('runner-gender');
-                const catEl = document.getElementById('category-name');
-                const bibEl = document.getElementById('runner-bib');
-                const tshirtEl = document.getElementById('runner-tshirt');
-                const bloodEl = document.getElementById('runner-blood');
-                const healthEl = document.getElementById('runner-health');
-                const emergPersonEl = document.getElementById('runner-emergency-person');
-                const emergPhoneEl = document.getElementById('runner-emergency-phone');
-                const dobEl = document.getElementById('runner-dob');
-                const groupEl = document.getElementById('runner-group');
-                const emailEl = document.getElementById('runner-email');
-                const phoneEl = document.getElementById('runner-phone');
+                // Runner Details Table Container
+                const runnerTableContainer = document.querySelector('.border.border-gray-200.dark\\:border-gray-800.rounded-xl.overflow-hidden.text-xs');
+                const runnersList = (Array.isArray(data.allRunners) && data.allRunners.length > 0) ? data.allRunners : [data];
 
-                if (nameEl) nameEl.textContent = fullName || '—';
-                if (genderEl) genderEl.textContent = data.Gender || data.Sex || '—';
-                if (catEl) catEl.textContent = raceName || 'Run Jaathara 2026';
-                if (bibEl) bibEl.textContent = data.BibName || data.Bib || fullName || '—';
-                if (tshirtEl) tshirtEl.textContent = data.TShirtSize || data.TShirt || data.Size || '—';
-                if (bloodEl) bloodEl.textContent = data.BloodGroup || data.Blood || '—';
-                if (healthEl) healthEl.textContent = data.HealthIssues || data.MedicalIssues || '—';
-                if (emergPersonEl) emergPersonEl.textContent = data.EmergencyContactPerson || data.EmergencyContact || data.EmergencyName || '—';
-                if (emergPhoneEl) emergPhoneEl.textContent = data.EmergencyMobileNumber || data.EmergencyPhone || '—';
-                if (dobEl) dobEl.textContent = data.DateOfBirth || data.DOB || '—';
-                if (groupEl) groupEl.textContent = data.RunningGroup || data.Group || data.Club || 'ECIL Runners';
-                if (emailEl) emailEl.textContent = data.eMail || data.Email || '—';
-                if (phoneEl) phoneEl.textContent = data.Phone || data.Mobile || '—';
+                if (runnersList.length > 1 && runnerTableContainer) {
+                    // Multi-runner view: render clean separated cards/tables for each runner
+                    let multiHtml = '';
+                    runnersList.forEach((r, idx) => {
+                        const rName = r.FullName || `${r.FirstName || ''} ${r.LastName || ''}`.trim() || r.BibName || `Runner ${idx + 1}`;
+                        const rRace = r.Race || r.Category || raceName;
+                        multiHtml += `
+                        <div class="mb-4 last:mb-0 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden text-xs">
+                            <div class="bg-orange-50/80 dark:bg-orange-950/30 px-3 py-2 font-bold text-[#F97316] flex items-center justify-between border-b border-gray-200 dark:border-gray-800">
+                                <span><i class="fas fa-running mr-1.5"></i> Runner #${idx + 1}: ${rName}</span>
+                                <span class="text-[11px] bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-2 py-0.5 rounded font-semibold border border-orange-200 dark:border-orange-900">${rRace}</span>
+                            </div>
+                            <table class="w-full text-left border-collapse">
+                                <tbody class="divide-y divide-gray-100 dark:divide-gray-800 text-gray-700 dark:text-gray-300">
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                        <td class="p-2.5 font-semibold text-gray-500 dark:text-gray-400 w-2/5">Gender</td>
+                                        <td class="p-2.5 font-medium">${r.Gender || r.Sex || '—'}</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                        <td class="p-2.5 font-semibold text-gray-500 dark:text-gray-400">Bib Name</td>
+                                        <td class="p-2.5 font-medium">${r.BibName || r.Bib || rName}</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                        <td class="p-2.5 font-semibold text-gray-500 dark:text-gray-400">T-Shirt Size</td>
+                                        <td class="p-2.5 font-medium">${r.TShirtSize || r.TShirt || r.Size || '—'}</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                        <td class="p-2.5 font-semibold text-gray-500 dark:text-gray-400">Blood Group</td>
+                                        <td class="p-2.5 font-medium">${r.BloodGroup || r.Blood || '—'}</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                        <td class="p-2.5 font-semibold text-gray-500 dark:text-gray-400">Emergency Contact Person</td>
+                                        <td class="p-2.5 font-medium">${r.EmergencyContactPerson || r.eContactName || r.EmergencyContact || '—'}</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                        <td class="p-2.5 font-semibold text-gray-500 dark:text-gray-400">Emergency Mobile Number</td>
+                                        <td class="p-2.5 font-medium">${r.EmergencyMobileNumber || r.eContact || r.EmergencyPhone || '—'}</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                        <td class="p-2.5 font-semibold text-gray-500 dark:text-gray-400">Date of Birth</td>
+                                        <td class="p-2.5 font-medium">${r.DateOfBirth || r.DOB || '—'}</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                        <td class="p-2.5 font-semibold text-gray-500 dark:text-gray-400">History of Health Issues</td>
+                                        <td class="p-2.5 font-medium">${r.HealthIssues || r.MedicalIssues || 'None'}</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                        <td class="p-2.5 font-semibold text-gray-500 dark:text-gray-400">Email</td>
+                                        <td class="p-2.5 font-medium text-gray-700 dark:text-gray-300 break-all">${r.eMail || r.Email || '—'}</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                                        <td class="p-2.5 font-semibold text-gray-500 dark:text-gray-400">Mobile</td>
+                                        <td class="p-2.5 font-medium">${r.Phone || r.Mobile || '—'}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>`;
+                    });
+                    runnerTableContainer.parentElement.innerHTML = `
+                        <h2 class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                            <i class="fas fa-users text-[#F97316]"></i> Registered Runners Details (${runnersList.length})
+                        </h2>
+                        ${multiHtml}
+                    `;
+                } else {
+                    // Single runner view
+                    const nameEl = document.getElementById('runner-name');
+                    const genderEl = document.getElementById('runner-gender');
+                    const catEl = document.getElementById('category-name');
+                    const bibEl = document.getElementById('runner-bib');
+                    const tshirtEl = document.getElementById('runner-tshirt');
+                    const bloodEl = document.getElementById('runner-blood');
+                    const healthEl = document.getElementById('runner-health');
+                    const emergPersonEl = document.getElementById('runner-emergency-person');
+                    const emergPhoneEl = document.getElementById('runner-emergency-phone');
+                    const dobEl = document.getElementById('runner-dob');
+                    const groupEl = document.getElementById('runner-group');
+                    const emailEl = document.getElementById('runner-email');
+                    const phoneEl = document.getElementById('runner-phone');
+
+                    if (nameEl) nameEl.textContent = fullName || '—';
+                    if (genderEl) genderEl.textContent = data.Gender || data.Sex || '—';
+                    if (catEl) catEl.textContent = raceName || 'Run Jaathara 2026';
+                    if (bibEl) bibEl.textContent = data.BibName || data.Bib || fullName || '—';
+                    if (tshirtEl) tshirtEl.textContent = data.TShirtSize || data.TShirt || data.Size || '—';
+                    if (bloodEl) bloodEl.textContent = data.BloodGroup || data.Blood || '—';
+                    if (healthEl) healthEl.textContent = data.HealthIssues || data.MedicalIssues || '—';
+                    if (emergPersonEl) emergPersonEl.textContent = data.EmergencyContactPerson || data.EmergencyContact || data.EmergencyName || '—';
+                    if (emergPhoneEl) emergPhoneEl.textContent = data.EmergencyMobileNumber || data.EmergencyPhone || '—';
+                    if (dobEl) dobEl.textContent = data.DateOfBirth || data.DOB || '—';
+                    if (groupEl) groupEl.textContent = data.RunningGroup || data.Group || data.Club || 'ECIL Runners';
+                    if (emailEl) emailEl.textContent = data.eMail || data.Email || '—';
+                    if (phoneEl) phoneEl.textContent = data.Phone || data.Mobile || '—';
+                }
 
                 // Check if emergency / course safety details are missing from IQ301
                 const hasBlood = data.BloodGroup && data.BloodGroup !== '-' && data.BloodGroup !== '';
