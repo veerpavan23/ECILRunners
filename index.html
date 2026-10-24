@@ -900,18 +900,29 @@
                     <div>
                         <input type="email" id="auth-email" placeholder="Email Address" required class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#F97316] focus:border-transparent outline-none transition-all placeholder-gray-400">
                     </div>
-                    <div>
-                        <input type="password" id="auth-password" placeholder="Password" required class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#F97316] focus:border-transparent outline-none transition-all placeholder-gray-400">
+                    <div id="auth-password-container">
+                        <div class="relative">
+                            <input type="password" id="auth-password" placeholder="Password" required class="w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl pl-4 pr-11 py-3 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#F97316] focus:border-transparent outline-none transition-all placeholder-gray-400">
+                            <button type="button" id="toggle-auth-password" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer focus:outline-none p-1" title="Show or Hide Password">
+                                <i class="fas fa-eye" id="toggle-auth-password-icon"></i>
+                            </button>
+                        </div>
+                        <div class="flex justify-end mt-1.5" id="forgot-password-wrap">
+                            <button type="button" id="auth-forgot-btn" class="text-xs text-[#F97316] hover:underline font-semibold cursor-pointer">
+                                Forgot password?
+                            </button>
+                        </div>
                     </div>
                     
                     <div id="auth-error" class="text-red-500 text-xs font-bold hidden bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800">Error message</div>
+                    <div id="auth-success" class="text-green-600 dark:text-green-400 text-xs font-bold hidden bg-green-50 dark:bg-green-900/20 p-3 rounded-lg border border-green-200 dark:border-green-800">Success message</div>
                     
                     <button type="submit" id="auth-submit-btn" class="w-full bg-[#F97316] text-white py-3.5 rounded-xl font-bold tracking-widest uppercase hover:bg-gray-900 transition-colors shadow-lg shadow-[#F97316]/30 flex items-center justify-center gap-2">
                         <span>Sign In</span>
                     </button>
                 </form>
                 
-                <p class="text-center text-sm text-gray-500 mt-6 font-light">
+                <p class="text-center text-sm text-gray-500 mt-6 font-light" id="auth-toggle-container">
                     <span id="auth-toggle-prefix">Don't have an account?</span> <a href="#" id="auth-toggle-mode" class="text-[#F97316] font-bold hover:underline">Sign up</a>
                 </p>
             </div>

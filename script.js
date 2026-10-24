@@ -1005,15 +1005,92 @@ const authForm = document.getElementById('auth-form');
 const authEmail = document.getElementById('auth-email');
 const authPassword = document.getElementById('auth-password');
 const authError = document.getElementById('auth-error');
+const authSuccess = document.getElementById('auth-success');
 const authSubmitBtn = document.getElementById('auth-submit-btn');
 const authToggleMode = document.getElementById('auth-toggle-mode');
 const authTogglePrefix = document.getElementById('auth-toggle-prefix');
 const authTitle = document.getElementById('auth-title');
 const navLogoutBtn = document.getElementById('nav-logout-btn');
+const toggleAuthPasswordBtn = document.getElementById('toggle-auth-password');
+const toggleAuthPasswordIcon = document.getElementById('toggle-auth-password-icon');
+const authForgotBtn = document.getElementById('auth-forgot-btn');
+const authPasswordContainer = document.getElementById('auth-password-container');
+const forgotPasswordWrap = document.getElementById('forgot-password-wrap');
+const authToggleContainer = document.getElementById('auth-toggle-container');
+
+let isResetPasswordMode = false;
+
+// Password visibility eye toggle
+if (toggleAuthPasswordBtn && authPassword) {
+    toggleAuthPasswordBtn.addEventListener('click', () => {
+        const isPassword = authPassword.getAttribute('type') === 'password';
+        authPassword.setAttribute('type', isPassword ? 'text' : 'password');
+        if (toggleAuthPasswordIcon) {
+            toggleAuthPasswordIcon.classList.toggle('fa-eye', !isPassword);
+            toggleAuthPasswordIcon.classList.toggle('fa-eye-slash', isPassword);
+        }
+    });
+}
+
+// Reset UI state to standard login
+function setSignInMode() {
+    isSignUpMode = false;
+    isResetPasswordMode = false;
+    if(authTitle) authTitle.innerText = 'Welcome Back';
+    if(authSubtitle) authSubtitle.innerText = 'Sign in to track your runs and register for events.';
+    if(authSubmitBtn) authSubmitBtn.querySelector('span').innerText = 'Sign In';
+    if(authTogglePrefix) authTogglePrefix.innerText = "Don't have an account?";
+    if(authToggleMode) authToggleMode.innerText = 'Sign up';
+    if(authPasswordContainer) authPasswordContainer.classList.remove('hidden');
+    if(authPassword) authPassword.required = true;
+    if(forgotPasswordWrap) forgotPasswordWrap.classList.remove('hidden');
+    if(authToggleContainer) authToggleContainer.classList.remove('hidden');
+    if(authError) authError.classList.add('hidden');
+    if(authSuccess) authSuccess.classList.add('hidden');
+}
+
+function setSignUpMode() {
+    isSignUpMode = true;
+    isResetPasswordMode = false;
+    if(authTitle) authTitle.innerText = 'Create Account';
+    if(authSubtitle) authSubtitle.innerText = 'Join the ECIL Runners community today.';
+    if(authSubmitBtn) authSubmitBtn.querySelector('span').innerText = 'Sign Up';
+    if(authTogglePrefix) authTogglePrefix.innerText = 'Already have an account?';
+    if(authToggleMode) authToggleMode.innerText = 'Sign in instead';
+    if(authPasswordContainer) authPasswordContainer.classList.remove('hidden');
+    if(authPassword) authPassword.required = true;
+    if(forgotPasswordWrap) forgotPasswordWrap.classList.add('hidden');
+    if(authToggleContainer) authToggleContainer.classList.remove('hidden');
+    if(authError) authError.classList.add('hidden');
+    if(authSuccess) authSuccess.classList.add('hidden');
+}
+
+function setResetPasswordMode() {
+    isResetPasswordMode = true;
+    isSignUpMode = false;
+    if(authTitle) authTitle.innerText = 'Reset Password';
+    if(authSubtitle) authSubtitle.innerText = 'Enter your registered email address to receive password reset instructions.';
+    if(authSubmitBtn) authSubmitBtn.querySelector('span').innerText = 'Send Reset Link';
+    if(authPasswordContainer) authPasswordContainer.classList.add('hidden');
+    if(authPassword) authPassword.required = false;
+    if(authToggleContainer) authToggleContainer.classList.remove('hidden');
+    if(authTogglePrefix) authTogglePrefix.innerText = 'Remembered your password?';
+    if(authToggleMode) authToggleMode.innerText = 'Back to Sign In';
+    if(authError) authError.classList.add('hidden');
+    if(authSuccess) authSuccess.classList.add('hidden');
+}
+
+// Forgot Password Click
+if (authForgotBtn) {
+    authForgotBtn.addEventListener('click', () => {
+        setResetPasswordMode();
+    });
+}
 
 // Open/Close Modal
 function openAuthModal() {
     if(!authModal) return;
+    setSignInMode();
     authModal.classList.remove('hidden');
     authModal.classList.add('flex');
     setTimeout(() => {
@@ -1045,11 +1122,13 @@ if(authModal) {
 if(authToggleMode) {
     authToggleMode.addEventListener('click', (e) => {
         e.preventDefault();
-        isSignUpMode = !isSignUpMode;
-        if(authTitle) authTitle.innerText = isSignUpMode ? 'Create Account' : 'Welcome Back';
-        if(authSubmitBtn) authSubmitBtn.querySelector('span').innerText = isSignUpMode ? 'Sign Up' : 'Sign In';
-        if(authToggleMode) authToggleMode.innerText = isSignUpMode ? 'Sign in instead' : 'Sign up';
-        if(authError) authError.classList.add('hidden');
+        if (isResetPasswordMode) {
+            setSignInMode();
+        } else if (isSignUpMode) {
+            setSignInMode();
+        } else {
+            setSignUpMode();
+        }
     });
 }
 
@@ -1063,16 +1142,27 @@ if(authForm) {
             return;
         }
         
-        const email = authEmail.value;
-        const password = authPassword.value;
+        const email = authEmail.value.trim();
+        const password = authPassword ? authPassword.value : '';
         
         authSubmitBtn.disabled = true;
         const originalText = authSubmitBtn.querySelector('span').innerText;
         authSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Processing...</span>';
-        authError.classList.add('hidden');
+        if(authError) authError.classList.add('hidden');
+        if(authSuccess) authSuccess.classList.add('hidden');
         
         try {
-            if (isSignUpMode) {
+            if (isResetPasswordMode) {
+                // Send Password Reset Link via Supabase
+                const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                    redirectTo: window.location.origin + window.location.pathname
+                });
+                if (error) throw error;
+                if(authSuccess) {
+                    authSuccess.innerText = `Password reset link sent to ${email}! Please check your inbox or spam folder.`;
+                    authSuccess.classList.remove('hidden');
+                }
+            } else if (isSignUpMode) {
                 const { data, error } = await supabaseClient.auth.signUp({ email, password });
                 if (error) throw error;
                 if (data?.user?.identities?.length === 0) {
